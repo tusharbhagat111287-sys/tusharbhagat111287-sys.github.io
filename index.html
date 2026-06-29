@@ -12,7 +12,10 @@
     .nav button.act { background: linear-gradient(145deg, #c8963e, #8b6914); color: #000; }
     h2 { margin: 20px 0 10px; color: #e6c27a; font-size: 18px; text-transform: uppercase; }
     #status { color: #50e3c2; font-weight: bold; font-size: 14px; margin-bottom: 5px; }
-    #clock { color: #ff9800; font-weight: bold; font-size: 16px; margin-bottom: 15px; }
+    #clock-container { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 15px; }
+    #clock { color: #ff9800; font-weight: bold; font-size: 16px; }
+    .badge { padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; color: #fff; }
+    .badge.on { background: #4caf50; } .badge.off { background: #f44336; }
     
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; max-width: 800px; margin: auto; }
     .card { background: linear-gradient(145deg, rgba(40,30,20,0.8), rgba(20,15,10,0.9)); padding: 10px; border-radius: 10px; border: 1px solid rgba(200,150,62,0.3); }
@@ -52,9 +55,14 @@
   <div id="view-dash">
     <h2>🔴🙏 SARVOPARI DHAM 🙏🔴</h2>
     <div id='status'>Connecting to Cloud... ⏳</div>
-    <div id='clock'>--:--:--</div>
+    
+    <div id="clock-container">
+      <div id='clock'>--:--:--</div>
+      <span id='netBadge' class='badge off'>OFFLINE</span>
+    </div>
+    
     <div class='grid' id='buttonsGrid'></div>
-    <div class='footer'>SARVOPARI CLOUD EDITION V1</div>
+    <div class='footer'>SARVOPARI CLOUD EDITION SMARAN V1</div>
   </div>
 
   <div id="view-sett">
@@ -123,11 +131,13 @@
     function updateDash() {
       for(let i=0; i<10; i++){
         let b = document.getElementById(`b${i}`); let a = document.getElementById(`a${i}`);
-        let isM = manualMode[i]; let isO = relayState[i] == 1;
-        b.innerHTML = isO ? (isM ? "ON" : "ON (Auto)") : (isM ? "OFF" : "OFF (Auto)");
-        b.className = isO ? (isM ? "btn on-m" : "btn on-a") : (isM ? "btn off-m" : "btn off-a");
-        a.innerHTML = isM ? "AUTO" : "AUTO (ON)";
-        a.className = isM ? "btn a-off" : "btn a-on";
+        if(b && a) {
+          let isM = manualMode[i]; let isO = relayState[i] == 1;
+          b.innerHTML = isO ? (isM ? "ON" : "ON (Auto)") : (isM ? "OFF" : "OFF (Auto)");
+          b.className = isO ? (isM ? "btn on-m" : "btn on-a") : (isM ? "btn off-m" : "btn off-a");
+          a.innerHTML = isM ? "AUTO" : "AUTO (ON)";
+          a.className = isM ? "btn a-off" : "btn a-on";
+        }
       }
     }
 
@@ -168,14 +178,17 @@
             for(let j=0; j<12; j++) {
               if(d['R'+i] && d['R'+i]['S'+j]) {
                 let s = d['R'+i]['S'+j];
-                document.getElementById(`r${i}s${j}_en`).checked = (s.en == 1);
-                let sh12 = s.sh % 12 || 12; document.getElementById(`r${i}s${j}_sh`).value = sh12;
-                document.getElementById(`r${i}s${j}_sap`).value = s.sh >= 12 ? 1 : 0;
-                document.getElementById(`r${i}s${j}_sm`).value = s.sm < 10 ? '0'+s.sm : s.sm;
-                
-                let eh12 = s.eh % 12 || 12; document.getElementById(`r${i}s${j}_eh`).value = eh12;
-                document.getElementById(`r${i}s${j}_eap`).value = s.eh >= 12 ? 1 : 0;
-                document.getElementById(`r${i}s${j}_em`).value = s.em < 10 ? '0'+s.em : s.em;
+                let el = document.getElementById(`r${i}s${j}_en`);
+                if(el) {
+                  el.checked = (s.en == 1);
+                  let sh12 = s.sh % 12 || 12; document.getElementById(`r${i}s${j}_sh`).value = sh12;
+                  document.getElementById(`r${i}s${j}_sap`).value = s.sh >= 12 ? 1 : 0;
+                  document.getElementById(`r${i}s${j}_sm`).value = s.sm < 10 ? '0'+s.sm : s.sm;
+                  
+                  let eh12 = s.eh % 12 || 12; document.getElementById(`r${i}s${j}_eh`).value = eh12;
+                  document.getElementById(`r${i}s${j}_eap`).value = s.eh >= 12 ? 1 : 0;
+                  document.getElementById(`r${i}s${j}_em`).value = s.em < 10 ? '0'+s.em : s.em;
+                }
               }
             }
           }
@@ -184,8 +197,17 @@
     }
 
     function listenToCloud() {
+      // 🟢 બેજ અને કનેક્શન સ્ટેટસ
       firebase.database().ref(".info/connected").on("value", (snap) => {
-        document.getElementById('status').innerText = snap.val() === true ? "🟢 Connected to Global Cloud" : "🔴 Reconnecting...";
+        let isConn = snap.val() === true;
+        let badge = document.getElementById('netBadge');
+        if (isConn) {
+          badge.innerText = "ONLINE"; badge.className = "badge on";
+          document.getElementById('status').innerText = "🟢 Connected to Cloud";
+        } else {
+          badge.innerText = "OFFLINE"; badge.className = "badge off";
+          document.getElementById('status').innerText = "🔴 Reconnecting...";
+        }
       });
 
       db.ref('SarvopariDham/Status').on('value', (snap) => {
@@ -206,16 +228,18 @@
       document.getElementById('clock').innerText = `${days[d.getDay()]} ${h < 10 ? '0'+h : h}:${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s} ${ampm}`;
     }, 1000);
 
-    // 🟢 ભૂલ સુધારી લીધી: અહીં ફાયરબેઝ ઓથ (Login) ઉમેરી દીધું
+    // 🟢 જો Auth ના થાય તો પણ ડેટા લોડ કરવાની કોશિશ કરશે
     window.onload = () => { 
       buildUI();
       firebase.auth().signInAnonymously().then(() => {
-        loadSettingsFromCloud(); 
-        listenToCloud();
+        loadSettingsFromCloud(); listenToCloud();
       }).catch((error) => {
-        document.getElementById('status').innerText = "🔴 Auth Failed!";
+        document.getElementById('status').innerText = "⚠️ Auth Failed! Firebaseમાં Anonymous Login ચાલુ કરો.";
+        // છતાં ડેટા ખેંચવાનો પ્રયાસ કરો
+        loadSettingsFromCloud(); listenToCloud();
       });
     };
   </script>
 </body>
 </html>
+
