@@ -43,7 +43,6 @@
     #toast.show { visibility: visible; }
   </style>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
@@ -53,14 +52,12 @@
   </div>
   
   <div id="view-dash">
-    <h2>🔴🙏 SARVOPARI DHAM 🙏🔴</h2>
-    <div id='status'>Connecting to Cloud... ⏳</div>
-    
-    <div id="clock-container">
+    <h2>🔴🙏 SARVOPARI DHAM LIGHT 🙏🔴</h2>
+    <div id='status'>Connecting... ⏳</div>
+    <div id='clock-container'>
       <div id='clock'>--:--:--</div>
       <span id='netBadge' class='badge off'>OFFLINE</span>
     </div>
-    
     <div class='grid' id='buttonsGrid'></div>
     <div class='footer'>SARVOPARI CLOUD EDITION SMARAN V1</div>
   </div>
@@ -76,10 +73,8 @@
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAoPnrydmBiFCG8FP52Sy_jsRBb1CyUfaM",
-      authDomain: "sarvopari-liths.firebaseapp.com",
       databaseURL: "https://sarvopari-liths-default-rtdb.firebaseio.com",
-      projectId: "sarvopari-liths",
-      storageBucket: "sarvopari-liths.firebasestorage.app"
+      projectId: "sarvopari-liths"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -109,7 +104,7 @@
     function buildUI() {
       let dHtml = "";
       for(let i=0; i<10; i++){
-        dHtml += `<div class='card'><h4>${names[i]}</h4><div class='btn-row'><button id='b${i}' class='btn off-m' onclick='cmd("toggle", ${i})'>Wait</button><button id='a${i}' class='btn a-off' onclick='cmd("auto", ${i})'>Wait</button></div></div>`;
+        dHtml += `<div class='card'><h4>${names[i]}</h4><div class='btn-row'><button id='b${i}' class='btn off-m' onclick='cmd("toggle", ${i})'>ON/OFF</button><button id='a${i}' class='btn a-off' onclick='cmd("auto", ${i})'>AUTO</button></div></div>`;
       }
       document.getElementById('buttonsGrid').innerHTML = dHtml;
 
@@ -184,7 +179,6 @@
                   let sh12 = s.sh % 12 || 12; document.getElementById(`r${i}s${j}_sh`).value = sh12;
                   document.getElementById(`r${i}s${j}_sap`).value = s.sh >= 12 ? 1 : 0;
                   document.getElementById(`r${i}s${j}_sm`).value = s.sm < 10 ? '0'+s.sm : s.sm;
-                  
                   let eh12 = s.eh % 12 || 12; document.getElementById(`r${i}s${j}_eh`).value = eh12;
                   document.getElementById(`r${i}s${j}_eap`).value = s.eh >= 12 ? 1 : 0;
                   document.getElementById(`r${i}s${j}_em`).value = s.em < 10 ? '0'+s.em : s.em;
@@ -197,8 +191,7 @@
     }
 
     function listenToCloud() {
-      // 🟢 બેજ અને કનેક્શન સ્ટેટસ
-      firebase.database().ref(".info/connected").on("value", (snap) => {
+      db.ref(".info/connected").on("value", (snap) => {
         let isConn = snap.val() === true;
         let badge = document.getElementById('netBadge');
         if (isConn) {
@@ -228,17 +221,7 @@
       document.getElementById('clock').innerText = `${days[d.getDay()]} ${h < 10 ? '0'+h : h}:${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s} ${ampm}`;
     }, 1000);
 
-    // 🟢 જો Auth ના થાય તો પણ ડેટા લોડ કરવાની કોશિશ કરશે
-    window.onload = () => { 
-      buildUI();
-      firebase.auth().signInAnonymously().then(() => {
-        loadSettingsFromCloud(); listenToCloud();
-      }).catch((error) => {
-        document.getElementById('status').innerText = "⚠️ Auth Failed! Firebaseમાં Anonymous Login ચાલુ કરો.";
-        // છતાં ડેટા ખેંચવાનો પ્રયાસ કરો
-        loadSettingsFromCloud(); listenToCloud();
-      });
-    };
+    window.onload = () => { buildUI(); loadSettingsFromCloud(); listenToCloud(); };
   </script>
 </body>
 </html>
