@@ -1,61 +1,259 @@
 
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<html lang="gu">
 <head>
-  <meta charset='UTF-8'>
-  <meta name='viewport' content='width=device-width, initial-scale=1'>
-  <title>Sarvopari Dham Cloud</title>
-  <style>
-    body { font-family: sans-serif; background: #121212; color: #fff; text-align: center; margin:0; padding-bottom: 50px; }
-    h2 { margin: 20px 0 10px; color: #e6c27a; font-size: 18px; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 15px; max-width: 600px; margin: auto; }
-    .card { background: #222; padding: 15px; border-radius: 10px; border: 1px solid #444; }
-    h4 { margin: 0 0 10px; color: #f9d976; font-size: 14px; }
-    .btn-row { display: flex; gap: 10px; }
-    .btn { padding: 10px 0; border-radius: 8px; flex: 1; font-weight: bold; border: none; cursor: pointer; color: white; transition:0.2s;}
-    .on { background: #388E3C; } .off { background: #D32F2F; }
-    .a-on { background: #0097A7; } .a-off { background: #1976D2; }
-    #status { color: #50e3c2; font-weight: bold; font-size: 14px; margin-bottom: 15px; }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sarvopari Dham - Online Remote</title>
+  
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <style>
+    body { font-family: Arial, sans-serif; background: #111; color: #fff; margin: 0; padding-bottom: 60px; text-align: center; }
+    .nav { background: #333; padding: 15px; display: flex; justify-content: space-around; font-weight: bold; }
+    .nav a { color: #aaa; text-decoration: none; padding: 5px 15px; border-radius: 20px; cursor: pointer; }
+    .nav a.act { background: #ff9800; color: #000; }
+    h2 { margin: 15px 0 5px; font-size: 17px; }
+    .t-blue { color: #2196F3; }
+    
+    /* Dashboard Styles */
+    #dashboard { display: block; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; }
+    .card { background: #2a2a2a; padding: 10px; border-radius: 12px; border: 1px solid #444; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+    h4 { margin: 0 0 10px; font-size: 12px; color: #FFD700; }
+    .btn-row { display: flex; justify-content: space-between; width: 100%; gap: 8px; }
+    .btn { border: none; padding: 10px 2px; font-size: 12px; border-radius: 30px; flex: 1; font-weight: bold; cursor: pointer; color: #fff; transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.4); white-space: nowrap; }
+    .on-m { background: #4CAF50; } .off-m { background: #F44336; }
+    .on-a { background: #00BCD4; box-shadow: inset 0 0 15px rgba(0,0,0,0.8); }
+    .off-a { background: #9C27B0; box-shadow: inset 0 0 15px rgba(0,0,0,0.8); }
+    .a-on { background: #FF9800; box-shadow: inset 0 0 15px rgba(0,0,0,0.8); }
+    .a-off { background: #2196F3; }
+
+    /* Settings Styles */
+    #settings { display: none; text-align: left; }
+    .tabs { display: flex; overflow-x: auto; padding: 10px; gap: 5px; background: #222; }
+    .tb { background: #444; color: #aaa; border: none; padding: 10px; border-radius: 25px; white-space: nowrap; font-weight: bold; cursor: pointer; }
+    .tb.act { background: #2196f3; color: #fff; }
+    .tc { display: none; padding: 10px; }
+    .tc.act { display: block; }
+    .cd { background: #2a2a2a; padding: 10px; margin-bottom: 10px; border-radius: 12px; border-left: 4px solid transparent; }
+    .hd { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: bold; }
+    .rw { display: flex; justify-content: space-between; align-items: center; background: #1a1a1a; padding: 8px; margin-bottom: 5px; border-radius: 8px; }
+    input[type=number], select { background: #000; color: #fff; border: 1px solid #555; padding: 5px; border-radius: 6px; text-align: center; }
+    
+    /* Toggle Switch */
+    .sw { position: relative; width: 40px; height: 20px; }
+    .sw input { display: none; }
+    .sw span { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #555; border-radius: 20px; cursor: pointer; }
+    .sw span:before { content: ''; position: absolute; width: 16px; height: 16px; left: 2px; bottom: 2px; background: #fff; border-radius: 50%; transition: 0.3s; }
+    input:checked + span { background: #4caf50; }
+    input:checked + span:before { transform: translateX(20px); }
+    
+    .btn-save { position: fixed; bottom: 0; left: 0; width: 100%; background: #4caf50; color: #fff; border: none; padding: 15px; font-size: 16px; font-weight: bold; cursor: pointer; }
+    .footer { color: #777; font-size: 11px; margin-top: 20px; padding-bottom: 20px; text-transform: uppercase; text-align: center; }
+  </style>
 </head>
 <body>
-  <h2>🔴🙏 SARVOPARI DHAM 🙏🔴</h2>
-  <div id='status'>Connecting to Cloud... ⏳</div>
-  <div class='grid' id='ui'></div>
+
+  <div class="nav">
+    <a id="nav-dash" class="act" onclick="showPage('dashboard')">DASHBOARD</a>
+    <a id="nav-set" onclick="showPage('settings')">SETTINGS</a>
+  </div>
+
+  <h2>🔴🙏 <span class="t-blue">SARVOPARI DHAM LITH</span> 🙏🔴</h2>
+  <div style="font-size:12px; color:#00ffcc; margin-bottom:15px;" id="cloud-status">Connecting to Cloud...</div>
+
+  <div id="dashboard">
+    <div class="grid" id="buttonsGrid"></div>
+    <div class="footer">SARVOPARI DHAM (CLOUD WEB APP)</div>
+  </div>
+
+  <div id="settings">
+    <div class="tabs" id="tabs-container"></div>
+    <div id="settings-content"></div>
+    <button class="btn-save" onclick="saveAllSettings()">☁️ SAVE & SYNC TO CLOUD</button>
+  </div>
 
   <script>
-    firebase.initializeApp({apiKey: "AIzaSyAoPnrydmBiFCG8FP52Sy_jsRBb1CyUfaM", databaseURL: "https://sarvopari-liths-default-rtdb.firebaseio.com"});
+    // --- FIREBASE CONFIGURATION ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyAoPnrydmBiFCG8FP52Sy_jsRBb1CyUfaM",
+      databaseURL: "https://sarvopari-liths-default-rtdb.firebaseio.com/"
+    };
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    const n = ["1. Jalar 1", "2. Jalar 2", "3. Jalar 3", "4. Zumar 1", "5. Zumar 2", "6. Zumar 3", "7. Ghumat", "8. Border", "9. Lamp 2", "10. Vakta Light"];
-    
-    const ui = document.getElementById('ui');
-    for(let i=0; i<10; i++) ui.innerHTML += `<div class='card'><h4>${n[i]}</h4><div class='btn-row'><button id='b${i}' class='btn off' onclick='cmd("toggle", ${i}, "b${i}")'>Wait</button><button id='a${i}' class='btn a-off' onclick='cmd("auto", ${i}, "a${i}")'>Wait</button></div></div>`;
 
-    function cmd(action, id, btnId) {
-      document.getElementById(btnId).innerText = "⏳";
-      let trig = Math.floor(Math.random() * 100000) + 1; 
-      db.ref('SarvopariDham/Command').set({ act: action, id: id, trig: trig });
+    // --- DATA ARRAYS ---
+    const pinNames = [
+      "1. Sinhasan Jalar 1", "2. Sabha Jalar 2", "3. Sabha Jalar 3", 
+      "4. Zumar 1", "5. Zumar 2", "6. Zumar 3", 
+      "7. Ghumat", "8. Border", "9. Audience Lamp 2", "10. Vakta Light"
+    ];
+    const slotNames = [
+      "S1: All Day Morn-1", "S2: All Day Morn-2", "S3: All Day Eve-1", "S4: All Day Eve-2",
+      "S5: Tue Only 1", "S6: Tue Only 2", "S7: Sat Only 1", "S8: Sat Only 2",
+      "S9: Sun Only 1", "S10: Sun Only 2", "S11: Extra Slot 1", "S12: Extra Slot 2"
+    ];
+    const slotColors = ["#4CAF50", "#8BC34A", "#00BCD4", "#2196F3", "#FFEB3B", "#FBC02D", "#FF9800", "#F57C00", "#FFFFFF", "#E0E0E0", "#9C27B0", "#E91E63"];
+
+    // --- UI NAVIGATION ---
+    function showPage(page) {
+      document.getElementById('dashboard').style.display = page === 'dashboard' ? 'block' : 'none';
+      document.getElementById('settings').style.display = page === 'settings' ? 'block' : 'none';
+      document.getElementById('nav-dash').className = page === 'dashboard' ? 'act' : '';
+      document.getElementById('nav-set').className = page === 'settings' ? 'act' : '';
     }
 
-    db.ref(".info/connected").on("value", (snap) => {
-      document.getElementById('status').innerText = snap.val() ? "🟢 Connected to Cloud" : "🔴 Offline";
-    });
+    function switchTab(id) {
+      document.querySelectorAll('.tc').forEach(e => e.classList.remove('act'));
+      document.querySelectorAll('.tb').forEach(e => e.classList.remove('act'));
+      document.getElementById('tc' + id).classList.add('act');
+      document.getElementById('tb' + id).classList.add('act');
+    }
 
-    db.ref('SarvopariDham/Status').on('value', snap => {
-      let d = snap.val();
-      if(d && d.R && d.M) {
-        for(let i=0; i<10; i++) {
-          let isM = d.M[i], isO = d.R[i] == 1;
-          let b = document.getElementById(`b${i}`), a = document.getElementById(`a${i}`);
-          b.innerText = isO ? (isM?"ON":"ON (Auto)") : (isM?"OFF":"OFF (Auto)");
-          b.className = isO ? "btn on" : "btn off";
-          a.innerText = isM ? "AUTO" : "AUTO (ON)";
+    // --- BUILD DASHBOARD UI ---
+    function buildDashboard() {
+      let h = "";
+      for (let i = 0; i < 10; i++) {
+        h += `<div class='card'><h4>${pinNames[i]}</h4><div class='btn-row'>
+              <button id='b${i}' class='btn off-a' onclick='toggleRelay(${i})'>Loading</button>
+              <button id='a${i}' class='btn a-on' onclick='toggleAuto(${i})'>Loading</button></div></div>`;
+      }
+      document.getElementById('buttonsGrid').innerHTML = h;
+    }
+
+    // --- BUILD SETTINGS UI ---
+    function buildSettingsUI() {
+      let tabsHtml = "";
+      let contentHtml = "";
+      for (let i = 0; i < 10; i++) {
+        tabsHtml += `<button id='tb${i}' class='tb ${i === 0 ? "act" : ""}' onclick='switchTab(${i})'>L${i + 1}</button>`;
+        contentHtml += `<div id='tc${i}' class='tc ${i === 0 ? "act" : ""}'><h3 style='color:#FFD700;text-align:center;margin-top:0;'>${pinNames[i]}</h3>`;
+        
+        for (let j = 0; j < 12; j++) {
+          let p = `r${i}s${j}`;
+          contentHtml += `
+            <div class='cd' style='border-left-color:${slotColors[j]}'>
+              <div class='hd' style='color:${slotColors[j]}'>
+                <span>${slotNames[j]}</span>
+                <label class='sw'><input type='checkbox' id='${p}_en'><span></span></label>
+              </div>
+              <div class='rw'><span>ON</span><div>
+                <input type='number' id='${p}_sh' min='1' max='12' style='width:35px'> : 
+                <input type='number' id='${p}_sm' min='0' max='59' style='width:35px'> 
+                <select id='${p}_sap'><option value='0'>AM</option><option value='1'>PM</option></select>
+              </div></div>
+              <div class='rw'><span>OFF</span><div>
+                <input type='number' id='${p}_eh' min='1' max='12' style='width:35px'> : 
+                <input type='number' id='${p}_em' min='0' max='59' style='width:35px'> 
+                <select id='${p}_eap'><option value='0'>AM</option><option value='1'>PM</option></select>
+              </div></div>
+            </div>`;
+        }
+        contentHtml += `</div>`;
+      }
+      document.getElementById('tabs-container').innerHTML = tabsHtml;
+      document.getElementById('settings-content').innerHTML = contentHtml;
+    }
+
+    // --- FIREBASE REALTIME SYNC (DASHBOARD) ---
+    db.ref('/SarvopariDham/Status').on('value', (snapshot) => {
+      document.getElementById('cloud-status').innerText = "✅ Cloud Connected & Synced";
+      if (!snapshot.exists()) return;
+      const data = snapshot.val();
+      
+      for (let i = 0; i < 10; i++) {
+        let isM = data.m ? data.m[i] : false;
+        let isO = data.s ? data.s[i] == 1 : false;
+        
+        let b = document.getElementById(`b${i}`);
+        let a = document.getElementById(`a${i}`);
+        
+        if(b && a) {
+          b.innerHTML = isO ? (isM ? "ON" : "ON (Auto)") : (isM ? "OFF" : "OFF (Auto)");
+          b.className = isO ? (isM ? "btn on-m" : "btn on-a") : (isM ? "btn off-m" : "btn off-a");
+          a.innerHTML = isM ? "AUTO" : "AUTO (ON)";
           a.className = isM ? "btn a-off" : "btn a-on";
         }
       }
     });
+
+    // --- BUTTON ACTIONS (SYNC TO CLOUD) ---
+    function toggleRelay(id) {
+      db.ref(`/SarvopariDham/Status/m/${id}`).once('value').then(snap => {
+        let currentManual = snap.val() || false;
+        db.ref(`/SarvopariDham/Status/m/${id}`).set(true); // Force manual mode
+        db.ref(`/SarvopariDham/Status/s/${id}`).once('value').then(sSnap => {
+           let currentState = sSnap.val() == 1;
+           db.ref(`/SarvopariDham/Status/s/${id}`).set(currentState ? 0 : 1);
+        });
+      });
+    }
+
+    function toggleAuto(id) {
+      db.ref(`/SarvopariDham/Status/m/${id}`).set(false); // Enable auto mode
+    }
+
+    // --- LOAD SETTINGS FROM FIREBASE ---
+    db.ref('/SarvopariDham/Settings').once('value', (snapshot) => {
+      if (!snapshot.exists()) return;
+      const data = snapshot.val();
+      for (let i = 0; i < 10; i++) {
+        for (let j = 0; j < 12; j++) {
+          if(data[`Relay${i}`] && data[`Relay${i}`][`Slot${j}`]) {
+            let slot = data[`Relay${i}`][`Slot${j}`];
+            let p = `r${i}s${j}`;
+            
+            document.getElementById(`${p}_en`).checked = (slot.en === 1);
+            
+            let sh_12 = (slot.st_h == 0) ? 12 : (slot.st_h > 12 ? slot.st_h - 12 : slot.st_h);
+            document.getElementById(`${p}_sh`).value = sh_12;
+            document.getElementById(`${p}_sm`).value = slot.st_m;
+            document.getElementById(`${p}_sap`).value = (slot.st_h >= 12) ? 1 : 0;
+            
+            let eh_12 = (slot.en_h == 0) ? 12 : (slot.en_h > 12 ? slot.en_h - 12 : slot.en_h);
+            document.getElementById(`${p}_eh`).value = eh_12;
+            document.getElementById(`${p}_em`).value = slot.en_m;
+            document.getElementById(`${p}_eap`).value = (slot.en_h >= 12) ? 1 : 0;
+          }
+        }
+      }
+    });
+
+    // --- SAVE SETTINGS TO FIREBASE ---
+    function saveAllSettings() {
+      let updates = {};
+      for (let i = 0; i < 10; i++) {
+        for (let j = 0; j < 12; j++) {
+          let p = `r${i}s${j}`;
+          let en = document.getElementById(`${p}_en`).checked ? 1 : 0;
+          
+          let h12_s = parseInt(document.getElementById(`${p}_sh`).value || 12);
+          let ap_s = parseInt(document.getElementById(`${p}_sap`).value);
+          let sh = (ap_s === 1) ? (h12_s === 12 ? 12 : h12_s + 12) : (h12_s === 12 ? 0 : h12_s);
+          let sm = parseInt(document.getElementById(`${p}_sm`).value || 0);
+          
+          let h12_e = parseInt(document.getElementById(`${p}_eh`).value || 12);
+          let ap_e = parseInt(document.getElementById(`${p}_eap`).value);
+          let eh = (ap_e === 1) ? (h12_e === 12 ? 12 : h12_e + 12) : (h12_e === 12 ? 0 : h12_e);
+          let em = parseInt(document.getElementById(`${p}_em`).value || 0);
+
+          updates[`/SarvopariDham/Settings/Relay${i}/Slot${j}`] = {
+            en: en, st_h: sh, st_m: sm, en_h: eh, en_m: em
+          };
+        }
+      }
+      db.ref().update(updates).then(() => {
+        alert("✅ સેટિંગ્સ સફળતાપૂર્વક ઓનલાઈન ક્લાઉડ પર સેવ થઈ ગયા છે!");
+      }).catch((error) => {
+        alert("❌ Error saving to cloud: " + error);
+      });
+    }
+
+    // Initialize UI
+    buildDashboard();
+    buildSettingsUI();
   </script>
 </body>
 </html>
