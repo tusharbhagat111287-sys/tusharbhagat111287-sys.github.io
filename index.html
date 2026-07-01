@@ -164,9 +164,7 @@
           updates[`/SarvopariDham/Settings/Relay${i}/Slot${j}`] = { en: en, st_h: sh, st_m: sm, en_h: eh, en_m: em };
         }
       }
-      // 🔴 ESP32 ને બૂટલૂપમાંથી બચાવવા માટેનો ખાસ સ્માર્ટ ઇશારો 🔴
       updates['/SarvopariDham/UpdateStatus/settingsChanged'] = 1;
-      
       db.ref().update(updates).then(() => { alert("✅ સેટિંગ્સ સફળતાપૂર્વક ઓનલાઈન ક્લાઉડ પર સેવ થઈ ગયા છે!"); }).catch((error) => { alert("❌ Error saving to cloud: " + error); });
     }
 
