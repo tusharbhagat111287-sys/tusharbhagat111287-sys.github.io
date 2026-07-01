@@ -4,71 +4,19 @@
 <head>
   <meta charset='UTF-8'>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
-  <title>Sarvopari Dham Cloud Remote</title>
+  <title>Sarvopari Dham Cloud</title>
   <style>
-    /* ઓફલાઇન પેજ જેવી જ પ્રીમિયમ ગોલ્ડન-ડાર્ક થીમ */
-    body { font-family: sans-serif; background: #130d06; color: #fff; text-align: center; margin:0; padding-bottom: 60px; }
-    
-    /* નેવિગેશન ટેબ્સ */
-    .tabs { display: flex; background: #1a120a; border-bottom: 2px solid #d4af37; position: sticky; top: 0; z-index: 100; }
-    .tab { flex: 1; padding: 14px; background: transparent; color: #d4af37; border: none; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
-    .tab.active { background: #d4af37; color: #000; }
-    
-    h2 { margin: 20px 0 5px; color: #ffd54f; font-size: 20px; word-spacing: 2px; }
-    #time-display { color: #50e3c2; font-weight: bold; font-size: 15px; margin-bottom: 15px; }
-    
-    /* ગ્રીડ લેઆઉટ */
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px; max-width: 600px; margin: auto; }
-    .card { background: #1f160c; padding: 15px; border-radius: 12px; border: 1px solid #3a2a18; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-    h4 { margin: 0 0 12px; color: #ffd54f; font-size: 14px; }
-    
-    /* કેપ્સ્યુલ (ગોળ) બટનની ડિઝાઇન */
-    .btn-row { display: flex; gap: 10px; justify-content: center; }
-    .btn { padding: 10px 18px; border-radius: 25px; flex: 1; font-weight: bold; border: none; cursor: pointer; color: white; font-size: 12px; text-transform: uppercase; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2); }
-    
-    /* ઓફલાઇન પેજ પ્રમાણે જ પર્પલ અને ઓરેન્જ કલર્સ */
-    .off { background: #6a1b9a; } 
-    .on { background: #2e7d32; }  
-    .a-on { background: #ef6c00; } 
-    .a-off { background: #1565c0; } 
-    
-    /* સેટિંગ્સ પેજના લાઈટ સિલેક્શન બટનો (L1, L2...) */
-    .light-pills { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; justify-content: center; max-width: 600px; margin: auto; }
-    .pill { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #d4af37; background: transparent; color: #d4af37; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; }
-    .pill.active { background: #d4af37; color: #000; }
-    
-    /* ૧૨ સ્લોટ કાર્ડ્સ */
-    .slot-card { background: #1f160c; margin: 12px auto; padding: 15px; border-radius: 8px; max-width: 500px; text-align: left; box-sizing: border-box; width: 92%; }
-    .slot-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: bold; }
-    
-    /* બધા સ્લોટ્સના ઓરિજિનલ બોર્ડર કલર્સ */
-    .s-green { border-left: 5px solid #4caf50; }
-    .s-purple { border-left: 5px solid #9c27b0; }
-    .s-pink { border-left: 5px solid #e91e63; }
-    .s-yellow { border-left: 5px solid #ffeb3b; }
-    .s-orange { border-left: 5px solid #ff9800; }
-    .s-brown { border-left: 5px solid #795548; }
-    
-    .time-row { display: flex; align-items: center; margin-bottom: 8px; justify-content: space-between; }
-    .time-inputs { display: flex; gap: 5px; align-items: center; }
-    
-    /* ઇનપુટ બોક્સ અને ડ્રોપડાઉન સ્ટાઇલ */
-    .t-input { width: 45px; background: #130d06; border: 1px solid #d4af37; color: #fff; text-align: center; padding: 5px; border-radius: 4px; font-weight: bold; font-size: 14px; }
-    .t-select { background: #130d06; border: 1px solid #d4af37; color: #ffd54f; padding: 5px; border-radius: 4px; font-weight: bold; }
-    
-    /* ટોગલ સ્વિચ */
-    .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #444; transition: .3s; border-radius: 24px; }
-    .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .3s; border-radius: 50%; }
-    input:checked + .slider { background-color: #d4af37; }
-    input:checked + .slider:before { transform: translateX(22px); }
-    
-    /* નીચેનું સેવ બટન */
-    .save-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #d4af37; color: #000; font-weight: bold; padding: 14px; cursor: pointer; font-size: 15px; border: none; width: 100%; text-transform: uppercase; letter-spacing: 1px; }
-    
-    .footer-text { margin-top: 25px; color: #e91e63; font-weight: bold; letter-spacing: 1px; font-size: 15px; text-shadow: 0 0 8px rgba(233,30,99,0.3); }
-    .hidden { display: none !important; }
+    /* સુંદર ડાર્ક થીમ ડિઝાઇન */
+    body { font-family: sans-serif; background: #121212; color: #fff; text-align: center; margin:0; padding-bottom: 50px; }
+    h2 { margin: 20px 0 10px; color: #e6c27a; font-size: 18px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 15px; max-width: 600px; margin: auto; }
+    .card { background: #222; padding: 15px; border-radius: 10px; border: 1px solid #444; }
+    h4 { margin: 0 0 10px; color: #f9d976; font-size: 14px; }
+    .btn-row { display: flex; gap: 10px; }
+    .btn { padding: 10px 0; border-radius: 8px; flex: 1; font-weight: bold; border: none; cursor: pointer; color: white; transition:0.2s;}
+    .on { background: #388E3C; } .off { background: #D32F2F; }
+    .a-on { background: #0097A7; } .a-off { background: #1976D2; }
+    #status { color: #50e3c2; font-weight: bold; font-size: 14px; margin-bottom: 15px; }
   </style>
   
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -76,235 +24,74 @@
 </head>
 <body>
 
-  <div class="tabs">
-    <button id="t-dash" class="tab active" onclick="setView('dash')">DASHBOARD</button>
-    <button id="t-sett" class="tab" onclick="setView('sett')">SETTINGS</button>
-  </div>
-
   <h2>🔴🙏 SARVOPARI DHAM 🙏🔴</h2>
-  <div id="time-display">Connecting... ⏳</div>
-
-  <div id="view-dash">
-    <div class="grid" id="ui-grid"></div>
-    <div class="footer-text">SARVOPARI DHAM LIGHT REMOTE</div>
-  </div>
-
-  <div id="view-sett" class="hidden">
-    <div class="light-pills" id="pills-container"></div>
-    <h3 id="current-light-title" style="color: #ffd54f; margin: 15px 0 5px;">1. Sinhasan Jalar 1</h3>
-    
-    <div id="slots-container"></div>
-    
-    <button class="save-bar" id="save-btn" onclick="saveSettings()">SAVE L1 SETTINGS</button>
-  </div>
+  <div id='status'>Connecting to Cloud... ⏳</div>
+  <div class='grid' id='ui'></div>
 
   <script>
-    // ફાયરબેઝ સેટઅપ
+    // ફાયરબેઝ કનેક્શન સેટઅપ
     firebase.initializeApp({
       apiKey: "AIzaSyAoPnrydmBiFCG8FP52Sy_jsRBb1CyUfaM", 
       databaseURL: "https://sarvopari-liths-default-rtdb.firebaseio.com"
     });
     const db = firebase.database();
     
-    // ૧૦ લાઈટોના સાચા નામો
-    const names = [
-      "1. Sinhasan Jalar 1", "2. Sinhasan Jalar 2", "3. Sinhasan Jalar 3", 
-      "4. Zumar 1", "5. Zumar 2", "6. Zumar 3", 
-      "7. Ghumat", "8. Border", "9. Lamp 2", "10. Vakta Light"
-    ];
+    // તમારા ૧૦ ડિવાઇસના નામ
+    const n = ["1. Jalar 1", "2. Jalar 2", "3. Jalar 3", "4. Zumar 1", "5. Zumar 2", "6. Zumar 3", "7. Ghumat", "8. Border", "9. Lamp 2", "10. Vakta Light"];
     
-    // ૧૨ ઓરિજિનલ સ્લોટના નામ અને તેના કલર કોડ
-    const slotNames = [
-      "S1: All Day 1", "S2: All Day 2", 
-      "S3: Mon-Sat 1", "S4: Mon-Sat 2", "S5: Mon-Sat 3", "S6: Mon-Sat 4",
-      "S7: Tue Only 1", "S8: Tue Only 2",
-      "S9: Sat Only 1", "S10: Sat Only 2",
-      "S11: Sun Only 1", "S12: Sun Only 2"
-    ];
-    const slotColors = [
-      "s-green", "s-green", 
-      "s-purple", "s-pink", "s-pink", "s-pink",
-      "s-yellow", "s-yellow",
-      "s-orange", "s-orange",
-      "s-brown", "s-brown"
-    ];
-    
-    let currentSelectedLight = 0; 
-    let globalSettings = {}; 
-
-    // લાઈવ સમય ઘડિયાળ
-    setInterval(() => {
-      let now = new Date();
-      let options = { weekday: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-      document.getElementById('time-display').innerText = now.toLocaleString('en-US', options);
-    }, 1000);
-
-    // ડેશબોર્ડ યુઆઈ બનાવવું
-    const grid = document.getElementById('ui-grid');
+    // ગ્રીડ યુઝર ઇન્ટરફેસ (UI) બનાવટ
+    const ui = document.getElementById('ui');
     for(let i=0; i<10; i++) {
-      grid.innerHTML += `<div class='card'>
-        <h4>${names[i]}</h4>
+      ui.innerHTML += `<div class='card'>
+        <h4>${n[i]}</h4>
         <div class='btn-row'>
-          <button id='b${i}' class='btn off' onclick='cmd("toggle", ${i}, "b${i}")'>Wait</button>
-          <button id='a${i}' class='btn a-off' onclick='cmd("auto", ${i}, "a${i}")'>Wait</button>
+          <button id='b${i}' class='btn off'>Wait</button>
+          <button id='a${i}' class='btn a-off'>Wait</button>
         </div>
       </div>`;
     }
 
-    // L1 થી L10 ના રાઉન્ડ પિલ્સ
-    const pills = document.getElementById('pills-container');
-    for(let i=0; i<10; i++) {
-      pills.innerHTML += `<button id="pill-${i}" class="pill ${i===0?'active':''}" onclick="selectLight(${i})">L${i+1}</button>`;
-    }
+    // ઓનલાઇન/ઓફલાઇન સ્ટેટસ ચેક
+    db.ref(".info/connected").on("value", (snap) => {
+      document.getElementById('status').innerText = snap.val() ? "🟢 Connected to Cloud" : "🔴 Offline";
+    });
 
-    // પૂરેપૂરા ૧૨ સ્લોટ્સ જનરેટ કરવા
-    const slotsDiv = document.getElementById('slots-container');
-    for(let s=0; s<12; s++) {
-      slotsDiv.innerHTML += `
-        <div class="slot-card ${slotColors[s]}">
-          <div class="slot-header">
-            <span>${slotNames[s]}</span>
-            <label class="switch">
-              <input type="checkbox" id="s${s}-en">
-              <span class="slider"></span>
-            </label>
-          </div>
-          <div class="time-row">
-            <span>ON</span>
-            <div class="time-inputs">
-              <input type="number" id="s${s}-on-h" class="t-input" min="1" max="12" value="12"> :
-              <input type="number" id="s${s}-on-m" class="t-input" min="0" max="59" value="00">
-              <select id="s${s}-on-p" class="t-select"><option>AM</option><option>PM</option></select>
-            </div>
-          </div>
-          <div class="time-row">
-            <span>OFF</span>
-            <div class="time-inputs">
-              <input type="number" id="s${s}-off-h" class="t-input" min="1" max="12" value="12"> :
-              <input type="number" id="s${s}-off-m" class="t-input" min="0" max="59" value="00">
-              <select id="s${s}-off-p" class="t-select"><option>AM</option><option>PM</option></select>
-            </div>
-          </div>
-        </div>`;
-    }
-
-    // ટેબ સ્વિચિંગ લોજિક
-    function setView(view) {
-      if(view === 'dash') {
-        document.getElementById('view-dash').classList.remove('hidden');
-        document.getElementById('view-sett').classList.add('hidden');
-        document.getElementById('t-dash').classList.add('active');
-        document.getElementById('t-sett').classList.remove('active');
-      } else {
-        document.getElementById('view-dash').classList.add('hidden');
-        document.getElementById('view-sett').classList.remove('hidden');
-        document.getElementById('t-dash').classList.remove('active');
-        document.getElementById('t-sett').classList.add('active');
-        updateSettingsUI(); 
-      }
-    }
-
-    // લાઈટ સિલેક્શન બદલવું
-    function selectLight(idx) {
-      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-      document.getElementById(`pill-${idx}`).classList.add('active');
-      currentSelectedLight = idx;
-      document.getElementById('current-light-title').innerText = names[idx];
-      document.getElementById('save-btn').innerText = `SAVE L${idx+1} SETTINGS`;
-      updateSettingsUI();
-    }
-
-    // મેન્યુઅલ કમાન્ડ મોકલવા
-    function cmd(action, id, btnId) {
-      document.getElementById(btnId).innerText = "⏳";
-      let trig = Math.floor(Math.random() * 100000) + 1; 
-      db.ref('SarvopariDham/Command').set({ act: action, id: id, trig: trig });
-    }
-
-    // ફાયરબેઝ લાઈવ લિસનર
-    db.ref('SarvopariDham').on('value', snap => {
+    // 🔴 નવો સુધારેલો કોડ: સીધા '/relays' ફોલ્ડરમાંથી ડેટા વાંચશે અને ત્યાં જ કમાન્ડ મોકલશે
+    db.ref('/relays').on('value', snap => {
       let d = snap.val();
       if(d) {
-        let relays = d.Relays || {};
-        let modes = d.Modes || {};
-        globalSettings = d.Settings || {}; 
-        
         for(let i=0; i<10; i++) {
-          let isO = (relays[`R${i}`] == 1);
-          let isM = (modes[`M${i}`] == 1 || modes[i] == 1);
-          
-          let b = document.getElementById(`b${i}`);
-          let a = document.getElementById(`a${i}`);
-          
-          if(b && a) {
-            b.innerText = isO ? (isM ? "ON" : "ON (Auto)") : (isM ? "OFF" : "OFF (Auto)");
-            b.className = isO ? "btn on" : "btn off";
-            a.innerText = isM ? "AUTO" : "AUTO (ON)";
-            a.className = isM ? "btn a-off" : "btn a-on";
+          if (d[i]) {
+            let isO = d[i].state === true;
+            let isM = d[i].isManual === true;
+            
+            let b = document.getElementById(`b${i}`);
+            let a = document.getElementById(`a${i}`);
+            
+            if(b && a) {
+              // બટનનું લખાણ અને કલર અપડેટ
+              b.innerText = isO ? (isM ? "ON" : "ON (Auto)") : (isM ? "OFF" : "OFF (Auto)");
+              b.className = isO ? "btn on" : "btn off";
+              
+              a.innerText = isM ? "AUTO" : "AUTO (ON)";
+              a.className = isM ? "btn a-off" : "btn a-on";
+              
+              // રિલે ચાલુ/બંધ કરવાની કમાન્ડ સીધી /relays ના તે ચોક્કસ ID માં જશે
+              b.onclick = () => {
+                b.innerText = "⏳";
+                db.ref('/relays/' + i).update({ state: !isO, isManual: true });
+              };
+              
+              // ઓટો મોડની કમાન્ડ
+              a.onclick = () => {
+                a.innerText = "⏳";
+                db.ref('/relays/' + i).update({ isManual: false });
+              };
+            }
           }
-        }
-        
-        if(!document.getElementById('view-sett').classList.contains('hidden')) {
-          updateSettingsUI();
         }
       }
     });
-
-    // ફાયરબેઝમાંથી ૧૨ સ્લોટનો ડેટા ફોર્મમાં લોડ કરવો
-    function updateSettingsUI() {
-      let lData = globalSettings[`L${currentSelectedLight}`] || globalSettings[currentSelectedLight] || {};
-      
-      for(let s=0; s<12; s++) {
-        let sData = lData[`S${s}`] || lData[s] || { en:0, on_h:12, on_m:0, on_p:"AM", off_h:12, off_m:0, off_p:"AM" };
-        
-        document.getElementById(`s${s}-en`).checked = (sData.en == 1);
-        document.getElementById(`s${s}-on-h`).value = sData.on_h || 12;
-        document.getElementById(`s${s}-on-m`).value = String(sData.on_m || 0).padStart(2, '0');
-        document.getElementById(`s${s}-on-p`).value = sData.on_p || "AM";
-        
-        document.getElementById(`s${s}-off-h`).value = sData.off_h || 12;
-        document.getElementById(`s${s}-off-m`).value = String(sData.off_m || 0).padStart(2, '0');
-        document.getElementById(`s${s}-off-p`).value = sData.off_p || "AM";
-      }
-    }
-
-    // ૧૨ સ્લોટના ડેટાને ફાયરબેઝમાં સેવ કરવો
-    function saveSettings() {
-      let updateData = {};
-      
-      for(let s=0; s<12; s++) {
-        updateData[`S${s}`] = {
-          en: document.getElementById(`s${s}-en`).checked ? 1 : 0,
-          on_h: parseInt(document.getElementById(`s${s}-on-h`).value),
-          on_m: parseInt(document.getElementById(`s${s}-on-m`).value),
-          on_p: document.getElementById(`s${s}-on-p`).value,
-          off_h: parseInt(document.getElementById(`s${s}-off-h`).value),
-          off_m: parseInt(document.getElementById(`s${s}-off-m`).value),
-          off_p: document.getElementById(`s${s}-off-p`).value
-        };
-      }
-      
-      const saveBtn = document.getElementById('save-btn');
-      saveBtn.innerText = "SAVING TO CLOUD... ⏳";
-      saveBtn.style.background = "#ffd54f";
-
-      db.ref(`SarvopariDham/Settings/L${currentSelectedLight}`).set(updateData)
-        .then(() => {
-          saveBtn.innerText = `✓ L${currentSelectedLight+1} SETTINGS SAVED!`;
-          saveBtn.style.background = "#2e7d32";
-          saveBtn.style.color = "#fff";
-          setTimeout(() => {
-            saveBtn.innerText = `SAVE L${currentSelectedLight+1} SETTINGS`;
-            saveBtn.style.background = "#d4af37";
-            saveBtn.style.color = "#000";
-          }, 2000);
-        })
-        .catch((err) => {
-          alert("Error: " + err.message);
-          saveBtn.innerText = "SAVE FAILED!";
-          saveBtn.style.background = "#d32f2f";
-        });
-    }
   </script>
 </body>
 </html>
