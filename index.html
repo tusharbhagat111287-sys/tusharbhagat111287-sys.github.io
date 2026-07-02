@@ -6,7 +6,6 @@
   <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'>
   <meta name='theme-color' content='#2b1b0e'>
   <title>Sarvopari Dham Online</title>
-  
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
@@ -16,16 +15,13 @@
     .nav a{color:#a9a9a9; text-decoration:none; padding:6px 15px; border-radius:20px; transition:0.3s; cursor:pointer;}
     .nav a.act{background:linear-gradient(145deg, #c8963e, #8b6914); color:#000;}
     
-    h2{margin:20px 0 5px; color:#e6c27a; font-size:18px;}
-    #clock{color:#50e3c2; font-weight:bold; font-size:16px; margin-bottom:15px;}
-    #netStatus{font-size:12px; font-weight:bold; color:#ff4c4c; margin-bottom:10px;}
-    
+    #dashboard { display: block; }
+    h2{margin:20px 0 10px; color:#e6c27a; font-size:18px;}
     .grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:10px; max-width:800px; margin:auto;}
     .card{background:linear-gradient(145deg, rgba(40,30,20,0.8), rgba(20,15,10,0.9)); padding:10px; border-radius:10px; border:1px solid rgba(200,150,62,0.3);}
-    h4{margin:0 0 10px; color:#f9d976; font-size:12px;}
+    h4{margin:0 0 10px; color:#f9d976; font-size:13px;}
     .btn-row{display:flex; gap:8px;}
     .btn{border:none; padding:8px 0; border-radius:20px; flex:1; font-weight:bold; cursor:pointer; color:#fff; font-size:11px; transition:0.3s; box-shadow:0 3px 5px rgba(0,0,0,0.4);}
-    
     .on-m{background:#388E3C; box-shadow:inset 0 4px 12px rgba(0,0,0,0.8);}
     .off-m{background:#D32F2F;}
     .on-a{background:#0097A7; box-shadow:inset 0 4px 12px rgba(0,0,0,0.8);}
@@ -33,22 +29,45 @@
     .a-on{background:#F57C00; box-shadow:inset 0 4px 12px rgba(0,0,0,0.8);}
     .a-off{background:#1976D2;}
     
-    .footer{color:#ffffff; font-size:18px; margin-top:30px; padding-bottom:30px; font-weight:bold; letter-spacing:1px; text-shadow: 0 0 8px #ff00ff, 0 0 15px #ff00ff;}
+    #settings { display: none; text-align: left; }
+    .tabs{display:flex; overflow-x:auto; padding:10px; gap:8px; background:rgba(0,0,0,0.5);}
+    .tb{background:#2a2a2a; color:#c8963e; border:1px solid #c8963e; padding:6px 12px; border-radius:15px; white-space:nowrap; font-weight:bold; font-size:13px; cursor:pointer;}
+    .tb.act{background:#c8963e; color:#000;}
+    .tc{display:none; padding:10px; max-width:800px; margin:auto;} 
+    .tc.act{display:block;}
+    .cd{background:linear-gradient(145deg, rgba(40,30,20,0.8), rgba(20,15,10,0.9)); padding:8px 10px; margin-bottom:10px; border-radius:8px; border-left:4px solid transparent; box-shadow:0 2px 5px rgba(0,0,0,0.5);}
+    .hd{display:flex; justify-content:space-between; margin-bottom:6px; font-weight:bold; font-size:13px;}
+    .rw{display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.4); padding:5px 8px; margin-bottom:4px; border-radius:5px; font-size:12px;}
+    input,select{background:#111; color:#f0e6d2; border:1px solid #c8963e; padding:3px; border-radius:4px; text-align:center; font-weight:bold; font-size:12px;}
+    .sw{position:relative; width:36px; height:18px;} .sw input{display:none;} .sw span{position:absolute; top:0; left:0; right:0; bottom:0; background:#444; border-radius:18px; cursor:pointer;} .sw span:before{content:''; position:absolute; width:14px; height:14px; left:2px; bottom:2px; background:#fff; border-radius:50%; transition:0.3s;} input:checked+span{background:#c8963e;} input:checked+span:before{transform:translateX(18px); background:#000;}
+    .btn-save{position:fixed; bottom:0; left:0; width:100%; background:linear-gradient(145deg, #c8963e, #8b6914); color:#000; border:none; padding:15px; font-size:15px; font-weight:bold; cursor:pointer; text-transform:uppercase; z-index:100;}
+    
+    #toast{visibility:hidden; min-width:250px; background:linear-gradient(145deg, #4CAF50, #2E7D32); color:#fff; text-align:center; border-radius:30px; padding:12px; position:fixed; z-index:1000; left:50%; bottom:70px; transform:translateX(-50%); font-size:14px; font-weight:bold; border:1px solid #8BC34A;} 
+    #toast.show{visibility:visible;}
+    .footer{text-align:center; color:#ffffff; font-size:18px; margin-top:30px; padding-bottom:30px; font-weight:bold; letter-spacing:1px; text-shadow: 0 0 8px #ff00ff, 0 0 15px #ff00ff;}
   </style>
 </head>
 <body>
   
   <div class='nav'>
-    <a id="navDash" class='act' onclick="alert('Use Settings button below for Slots!')">DASHBOARD</a>
-    <a id="navSet" onclick="alert('Online Settings are in development. Enjoy the Dashboard!')">SETTINGS</a>
+    <a id="navDash" class='act' onclick="switchTab('dash')">DASHBOARD</a>
+    <a id="navSet" onclick="switchTab('set')">SETTINGS</a>
   </div>
   
-  <h2>🔴🙏 SARVOPARI DHAM 🙏🔴</h2>
-  <div id='netStatus'>Connecting to Cloud... ⏳</div>
-  <div id='clock'>Loading...</div>
-  
-  <div class='grid' id='buttonsGrid'></div>
-  <div class='footer'>GLOBAL LIGHT REMOTE</div>
+  <div id='toast'>Done!</div>
+
+  <div id="dashboard">
+    <h2>🔴🙏 SARVOPARI DHAM 🙏🔴</h2>
+    <div id='clock' style="color:#50e3c2; font-weight:bold; font-size:16px; margin-bottom:5px;">Connecting...</div>
+    <div id='netStatus' style="font-size:12px; font-weight:bold; color:#ff4c4c; margin-bottom:15px;">WAITING FOR ESP32</div>
+    <div class='grid' id='buttonsGrid'></div>
+    <div class='footer'>GLOBAL LIGHT REMOTE</div>
+  </div>
+
+  <div id="settings">
+    <div class='tabs' id='settingsTabs'></div>
+    <div id='settingsContent'></div>
+  </div>
 
   <script>
     const firebaseConfig = {
@@ -59,82 +78,128 @@
     const db = firebase.database();
 
     const names = ["1. Jalar 1", "2. Jalar 2", "3. Jalar 3", "4. Zumar 1", "5. Zumar 2", "6. Zumar 3", "7. Ghumat", "8. Border", "9. Lamp 2", "10. Vakta Light"];
+    const slotNames = ["S1: All Day 1", "S2: All Day 2", "S3: Mon-Sat 1", "S4: Mon-Sat 2", "S5: Mon-Sat 3", "S6: Mon-Sat 4", "S7: Tue Only 1", "S8: Tue Only 2", "S9: Sat Only 1", "S10: Sat Only 2", "S11: Sun Only 1", "S12: Sun Only 2"];
+    const slotColors = ["#4CAF50", "#8BC34A", "#9C27B0", "#BA68C8", "#E91E63", "#F06292", "#FFEB3B", "#FBC02D", "#FF9800", "#F57C00", "#FFFFFF", "#E0E0E0"];
     
-    let relayStates = {};
-    let manualModes = {};
+    let relayStates = []; let manualModes = [];
+    let isSending = false; let onlineTimer;
 
-    function updateClock() {
-      const now = new Date();
-      const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-      let h12 = now.getHours() % 12 || 12;
-      let ampm = now.getHours() >= 12 ? "PM" : "AM";
-      let m = now.getMinutes().toString().padStart(2, '0');
-      let s = now.getSeconds().toString().padStart(2, '0');
-      document.getElementById('clock').innerHTML = `${days[now.getDay()]} ${h12}:${m}:${s} ${ampm}`;
-    }
-    setInterval(updateClock, 1000);
-
-    function toggleRelay(id) {
-      let currentState = relayStates["R"+id] || false;
-      db.ref('/relays/R' + id).set(!currentState);
-      db.ref('/modes/R' + id).set(true); // મેન્યુઅલ દબાવ્યું એટલે મોડ મેન્યુઅલ થઈ જશે
+    function switchTab(tab) {
+      document.getElementById('dashboard').style.display = tab==='dash'?'block':'none';
+      document.getElementById('settings').style.display = tab==='set'?'block':'none';
+      document.getElementById('navDash').classList.toggle('act', tab==='dash');
+      document.getElementById('navSet').classList.toggle('act', tab==='set');
     }
 
-    function setAuto(id) {
-      db.ref('/modes/R' + id).set(false); // ઓટો બટન દબાવ્યું 
+    function cmd(act, id) {
+      if(isSending) return; isSending = true;
+      db.ref("/command").set({action: act, id: id, timestamp: Date.now()});
+      showToast("Sent!"); setTimeout(() => { isSending = false; }, 400);
+    }
+
+    function oT(id) {
+      document.querySelectorAll('.tc').forEach(e => e.classList.remove('act'));
+      document.querySelectorAll('.tb').forEach(e => e.classList.remove('act'));
+      document.getElementById('tc'+id).classList.add('act');
+      document.getElementById('tb'+id).classList.add('act');
     }
 
     function buildUI() {
-      let html = "";
+      let dHtml = "";
       for(let i=0; i<10; i++) {
-        html += `<div class='card'><h4>${names[i]}</h4><div class='btn-row'>
-                 <button id='btnR${i}' class='btn off-m' onclick='toggleRelay(${i})'>Wait</button>
-                 <button id='btnA${i}' class='btn a-on' onclick='setAuto(${i})'>Wait</button>
-                 </div></div>`;
+        dHtml += `<div class='card'><h4>${names[i]}</h4><div class='btn-row'>
+                  <button id='btnR${i}' class='btn off-m' onclick='cmd("toggle", ${i})'>Wait</button>
+                  <button id='btnA${i}' class='btn a-on' onclick='cmd("auto", ${i})'>Wait</button>
+                  </div></div>`;
       }
-      document.getElementById('buttonsGrid').innerHTML = html;
+      document.getElementById('buttonsGrid').innerHTML = dHtml;
+
+      let tHtml = "";
+      for(let i=0; i<10; i++) { tHtml += `<button id='tb${i}' class='tb ${i==0?"act":""}' onclick='oT(${i})'>L${i+1}</button>`; }
+      document.getElementById('settingsTabs').innerHTML = tHtml;
+
+      let cHtml = "";
+      for(let i=0; i<10; i++) {
+        cHtml += `<div id='tc${i}' class='tc ${i==0?"act":""}'><h3 style='color:#f9d976;text-align:center;margin-top:0;'>${names[i]}</h3>`;
+        for(let j=0; j<12; j++) {
+          let p = `r${i}s${j}`;
+          cHtml += `<div class='cd' style='border-left-color:${slotColors[j]}'><div class='hd' style='color:${slotColors[j]}'><span>${slotNames[j]}</span><label class='sw'><input type='checkbox' id='${p}_en'><span></span></label></div><div class='rw'><span>ON</span><div><input type='number' id='${p}_sh' min='1' max='12' value='12' style='width:35px'>:<input type='number' id='${p}_sm' min='0' max='59' value='0' style='width:35px'> <select id='${p}_sap'><option value='0'>AM</option><option value='1'>PM</option></select></div></div><div class='rw'><span>OFF</span><div><input type='number' id='${p}_eh' min='1' max='12' value='12' style='width:35px'>:<input type='number' id='${p}_em' min='0' max='59' value='0' style='width:35px'> <select id='${p}_eap'><option value='0'>AM</option><option value='1'>PM</option></select></div></div></div>`;
+        }
+        cHtml += `<button class='btn-save' onclick='saveFirebaseSettings()'>SYNC WITH ESP32</button></div>`;
+      }
+      document.getElementById('settingsContent').innerHTML = cHtml;
     }
 
-    window.onload = () => {
-      buildUI();
-      
-      // Connection Status Check
-      db.ref(".info/connected").on("value", function(snap) {
-        let statusDiv = document.getElementById("netStatus");
-        if (snap.val() === true) {
-          statusDiv.innerHTML = "🟢 Online Connected";
-          statusDiv.style.color = "#4CAF50";
-        } else {
-          statusDiv.innerHTML = "🔴 Disconnected";
-          statusDiv.style.color = "#ff4c4c";
+    function loadFirebaseSettings() {
+      db.ref('/settings').once('value').then(snap => {
+        let data = snap.val(); if(!data) return;
+        for(let i=0; i<10; i++) {
+          let rData = data["R"+i];
+          if(rData) {
+            for(let j=0; j<12; j++) {
+              let slot = rData[j];
+              if(slot) {
+                let p = `r${i}s${j}`;
+                document.getElementById(`${p}_en`).checked = (slot.en == 1);
+                document.getElementById(`${p}_sh`).value = (slot.sh == 0 || slot.sh == 12) ? 12 : (slot.sh > 12 ? slot.sh - 12 : slot.sh);
+                document.getElementById(`${p}_sap`).value = (slot.sh >= 12) ? 1 : 0;
+                document.getElementById(`${p}_sm`).value = slot.sm;
+                document.getElementById(`${p}_eh`).value = (slot.eh == 0 || slot.eh == 12) ? 12 : (slot.eh > 12 ? slot.eh - 12 : slot.eh);
+                document.getElementById(`${p}_eap`).value = (slot.eh >= 12) ? 1 : 0;
+                document.getElementById(`${p}_em`).value = slot.em;
+              }
+            }
+          }
         }
       });
-
-      // Listen to Database Realtime
-      for(let i=0; i<10; i++) {
-        db.ref('/relays/R' + i).on('value', (s) => {
-          relayStates["R"+i] = s.val() || false; updateBtnUI(i);
-        });
-        db.ref('/modes/R' + i).on('value', (s) => {
-          manualModes["R"+i] = (s.val() !== null) ? s.val() : true; updateBtnUI(i);
-        });
-      }
-    };
-
-    function updateBtnUI(i) {
-      let b = document.getElementById(`btnR${i}`);
-      let a = document.getElementById(`btnA${i}`);
-      if(!b || !a) return;
-      
-      let isO = relayStates["R"+i];
-      let isM = manualModes["R"+i];
-
-      b.innerHTML = isO ? (isM ? "ON" : "ON (Auto)") : (isM ? "OFF" : "OFF (Auto)");
-      b.className = isO ? (isM ? "btn on-m" : "btn on-a") : (isM ? "btn off-m" : "btn off-a");
-      
-      a.innerHTML = isM ? "AUTO" : "AUTO (ON)";
-      a.className = isM ? "btn a-off" : "btn a-on";
     }
+
+    function saveFirebaseSettings() {
+      let fullData = {};
+      for(let i=0; i<10; i++) {
+        let rArray = [];
+        for(let j=0; j<12; j++) {
+          let p = `r${i}s${j}`;
+          let en = document.getElementById(`${p}_en`).checked ? 1 : 0;
+          let sh_in = parseInt(document.getElementById(`${p}_sh`).value); let sap = parseInt(document.getElementById(`${p}_sap`).value);
+          let sh = (sap === 1) ? (sh_in === 12 ? 12 : sh_in + 12) : (sh_in === 12 ? 0 : sh_in);
+          let eh_in = parseInt(document.getElementById(`${p}_eh`).value); let eap = parseInt(document.getElementById(`${p}_eap`).value);
+          let eh = (eap === 1) ? (eh_in === 12 ? 12 : eh_in + 12) : (eh_in === 12 ? 0 : eh_in);
+          rArray.push({en: en, sh: sh, sm: parseInt(document.getElementById(`${p}_sm`).value)||0, eh: eh, em: parseInt(document.getElementById(`${p}_em`).value)||0});
+        }
+        fullData["R"+i] = rArray;
+      }
+      db.ref('/settings').set(fullData).then(() => {
+        cmd("sync_settings", 0);
+        showToast("Settings Synced!"); switchTab('dash');
+      });
+    }
+
+    function showToast(msg) { let t = document.getElementById('toast'); t.innerText = msg; t.className = 'show'; setTimeout(() => { t.className = ''; }, 3000); }
+
+    window.onload = () => {
+      buildUI(); loadFirebaseSettings();
+      db.ref('/status').on('value', snap => {
+        let d = snap.val(); if(!d) return;
+        if(d.time) document.getElementById('clock').innerText = d.time;
+        if(d.s) relayStates = d.s;
+        if(d.m) manualModes = d.m;
+        
+        for(let i=0; i<10; i++) {
+          let b = document.getElementById(`btnR${i}`); let a = document.getElementById(`btnA${i}`);
+          if(b && a) {
+            let isO = (relayStates[i] == 1); let isM = (manualModes[i] == "true");
+            b.innerHTML = isO ? (isM ? "ON" : "ON (Auto)") : (isM ? "OFF" : "OFF (Auto)");
+            b.className = isO ? (isM ? "btn on-m" : "btn on-a") : (isM ? "btn off-m" : "btn off-a");
+            a.innerHTML = isM ? "AUTO" : "AUTO (ON)"; a.className = isM ? "btn a-off" : "btn a-on";
+          }
+        }
+        document.getElementById("netStatus").innerText = "🟢 ESP32 CONNECTED";
+        document.getElementById("netStatus").style.color = "#4CAF50";
+        clearTimeout(onlineTimer);
+        onlineTimer = setTimeout(() => { document.getElementById("netStatus").innerText = "🔴 ESP32 OFFLINE"; document.getElementById("netStatus").style.color = "#ff4c4c"; }, 4000);
+      });
+    };
   </script>
 </body>
 </html>
