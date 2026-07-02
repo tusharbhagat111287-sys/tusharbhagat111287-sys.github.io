@@ -3,249 +3,207 @@
 <html>
 <head>
   <meta charset='UTF-8'>
-  <meta name='viewport' content='width=device-width, initial-scale=1'>
-  <title>Sarvopari Dham Online Remote</title>
-  <style>
-    body { font-family: sans-serif; background: #130d06; color: #fff; text-align: center; margin:0; padding-bottom: 70px; }
-    .tabs { display: flex; background: #1a120a; border-bottom: 2px solid #d4af37; position: sticky; top: 0; z-index: 100; }
-    .tab { flex: 1; padding: 14px; background: transparent; color: #d4af37; border: none; font-weight: bold; font-size: 14px; cursor: pointer; letter-spacing: 1px;}
-    .tab.active { background: #d4af37; color: #000; }
-    
-    h2 { margin: 20px 0 5px; color: #ffd54f; font-size: 20px; }
-    #time-display { color: #50e3c2; font-weight: bold; font-size: 15px; margin-bottom: 15px; }
-    
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px; max-width: 600px; margin: auto; }
-    .card { background: #1f160c; padding: 15px; border-radius: 12px; border: 1px solid #3a2a18; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-    h4 { margin: 0 0 12px; color: #ffd54f; font-size: 13px; }
-    
-    .btn-row { display: flex; gap: 10px; justify-content: center; }
-    .btn { padding: 10px 0; border-radius: 25px; flex: 1; font-weight: bold; border: none; cursor: pointer; color: white; font-size: 12px; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2); }
-    
-    .off { background: #6a1b9a; } .on { background: #2e7d32; }  
-    .a-on { background: #ef6c00; } .a-off { background: #1565c0; } 
-
-    .light-pills { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; justify-content: center; max-width: 600px; margin: auto;}
-    .pill { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #d4af37; background: transparent; color: #d4af37; font-weight: bold; cursor: pointer; }
-    .pill.active { background: #d4af37; color: #000; }
-    
-    .slot-card { background: #1f160c; margin: 12px auto; padding: 15px; border-radius: 8px; max-width: 500px; text-align: left; width: 92%; box-sizing: border-box;}
-    .slot-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: bold; }
-    
-    .time-row { display: flex; align-items: center; margin-bottom: 8px; justify-content: space-between; font-size: 14px;}
-    .time-inputs { display: flex; gap: 5px; align-items: center; }
-    .t-input { width: 45px; background: #130d06; border: 1px solid #d4af37; color: #fff; text-align: center; padding: 5px; border-radius: 4px; font-weight: bold; }
-    .t-select { background: #130d06; border: 1px solid #d4af37; color: #ffd54f; padding: 5px; border-radius: 4px; font-weight: bold; }
-    
-    .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #444; border-radius: 24px; transition: 0.3s;}
-    .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; border-radius: 50%; transition: 0.3s;}
-    input:checked + .slider { background-color: #d4af37; }
-    input:checked + .slider:before { transform: translateX(22px); }
-    
-    .save-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #d4af37; color: #000; font-weight: bold; padding: 15px; cursor: pointer; font-size: 15px; border: none; width: 100%; z-index:100; letter-spacing: 1px;}
-    .hidden { display: none !important; }
-  </style>
+  <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'>
+  <meta name='mobile-web-app-capable' content='yes'>
+  <meta name='apple-mobile-web-app-capable' content='yes'>
+  <meta name='theme-color' content='#2b1b0e'>
+  <title>Sarvopari Dham Online</title>
   
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <style>
+    body{font-family:'Segoe UI', sans-serif; background:radial-gradient(circle at center, #2b1b0e 0%, #0a0a0a 100%); color:#f0e6d2; margin:0; text-align:center; min-height:100vh; padding-bottom:70px;}
+    .nav{background:rgba(20, 20, 20, 0.9); padding:10px; display:flex; justify-content:space-around; font-weight:bold; border-bottom: 2px solid #c8963e;}
+    .nav a{color:#a9a9a9; text-decoration:none; padding:6px 15px; border-radius:20px; transition:0.3s; cursor:pointer;}
+    .nav a.act{background:linear-gradient(145deg, #c8963e, #8b6914); color:#000;}
+    
+    #dashboard { display: block; }
+    h2{margin:20px 0 10px; color:#e6c27a; font-size:18px;}
+    .grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:10px; max-width:800px; margin:auto;}
+    .card{background:linear-gradient(145deg, rgba(40,30,20,0.8), rgba(20,15,10,0.9)); padding:15px; border-radius:10px; border:1px solid rgba(200,150,62,0.3);}
+    h4{margin:0 0 10px; color:#f9d976; font-size:13px;}
+    .btn{border:none; padding:12px 0; width:100%; border-radius:20px; font-weight:bold; cursor:pointer; color:#fff; font-size:14px; transition:0.3s; box-shadow:0 3px 5px rgba(0,0,0,0.4);}
+    .on-m{background:#388E3C; box-shadow:inset 0 4px 12px rgba(0,0,0,0.8);}
+    .off-m{background:#D32F2F;}
+    
+    #settings { display: none; text-align: left; }
+    .tabs{display:flex; overflow-x:auto; padding:10px; gap:8px; background:rgba(0,0,0,0.5);}
+    .tb{background:#2a2a2a; color:#c8963e; border:1px solid #c8963e; padding:6px 12px; border-radius:15px; white-space:nowrap; font-weight:bold; font-size:13px; cursor:pointer;}
+    .tb.act{background:#c8963e; color:#000;}
+    .tc{display:none; padding:10px; max-width:800px; margin:auto;} 
+    .tc.act{display:block;}
+    .cd{background:linear-gradient(145deg, rgba(40,30,20,0.8), rgba(20,15,10,0.9)); padding:8px 10px; margin-bottom:10px; border-radius:8px; border-left:4px solid transparent; box-shadow:0 2px 5px rgba(0,0,0,0.5);}
+    .hd{display:flex; justify-content:space-between; margin-bottom:6px; font-weight:bold; font-size:13px;}
+    .rw{display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.4); padding:5px 8px; margin-bottom:4px; border-radius:5px; font-size:12px;}
+    input,select{background:#111; color:#f0e6d2; border:1px solid #c8963e; padding:3px; border-radius:4px; text-align:center; font-weight:bold; font-size:12px;}
+    .sw{position:relative; width:36px; height:18px;} .sw input{display:none;} .sw span{position:absolute; top:0; left:0; right:0; bottom:0; background:#444; border-radius:18px; cursor:pointer;} .sw span:before{content:''; position:absolute; width:14px; height:14px; left:2px; bottom:2px; background:#fff; border-radius:50%; transition:0.3s;} input:checked+span{background:#c8963e;} input:checked+span:before{transform:translateX(18px); background:#000;}
+    .btn-save{position:fixed; bottom:0; left:0; width:100%; background:linear-gradient(145deg, #c8963e, #8b6914); color:#000; border:none; padding:15px; font-size:15px; font-weight:bold; cursor:pointer; text-transform:uppercase; z-index:100;}
+    
+    #toast{visibility:hidden; min-width:250px; background:linear-gradient(145deg, #4CAF50, #2E7D32); color:#fff; text-align:center; border-radius:30px; padding:12px; position:fixed; z-index:1000; left:50%; bottom:70px; transform:translateX(-50%); font-size:14px; font-weight:bold; border:1px solid #8BC34A;} 
+    #toast.show{visibility:visible;}
+    .footer{text-align:center; color:#ffffff; font-size:18px; margin-top:30px; padding-bottom:30px; font-weight:bold; letter-spacing:1px; text-shadow: 0 0 8px #ff00ff, 0 0 15px #ff00ff;}
+  </style>
 </head>
 <body>
+  
+  <div class='nav'>
+    <a id="navDash" class='act' onclick="switchTab('dash')">DASHBOARD</a>
+    <a id="navSet" onclick="switchTab('set')">SETTINGS</a>
+  </div>
+  
+  <div id='toast'>Settings Sent to ESP32 Master!</div>
 
-  <div class="tabs">
-    <button id="t-dash" class="tab active" onclick="setView('dash')">DASHBOARD</button>
-    <button id="t-sett" class="tab" onclick="setView('sett')">SETTINGS</button>
+  <div id="dashboard">
+    <h2 style="text-align:center;">🔴🙏 SARVOPARI DHAM 🙏🔴</h2>
+    <div class='grid' id='buttonsGrid'></div>
+    <div class='footer'>GLOBAL LIGHT REMOTE</div>
   </div>
 
-  <h2>🔴🙏 SARVOPARI DHAM 🙏🔴</h2>
-  <div id="time-display">Connecting... ⏳</div>
-
-  <div id="view-dash">
-    <div class="grid" id="ui-grid"></div>
-  </div>
-
-  <div id="view-sett" class="hidden">
-    <div class="light-pills" id="pills-container"></div>
-    <h3 id="current-light-title" style="color: #ffd54f; margin: 15px 0 5px;"></h3>
-    <div id="slots-container"></div>
-    <button class="save-bar" id="save-btn" onclick="saveSettings()">SAVE SETTINGS</button>
+  <div id="settings">
+    <div class='tabs' id='settingsTabs'></div>
+    <div id='settingsContent'></div>
   </div>
 
   <script>
-    firebase.initializeApp({
-      apiKey: "AIzaSyAoPnrydmBiFCG8FP52Sy_jsRBb1CyUfaM", 
+    const firebaseConfig = {
+      apiKey: "AIzaSyAoPnrydmBiFCG8FP52Sy_jsRBb1CyUfaM",
       databaseURL: "https://sarvopari-liths-default-rtdb.firebaseio.com"
-    });
+    };
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    
+
     const names = ["1. Sinhasan Jalar 1", "2. Sabha Jalar 2", "3. Sabha Jalar 3", "4. Zumar 1", "5. Zumar 2", "6. Zumar 3", "7. Ghumat", "8. Border", "9. Audience Lamp 2", "10. Vakta Light"];
     const slotNames = ["S1: All Day 1", "S2: All Day 2", "S3: Mon-Sat 1", "S4: Mon-Sat 2", "S5: Mon-Sat 3", "S6: Mon-Sat 4", "S7: Tue Only 1", "S8: Tue Only 2", "S9: Sat Only 1", "S10: Sat Only 2", "S11: Sun Only 1", "S12: Sun Only 2"];
-    const slotColors = ["#4caf50", "#4caf50", "#9c27b0", "#e91e63", "#e91e63", "#e91e63", "#ffeb3b", "#ffeb3b", "#ff9800", "#ff9800", "#795548", "#795548"];
+    const slotColors = ["#4CAF50", "#8BC34A", "#9C27B0", "#BA68C8", "#E91E63", "#F06292", "#FFEB3B", "#FBC02D", "#FF9800", "#F57C00", "#FFFFFF", "#E0E0E0"];
     
-    let currentLight = 0; 
-    let globalSlots = {}; 
+    let relayStates = {};
 
-    setInterval(() => {
-      let now = new Date();
-      let options = { weekday: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-      document.getElementById('time-display').innerText = now.toLocaleString('en-US', options);
-    }, 1000);
-
-    const grid = document.getElementById('ui-grid');
-    for(let i=0; i<10; i++) {
-      grid.innerHTML += `<div class='card'>
-        <h4>${names[i]}</h4>
-        <div class='btn-row'>
-          <button id='b${i}' class='btn off' onclick='cmd("toggle", ${i})'>Wait</button>
-          <button id='a${i}' class='btn a-off' onclick='cmd("auto", ${i})'>Wait</button>
-        </div>
-      </div>`;
-    }
-
-    const pills = document.getElementById('pills-container');
-    for(let i=0; i<10; i++) {
-      pills.innerHTML += `<button id="pill-${i}" class="pill ${i===0?'active':''}" onclick="selectLight(${i})">L${i+1}</button>`;
-    }
-
-    const slotsDiv = document.getElementById('slots-container');
-    for(let s=0; s<12; s++) {
-      slotsDiv.innerHTML += `
-        <div class="slot-card" style="border-left: 5px solid ${slotColors[s]}">
-          <div class="slot-header">
-            <span>${slotNames[s]}</span>
-            <label class="switch"><input type="checkbox" id="s${s}-en"><span class="slider"></span></label>
-          </div>
-          <div class="time-row">
-            <span>ON</span>
-            <div class="time-inputs">
-              <input type="number" id="s${s}-on-h" class="t-input" min="1" max="12" value="12">:
-              <input type="number" id="s${s}-on-m" class="t-input" min="0" max="59" value="00">
-              <select id="s${s}-on-p" class="t-select"><option value="0">AM</option><option value="1">PM</option></select>
-            </div>
-          </div>
-          <div class="time-row">
-            <span>OFF</span>
-            <div class="time-inputs">
-              <input type="number" id="s${s}-off-h" class="t-input" min="1" max="12" value="12">:
-              <input type="number" id="s${s}-off-m" class="t-input" min="0" max="59" value="00">
-              <select id="s${s}-off-p" class="t-select"><option value="0">AM</option><option value="1">PM</option></select>
-            </div>
-          </div>
-        </div>`;
-    }
-
-    function setView(view) {
-      if(view === 'dash') {
-        document.getElementById('view-dash').classList.remove('hidden');
-        document.getElementById('view-sett').classList.add('hidden');
-        document.getElementById('t-dash').classList.add('active');
-        document.getElementById('t-sett').classList.remove('active');
+    function switchTab(tab) {
+      if(tab === 'dash') {
+        document.getElementById('dashboard').style.display = 'block';
+        document.getElementById('settings').style.display = 'none';
+        document.getElementById('navDash').classList.add('act');
+        document.getElementById('navSet').classList.remove('act');
       } else {
-        document.getElementById('view-dash').classList.add('hidden');
-        document.getElementById('view-sett').classList.remove('hidden');
-        document.getElementById('t-dash').classList.remove('active');
-        document.getElementById('t-sett').classList.add('active');
-        selectLight(currentLight); 
+        document.getElementById('dashboard').style.display = 'none';
+        document.getElementById('settings').style.display = 'block';
+        document.getElementById('navDash').classList.remove('act');
+        document.getElementById('navSet').classList.add('act');
       }
     }
 
-    function selectLight(idx) {
-      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-      document.getElementById(`pill-${idx}`).classList.add('active');
-      currentLight = idx;
-      document.getElementById('current-light-title').innerText = names[idx];
-      document.getElementById('save-btn').innerText = `SAVE L${idx+1} SETTINGS`;
-      
-      for(let s=0; s<12; s++) {
-        let sd = (globalSlots[idx] && globalSlots[idx][s]) ? globalSlots[idx][s] : {en:0, sh:12, sm:0, eh:12, em:0};
-        document.getElementById(`s${s}-en`).checked = (sd.en == 1);
-        let sh_12 = (sd.sh == 0) ? 12 : (sd.sh > 12 ? sd.sh - 12 : sd.sh);
-        let sh_ap = (sd.sh >= 12) ? 1 : 0;
-        document.getElementById(`s${s}-on-h`).value = sh_12;
-        document.getElementById(`s${s}-on-m`).value = String(sd.sm).padStart(2, '0');
-        document.getElementById(`s${s}-on-p`).value = sh_ap;
-        
-        let eh_12 = (sd.eh == 0) ? 12 : (sd.eh > 12 ? sd.eh - 12 : sd.eh);
-        let eh_ap = (sd.eh >= 12) ? 1 : 0;
-        document.getElementById(`s${s}-off-h`).value = eh_12;
-        document.getElementById(`s${s}-off-m`).value = String(sd.em).padStart(2, '0');
-        document.getElementById(`s${s}-off-p`).value = eh_ap;
+    function toggleRelay(id) {
+      let currentState = relayStates["R"+id] || false;
+      db.ref('/relays/R' + id).set(!currentState);
+    }
+
+    function oT(id) {
+      document.querySelectorAll('.tc').forEach(e => e.classList.remove('act'));
+      document.querySelectorAll('.tb').forEach(e => e.classList.remove('act'));
+      document.getElementById('tc'+id).classList.add('act');
+      document.getElementById('tb'+id).classList.add('act');
+    }
+
+    function buildUI() {
+      let dHtml = "";
+      for(let i=0; i<10; i++) {
+        dHtml += `<div class='card'><h4>${names[i]}</h4><button id='btn${i}' class='btn off-m' onclick='toggleRelay(${i})'>Wait</button></div>`;
       }
+      document.getElementById('buttonsGrid').innerHTML = dHtml;
+
+      let tHtml = "";
+      for(let i=0; i<10; i++) {
+        tHtml += `<button id='tb${i}' class='tb ${i==0?"act":""}' onclick='oT(${i})'>L${i+1}</button>`;
+      }
+      document.getElementById('settingsTabs').innerHTML = tHtml;
+
+      let cHtml = "";
+      for(let i=0; i<10; i++) {
+        cHtml += `<div id='tc${i}' class='tc ${i==0?"act":""}'><h3 style='color:#f9d976;text-align:center;margin-top:0;text-transform:uppercase;'>${names[i]}</h3>`;
+        for(let j=0; j<12; j++) {
+          let p = `r${i}s${j}`;
+          cHtml += `<div class='cd' style='border-left-color:${slotColors[j]}'><div class='hd' style='color:${slotColors[j]}'><span>${slotNames[j]}</span><label class='sw'><input type='checkbox' id='${p}_en'><span></span></label></div><div class='rw'><span>ON</span><div><input type='number' id='${p}_sh' min='1' max='12' value='12' style='width:35px'>:<input type='number' id='${p}_sm' min='0' max='59' value='0' style='width:35px'> <select id='${p}_sap'><option value='0'>AM</option><option value='1'>PM</option></select></div></div><div class='rw'><span>OFF</span><div><input type='number' id='${p}_eh' min='1' max='12' value='12' style='width:35px'>:<input type='number' id='${p}_em' min='0' max='59' value='0' style='width:35px'> <select id='${p}_eap'><option value='0'>AM</option><option value='1'>PM</option></select></div></div></div>`;
+        }
+        cHtml += `<button class='btn-save' onclick='saveFirebaseSettings(${i})'>SYNC L${i+1} WITH MASTER</button></div>`;
+      }
+      document.getElementById('settingsContent').innerHTML = cHtml;
     }
 
-    function cmd(action, id) {
-      let btn = action === 'toggle' ? document.getElementById(`b${id}`) : document.getElementById(`a${id}`);
-      btn.innerText = "⏳";
-      db.ref('SarvopariDham/Command').set({ act: action, id: id, trig: Math.floor(Math.random() * 100000) + 1 });
-    }
-
-    db.ref('relays').on('value', snap => {
-      let d = snap.val();
-      if(d) {
+    function loadFirebaseSettings() {
+      db.ref('/settings').once('value', (snapshot) => {
+        let data = snapshot.val();
+        if(!data) return;
         for(let i=0; i<10; i++) {
-          if(d[i]) {
-            let isO = (d[i].state == 1 || d[i].state === true);
-            let isM = (d[i].isManual == 1 || d[i].isManual === true);
-            let b = document.getElementById(`b${i}`);
-            let a = document.getElementById(`a${i}`);
-            if(b && a) {
-              b.innerText = isO ? (isM ? "ON" : "ON (Auto)") : (isM ? "OFF" : "OFF (Auto)");
-              b.className = isO ? "btn on" : "btn off";
-              a.innerText = isM ? "AUTO" : "AUTO (ON)";
-              a.className = isM ? "btn a-off" : "btn a-on";
+          if(data["R"+i]) {
+            for(let j=0; j<12; j++) {
+              let slot = data["R"+i]["S"+j];
+              if(slot) {
+                let p = `r${i}s${j}`;
+                document.getElementById(`${p}_en`).checked = (slot.en == 1);
+                
+                let sh_12 = (slot.sh == 0 || slot.sh == 12) ? 12 : (slot.sh > 12 ? slot.sh - 12 : slot.sh);
+                let sh_ap = (slot.sh >= 12) ? 1 : 0;
+                document.getElementById(`${p}_sh`).value = sh_12;
+                document.getElementById(`${p}_sm`).value = slot.sm;
+                document.getElementById(`${p}_sap`).value = sh_ap;
+
+                let eh_12 = (slot.eh == 0 || slot.eh == 12) ? 12 : (slot.eh > 12 ? slot.eh - 12 : slot.eh);
+                let eh_ap = (slot.eh >= 12) ? 1 : 0;
+                document.getElementById(`${p}_eh`).value = eh_12;
+                document.getElementById(`${p}_em`).value = slot.em;
+                document.getElementById(`${p}_eap`).value = eh_ap;
+              }
             }
           }
         }
-      }
-    });
-
-    db.ref('slots').on('value', snap => {
-      let d = snap.val();
-      if(d) {
-        globalSlots = d;
-        if(!document.getElementById('view-sett').classList.contains('hidden')) { selectLight(currentLight); }
-      }
-    });
-
-    function saveSettings() {
-      let updateData = {};
-      for(let s=0; s<12; s++) {
-        let on_h = parseInt(document.getElementById(`s${s}-on-h`).value);
-        let on_p = parseInt(document.getElementById(`s${s}-on-p`).value);
-        let off_h = parseInt(document.getElementById(`s${s}-off-h`).value);
-        let off_p = parseInt(document.getElementById(`s${s}-off-p`).value);
-        
-        let sh24 = (on_p == 1) ? (on_h == 12 ? 12 : on_h + 12) : (on_h == 12 ? 0 : on_h);
-        let eh24 = (off_p == 1) ? (off_h == 12 ? 12 : off_h + 12) : (off_h == 12 ? 0 : off_h);
-
-        updateData[s] = {
-          en: document.getElementById(`s${s}-en`).checked ? 1 : 0,
-          sh: sh24,
-          sm: parseInt(document.getElementById(`s${s}-on-m`).value),
-          eh: eh24,
-          em: parseInt(document.getElementById(`s${s}-off-m`).value)
-        };
-      }
-      
-      const saveBtn = document.getElementById('save-btn');
-      saveBtn.innerText = "SAVING TO CLOUD... ⏳";
-      saveBtn.style.background = "#ffd54f";
-
-      db.ref(`slots/${currentLight}`).set(updateData).then(() => {
-          // 🔴 આ કમાન્ડ મોડ્યુલને કહેશે કે નવો સમય ડાઉનલોડ કરીને કાયમ માટે સેવ કરી લે 
-          db.ref('SarvopariDham/Command').set({ act: 'sync_slots', id: currentLight, trig: Math.floor(Math.random() * 100000) + 1 });
-          
-          saveBtn.innerText = `✓ L${currentLight+1} SETTINGS SAVED!`;
-          saveBtn.style.background = "#2e7d32";
-          saveBtn.style.color = "#fff";
-          
-          setTimeout(() => {
-            saveBtn.innerText = `SAVE L${currentLight+1} SETTINGS`;
-            saveBtn.style.background = "#d4af37";
-            saveBtn.style.color = "#000";
-          }, 2000);
       });
     }
+
+    function saveFirebaseSettings(relayId) {
+      let relayData = {};
+      for(let j=0; j<12; j++) {
+        let p = `r${relayId}s${j}`;
+        let en = document.getElementById(`${p}_en`).checked ? 1 : 0;
+        
+        let sh_in = parseInt(document.getElementById(`${p}_sh`).value);
+        let sm = parseInt(document.getElementById(`${p}_sm`).value);
+        let sap = parseInt(document.getElementById(`${p}_sap`).value);
+        let sh = (sap === 1) ? (sh_in === 12 ? 12 : sh_in + 12) : (sh_in === 12 ? 0 : sh_in);
+
+        let eh_in = parseInt(document.getElementById(`${p}_eh`).value);
+        let em = parseInt(document.getElementById(`${p}_em`).value);
+        let eap = parseInt(document.getElementById(`${p}_eap`).value);
+        let eh = (eap === 1) ? (eh_in === 12 ? 12 : eh_in + 12) : (eh_in === 12 ? 0 : eh_in);
+
+        relayData["S"+j] = { en: en, sh: sh, sm: sm, eh: eh, em: em };
+      }
+
+      db.ref('/settings/R' + relayId).set(relayData).then(() => {
+        db.ref('/settings_updated').set(true); 
+        
+        let t = document.getElementById('toast');
+        t.className = 'show';
+        setTimeout(() => { t.className = ''; }, 3000);
+      });
+    }
+
+    window.onload = () => {
+      buildUI();
+      loadFirebaseSettings();
+      for(let i=0; i<10; i++) {
+        db.ref('/relays/R' + i).on('value', (snapshot) => {
+          let state = snapshot.val();
+          if (state === null) state = false;
+          relayStates["R"+i] = state;
+          let btn = document.getElementById('btn' + i);
+          if(btn) {
+            btn.innerHTML = state ? "ON" : "OFF";
+            btn.className = state ? "btn on-m" : "btn off-m";
+          }
+        });
+      }
+    };
   </script>
 </body>
 </html>
