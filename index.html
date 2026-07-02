@@ -4,19 +4,47 @@
 <head>
   <meta charset='UTF-8'>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
-  <title>Sarvopari Dham Cloud</title>
+  <title>Sarvopari Dham Online Remote</title>
   <style>
-    /* સુંદર ડાર્ક થીમ ડિઝાઇન */
-    body { font-family: sans-serif; background: #121212; color: #fff; text-align: center; margin:0; padding-bottom: 50px; }
-    h2 { margin: 20px 0 10px; color: #e6c27a; font-size: 18px; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 15px; max-width: 600px; margin: auto; }
-    .card { background: #222; padding: 15px; border-radius: 10px; border: 1px solid #444; }
-    h4 { margin: 0 0 10px; color: #f9d976; font-size: 14px; }
-    .btn-row { display: flex; gap: 10px; }
-    .btn { padding: 10px 0; border-radius: 8px; flex: 1; font-weight: bold; border: none; cursor: pointer; color: white; transition:0.2s;}
-    .on { background: #388E3C; } .off { background: #D32F2F; }
-    .a-on { background: #0097A7; } .a-off { background: #1976D2; }
-    #status { color: #50e3c2; font-weight: bold; font-size: 14px; margin-bottom: 15px; }
+    body { font-family: sans-serif; background: #130d06; color: #fff; text-align: center; margin:0; padding-bottom: 70px; }
+    .tabs { display: flex; background: #1a120a; border-bottom: 2px solid #d4af37; position: sticky; top: 0; z-index: 100; }
+    .tab { flex: 1; padding: 14px; background: transparent; color: #d4af37; border: none; font-weight: bold; font-size: 14px; cursor: pointer; letter-spacing: 1px;}
+    .tab.active { background: #d4af37; color: #000; }
+    
+    h2 { margin: 20px 0 5px; color: #ffd54f; font-size: 20px; }
+    #time-display { color: #50e3c2; font-weight: bold; font-size: 15px; margin-bottom: 15px; }
+    
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px; max-width: 600px; margin: auto; }
+    .card { background: #1f160c; padding: 15px; border-radius: 12px; border: 1px solid #3a2a18; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+    h4 { margin: 0 0 12px; color: #ffd54f; font-size: 13px; }
+    
+    .btn-row { display: flex; gap: 10px; justify-content: center; }
+    .btn { padding: 10px 0; border-radius: 25px; flex: 1; font-weight: bold; border: none; cursor: pointer; color: white; font-size: 12px; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2); }
+    
+    .off { background: #6a1b9a; } .on { background: #2e7d32; }  
+    .a-on { background: #ef6c00; } .a-off { background: #1565c0; } 
+
+    .light-pills { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; justify-content: center; max-width: 600px; margin: auto;}
+    .pill { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #d4af37; background: transparent; color: #d4af37; font-weight: bold; cursor: pointer; }
+    .pill.active { background: #d4af37; color: #000; }
+    
+    .slot-card { background: #1f160c; margin: 12px auto; padding: 15px; border-radius: 8px; max-width: 500px; text-align: left; width: 92%; box-sizing: border-box;}
+    .slot-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: bold; }
+    
+    .time-row { display: flex; align-items: center; margin-bottom: 8px; justify-content: space-between; font-size: 14px;}
+    .time-inputs { display: flex; gap: 5px; align-items: center; }
+    .t-input { width: 45px; background: #130d06; border: 1px solid #d4af37; color: #fff; text-align: center; padding: 5px; border-radius: 4px; font-weight: bold; }
+    .t-select { background: #130d06; border: 1px solid #d4af37; color: #ffd54f; padding: 5px; border-radius: 4px; font-weight: bold; }
+    
+    .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #444; border-radius: 24px; transition: 0.3s;}
+    .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; border-radius: 50%; transition: 0.3s;}
+    input:checked + .slider { background-color: #d4af37; }
+    input:checked + .slider:before { transform: translateX(22px); }
+    
+    .save-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #d4af37; color: #000; font-weight: bold; padding: 15px; cursor: pointer; font-size: 15px; border: none; width: 100%; z-index:100; letter-spacing: 1px;}
+    .hidden { display: none !important; }
   </style>
   
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -24,74 +52,200 @@
 </head>
 <body>
 
+  <div class="tabs">
+    <button id="t-dash" class="tab active" onclick="setView('dash')">DASHBOARD</button>
+    <button id="t-sett" class="tab" onclick="setView('sett')">SETTINGS</button>
+  </div>
+
   <h2>🔴🙏 SARVOPARI DHAM 🙏🔴</h2>
-  <div id='status'>Connecting to Cloud... ⏳</div>
-  <div class='grid' id='ui'></div>
+  <div id="time-display">Connecting... ⏳</div>
+
+  <div id="view-dash">
+    <div class="grid" id="ui-grid"></div>
+  </div>
+
+  <div id="view-sett" class="hidden">
+    <div class="light-pills" id="pills-container"></div>
+    <h3 id="current-light-title" style="color: #ffd54f; margin: 15px 0 5px;"></h3>
+    <div id="slots-container"></div>
+    <button class="save-bar" id="save-btn" onclick="saveSettings()">SAVE SETTINGS</button>
+  </div>
 
   <script>
-    // ફાયરબેઝ કનેક્શન સેટઅપ
     firebase.initializeApp({
       apiKey: "AIzaSyAoPnrydmBiFCG8FP52Sy_jsRBb1CyUfaM", 
       databaseURL: "https://sarvopari-liths-default-rtdb.firebaseio.com"
     });
     const db = firebase.database();
     
-    // તમારા ૧૦ ડિવાઇસના નામ
-    const n = ["1. Jalar 1", "2. Jalar 2", "3. Jalar 3", "4. Zumar 1", "5. Zumar 2", "6. Zumar 3", "7. Ghumat", "8. Border", "9. Lamp 2", "10. Vakta Light"];
+    const names = ["1. Sinhasan Jalar 1", "2. Sabha Jalar 2", "3. Sabha Jalar 3", "4. Zumar 1", "5. Zumar 2", "6. Zumar 3", "7. Ghumat", "8. Border", "9. Audience Lamp 2", "10. Vakta Light"];
+    const slotNames = ["S1: All Day 1", "S2: All Day 2", "S3: Mon-Sat 1", "S4: Mon-Sat 2", "S5: Mon-Sat 3", "S6: Mon-Sat 4", "S7: Tue Only 1", "S8: Tue Only 2", "S9: Sat Only 1", "S10: Sat Only 2", "S11: Sun Only 1", "S12: Sun Only 2"];
+    const slotColors = ["#4caf50", "#4caf50", "#9c27b0", "#e91e63", "#e91e63", "#e91e63", "#ffeb3b", "#ffeb3b", "#ff9800", "#ff9800", "#795548", "#795548"];
     
-    // ગ્રીડ યુઝર ઇન્ટરફેસ (UI) બનાવટ
-    const ui = document.getElementById('ui');
+    let currentLight = 0; 
+    let globalSlots = {}; 
+
+    setInterval(() => {
+      let now = new Date();
+      let options = { weekday: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+      document.getElementById('time-display').innerText = now.toLocaleString('en-US', options);
+    }, 1000);
+
+    const grid = document.getElementById('ui-grid');
     for(let i=0; i<10; i++) {
-      ui.innerHTML += `<div class='card'>
-        <h4>${n[i]}</h4>
+      grid.innerHTML += `<div class='card'>
+        <h4>${names[i]}</h4>
         <div class='btn-row'>
-          <button id='b${i}' class='btn off'>Wait</button>
-          <button id='a${i}' class='btn a-off'>Wait</button>
+          <button id='b${i}' class='btn off' onclick='cmd("toggle", ${i})'>Wait</button>
+          <button id='a${i}' class='btn a-off' onclick='cmd("auto", ${i})'>Wait</button>
         </div>
       </div>`;
     }
 
-    // ઓનલાઇન/ઓફલાઇન સ્ટેટસ ચેક
-    db.ref(".info/connected").on("value", (snap) => {
-      document.getElementById('status').innerText = snap.val() ? "🟢 Connected to Cloud" : "🔴 Offline";
-    });
+    const pills = document.getElementById('pills-container');
+    for(let i=0; i<10; i++) {
+      pills.innerHTML += `<button id="pill-${i}" class="pill ${i===0?'active':''}" onclick="selectLight(${i})">L${i+1}</button>`;
+    }
 
-    // 🔴 નવો સુધારેલો કોડ: સીધા '/relays' ફોલ્ડરમાંથી ડેટા વાંચશે અને ત્યાં જ કમાન્ડ મોકલશે
-    db.ref('/relays').on('value', snap => {
+    const slotsDiv = document.getElementById('slots-container');
+    for(let s=0; s<12; s++) {
+      slotsDiv.innerHTML += `
+        <div class="slot-card" style="border-left: 5px solid ${slotColors[s]}">
+          <div class="slot-header">
+            <span>${slotNames[s]}</span>
+            <label class="switch"><input type="checkbox" id="s${s}-en"><span class="slider"></span></label>
+          </div>
+          <div class="time-row">
+            <span>ON</span>
+            <div class="time-inputs">
+              <input type="number" id="s${s}-on-h" class="t-input" min="1" max="12" value="12">:
+              <input type="number" id="s${s}-on-m" class="t-input" min="0" max="59" value="00">
+              <select id="s${s}-on-p" class="t-select"><option value="0">AM</option><option value="1">PM</option></select>
+            </div>
+          </div>
+          <div class="time-row">
+            <span>OFF</span>
+            <div class="time-inputs">
+              <input type="number" id="s${s}-off-h" class="t-input" min="1" max="12" value="12">:
+              <input type="number" id="s${s}-off-m" class="t-input" min="0" max="59" value="00">
+              <select id="s${s}-off-p" class="t-select"><option value="0">AM</option><option value="1">PM</option></select>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function setView(view) {
+      if(view === 'dash') {
+        document.getElementById('view-dash').classList.remove('hidden');
+        document.getElementById('view-sett').classList.add('hidden');
+        document.getElementById('t-dash').classList.add('active');
+        document.getElementById('t-sett').classList.remove('active');
+      } else {
+        document.getElementById('view-dash').classList.add('hidden');
+        document.getElementById('view-sett').classList.remove('hidden');
+        document.getElementById('t-dash').classList.remove('active');
+        document.getElementById('t-sett').classList.add('active');
+        selectLight(currentLight); 
+      }
+    }
+
+    function selectLight(idx) {
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      document.getElementById(`pill-${idx}`).classList.add('active');
+      currentLight = idx;
+      document.getElementById('current-light-title').innerText = names[idx];
+      document.getElementById('save-btn').innerText = `SAVE L${idx+1} SETTINGS`;
+      
+      for(let s=0; s<12; s++) {
+        let sd = (globalSlots[idx] && globalSlots[idx][s]) ? globalSlots[idx][s] : {en:0, sh:12, sm:0, eh:12, em:0};
+        document.getElementById(`s${s}-en`).checked = (sd.en == 1);
+        let sh_12 = (sd.sh == 0) ? 12 : (sd.sh > 12 ? sd.sh - 12 : sd.sh);
+        let sh_ap = (sd.sh >= 12) ? 1 : 0;
+        document.getElementById(`s${s}-on-h`).value = sh_12;
+        document.getElementById(`s${s}-on-m`).value = String(sd.sm).padStart(2, '0');
+        document.getElementById(`s${s}-on-p`).value = sh_ap;
+        
+        let eh_12 = (sd.eh == 0) ? 12 : (sd.eh > 12 ? sd.eh - 12 : sd.eh);
+        let eh_ap = (sd.eh >= 12) ? 1 : 0;
+        document.getElementById(`s${s}-off-h`).value = eh_12;
+        document.getElementById(`s${s}-off-m`).value = String(sd.em).padStart(2, '0');
+        document.getElementById(`s${s}-off-p`).value = eh_ap;
+      }
+    }
+
+    function cmd(action, id) {
+      let btn = action === 'toggle' ? document.getElementById(`b${id}`) : document.getElementById(`a${id}`);
+      btn.innerText = "⏳";
+      db.ref('SarvopariDham/Command').set({ act: action, id: id, trig: Math.floor(Math.random() * 100000) + 1 });
+    }
+
+    db.ref('relays').on('value', snap => {
       let d = snap.val();
       if(d) {
         for(let i=0; i<10; i++) {
-          if (d[i]) {
-            let isO = d[i].state === true;
-            let isM = d[i].isManual === true;
-            
+          if(d[i]) {
+            let isO = (d[i].state == 1 || d[i].state === true);
+            let isM = (d[i].isManual == 1 || d[i].isManual === true);
             let b = document.getElementById(`b${i}`);
             let a = document.getElementById(`a${i}`);
-            
             if(b && a) {
-              // બટનનું લખાણ અને કલર અપડેટ
               b.innerText = isO ? (isM ? "ON" : "ON (Auto)") : (isM ? "OFF" : "OFF (Auto)");
               b.className = isO ? "btn on" : "btn off";
-              
               a.innerText = isM ? "AUTO" : "AUTO (ON)";
               a.className = isM ? "btn a-off" : "btn a-on";
-              
-              // રિલે ચાલુ/બંધ કરવાની કમાન્ડ સીધી /relays ના તે ચોક્કસ ID માં જશે
-              b.onclick = () => {
-                b.innerText = "⏳";
-                db.ref('/relays/' + i).update({ state: !isO, isManual: true });
-              };
-              
-              // ઓટો મોડની કમાન્ડ
-              a.onclick = () => {
-                a.innerText = "⏳";
-                db.ref('/relays/' + i).update({ isManual: false });
-              };
             }
           }
         }
       }
     });
+
+    db.ref('slots').on('value', snap => {
+      let d = snap.val();
+      if(d) {
+        globalSlots = d;
+        if(!document.getElementById('view-sett').classList.contains('hidden')) { selectLight(currentLight); }
+      }
+    });
+
+    function saveSettings() {
+      let updateData = {};
+      for(let s=0; s<12; s++) {
+        let on_h = parseInt(document.getElementById(`s${s}-on-h`).value);
+        let on_p = parseInt(document.getElementById(`s${s}-on-p`).value);
+        let off_h = parseInt(document.getElementById(`s${s}-off-h`).value);
+        let off_p = parseInt(document.getElementById(`s${s}-off-p`).value);
+        
+        let sh24 = (on_p == 1) ? (on_h == 12 ? 12 : on_h + 12) : (on_h == 12 ? 0 : on_h);
+        let eh24 = (off_p == 1) ? (off_h == 12 ? 12 : off_h + 12) : (off_h == 12 ? 0 : off_h);
+
+        updateData[s] = {
+          en: document.getElementById(`s${s}-en`).checked ? 1 : 0,
+          sh: sh24,
+          sm: parseInt(document.getElementById(`s${s}-on-m`).value),
+          eh: eh24,
+          em: parseInt(document.getElementById(`s${s}-off-m`).value)
+        };
+      }
+      
+      const saveBtn = document.getElementById('save-btn');
+      saveBtn.innerText = "SAVING TO CLOUD... ⏳";
+      saveBtn.style.background = "#ffd54f";
+
+      db.ref(`slots/${currentLight}`).set(updateData).then(() => {
+          // 🔴 આ કમાન્ડ મોડ્યુલને કહેશે કે નવો સમય ડાઉનલોડ કરીને કાયમ માટે સેવ કરી લે 
+          db.ref('SarvopariDham/Command').set({ act: 'sync_slots', id: currentLight, trig: Math.floor(Math.random() * 100000) + 1 });
+          
+          saveBtn.innerText = `✓ L${currentLight+1} SETTINGS SAVED!`;
+          saveBtn.style.background = "#2e7d32";
+          saveBtn.style.color = "#fff";
+          
+          setTimeout(() => {
+            saveBtn.innerText = `SAVE L${currentLight+1} SETTINGS`;
+            saveBtn.style.background = "#d4af37";
+            saveBtn.style.color = "#000";
+          }, 2000);
+      });
+    }
   </script>
 </body>
 </html>
