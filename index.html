@@ -6,6 +6,10 @@
   <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'>
   <meta name='theme-color' content='#2b1b0e'>
   <title>Sarvopari Dham Online</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="https://i.ibb.co/999CRL59/IMG-20260606-214127.jpg">
+
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
@@ -66,7 +70,7 @@
   <div class="c">
     <div id="dashboard">
       <div class="card" style="margin-bottom: 10px;">
-        <div style="color:#2196f3; font-weight:900; font-size:13px; margin-bottom:10px;">🔴🙏 SWAMINARAYAN SARVOPARI DHAM 🙏🔴</div>
+        <div style="color:#2196f3; font-weight:900; font-size:14px; margin-bottom:10px;">🔴🙏 SWAMINARAYAN SARVOPARI DHAM 🙏🔴</div>
         <div class="stat-row">
           <div id="clock" class="time-text">--:--</div>
           <div class="badge-col">
@@ -110,11 +114,8 @@
       document.getElementById('navSet').classList.toggle('act', tab==='set');
     }
 
-    // 🔴 0.0 Delay માટે Optimistic UI ફંક્શન 🔴
     function cmd(act, id) {
       if(isSending) return; isSending = true;
-      
-      // 1. ઇન્સ્ટન્ટ બટન કલર ચેન્જ કરો 
       if(act === "toggle") {
         relayStates[id] = relayStates[id] == 1 ? 0 : 1; 
         manualModes[id] = "true"; 
@@ -122,10 +123,8 @@
         manualModes[id] = "false";
       }
       updateBtnUI(id);
-
-      // 2. બેકગ્રાઉન્ડમાં ફાયરબેઝમાં મોકલો
       db.ref("/command").set({action: act, id: id, timestamp: Date.now()});
-      setTimeout(() => { isSending = false; }, 200); // ટાઈમ આઉટ ઓછો કર્યો
+      setTimeout(() => { isSending = false; }, 200); 
     }
 
     function oT(id) {
@@ -218,7 +217,6 @@
       }
     }
 
-    // 🔴 પોતાની ઘડિયાળ શરૂ કરો 🔴
     function updateClock() {
       const now = new Date();
       const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -233,7 +231,6 @@
     window.onload = () => {
       buildUI(); loadFirebaseSettings(); updateClock();
 
-      // 1. APP Connection Status (તમારો ફોન ઇન્ટરનેટથી જોડાયેલો છે કે નહિ)
       db.ref(".info/connected").on("value", function(snap) {
         let appBadge = document.getElementById("appNetBadge");
         if (snap.val() === true) {
@@ -243,14 +240,12 @@
         }
       });
 
-      // 2. ESP32 Connection Status (મોડ્યુલમાંથી આવતો ડેટા)
       db.ref('/status').on('value', snap => {
         let d = snap.val(); if(!d) return;
         if(d.s) relayStates = d.s;
         if(d.m) manualModes = d.m;
         for(let i=0; i<10; i++) updateBtnUI(i);
         
-        // ESP બોર્ડનું બેજ 
         let espBadge = document.getElementById("espNetBadge");
         if(d.online === true) {
           espBadge.className = "badge"; espBadge.innerText = "CLOUD";
