@@ -2,7 +2,7 @@
 {
   "name": "Sarvopari Dham",
   "short_name": "Sarvopari",
-  "start_url": "/SARVOPARI-LITHS-/"
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0a0a",
   "theme_color": "#2b1b0e",

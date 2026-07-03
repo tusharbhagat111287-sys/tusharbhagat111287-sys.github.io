@@ -15,60 +15,59 @@
 
   <style>
     body{font-family:'Segoe UI', sans-serif; background:#1a1a1a; color:#f0e6d2; margin:0; text-align:center; min-height:100vh; padding-bottom:70px;}
-    .nav{background:#111; padding:12px; display:flex; justify-content:space-around; font-weight:bold; border-bottom: 1px solid #333; position:sticky; top:0; z-index:100;}
-    .nav a{color:#888; text-decoration:none; padding:8px 16px; border-radius:5px; transition:0.3s; cursor:pointer;}
+    .nav{background:#111; padding:10px; display:flex; justify-content:space-around; font-weight:bold; border-bottom: 1px solid #333; position:sticky; top:0; z-index:100;}
+    .nav a{color:#888; text-decoration:none; padding:6px 14px; border-radius:5px; transition:0.3s; cursor:pointer; font-size:14px;}
     .nav a.act{background:#2196f3; color:#fff;}
     
-    .c{padding:10px; max-width:800px; margin:auto;}
-    .card{background:#333; padding:15px; margin-bottom:15px; border-radius:10px; box-shadow:0 4px 6px rgba(0,0,0,0.3);}
+    .c{padding:8px; max-width:800px; margin:auto;}
+    .card{background:#333; padding:12px; margin-bottom:12px; border-radius:10px; box-shadow:0 4px 6px rgba(0,0,0,0.3);}
     
     .stat-row{display:flex; justify-content:space-between; align-items:center;}
-    .time-text{font-size:22px; color:#fbc02d; font-weight:bold;}
-    .badge-col{display:flex; flex-direction:column; gap:5px; align-items:flex-end;}
-    .badge{font-size:10px; padding:4px 8px; border-radius:5px; font-weight:bold; background:#4caf50; color:#fff; letter-spacing:1px;}
+    .time-text{font-size:18px; color:#fbc02d; font-weight:bold;}
+    .badge-col{display:flex; flex-direction:column; gap:4px; align-items:flex-end;}
+    .badge{font-size:9px; padding:3px 6px; border-radius:4px; font-weight:bold; background:#4caf50; color:#fff; letter-spacing:1px;}
     .badge.offline{background:#f44336;}
-    .status-msg{color:#69f0ae; font-weight:600; font-size:13px; margin-top:8px;}
+    .status-msg{color:#69f0ae; font-weight:600; font-size:12px; margin-top:6px;}
     
-    .grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;}
-    h4{margin:0 0 10px; color:#f9d976; font-size:13px;}
-    .btn-row{display:flex; gap:8px;}
+    .grid{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;}
+    h4{margin:0 0 8px; color:#f9d976; font-size:12px;}
+    .btn-row{display:flex; gap:6px;}
     
-    /* 🔴 બટનની સાઈઝ થોડી નાની કરી (padding 10px 0) 🔴 */
-    .btn{border:none; padding:10px 0; border-radius:22px; flex:1; font-weight:bold; cursor:pointer; color:#fff; font-size:12px; transition:0.2s; box-shadow:0 4px 6px rgba(0,0,0,0.3);}
+    /* 🔴 બટનો એકદમ નાના અને સ્લીમ કર્યા 🔴 */
+    .btn{border:none; padding:8px 0; border-radius:18px; flex:1; font-weight:bold; cursor:pointer; color:#fff; font-size:11px; transition:0.2s; box-shadow:0 3px 5px rgba(0,0,0,0.3);}
     .btn:active{transform:scale(0.95);}
-    .on-m{background:#388E3C; box-shadow:inset 0 6px 15px rgba(0,0,0,0.6);} 
+    .on-m{background:#388E3C; box-shadow:inset 0 4px 10px rgba(0,0,0,0.6);} 
     .off-m{background:#D32F2F;} 
-    .on-a{background:#0097A7; box-shadow:inset 0 6px 15px rgba(0,0,0,0.6);} 
+    .on-a{background:#0097A7; box-shadow:inset 0 4px 10px rgba(0,0,0,0.6);} 
     .off-a{background:#7B1FA2;} 
-    .a-on{background:#F57C00; box-shadow:inset 0 6px 15px rgba(0,0,0,0.6);} 
+    .a-on{background:#F57C00; box-shadow:inset 0 4px 10px rgba(0,0,0,0.6);} 
     .a-off{background:#1976D2;}
     
     #settings { display: none; text-align: left; }
-    .tabs{display:flex; overflow-x:auto; padding:10px 0; gap:8px;}
-    .tb{background:#222; color:#e6c27a; border:1px solid #e6c27a; padding:8px 15px; border-radius:20px; white-space:nowrap; font-weight:bold; font-size:13px; cursor:pointer;}
+    .tabs{display:flex; overflow-x:auto; padding:8px 0; gap:6px;}
+    .tb{background:#222; color:#e6c27a; border:1px solid #e6c27a; padding:6px 12px; border-radius:15px; white-space:nowrap; font-weight:bold; font-size:12px; cursor:pointer;}
     .tb.act{background:#e6c27a; color:#000;}
     .tc{display:none;} .tc.act{display:block;}
     
-    /* 🔴 સ્લોટ બોક્સની મીડીયમ સાઈઝ સેટ કરી 🔴 */
-    .cd{background:#111; padding:10px 12px; margin-bottom:12px; border-radius:8px; border-left:4px solid transparent; box-shadow:0 3px 5px rgba(0,0,0,0.3);}
-    .hd{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-weight:bold; font-size:13px;}
-    .rw{display:flex; justify-content:space-between; align-items:center; background:#1a1a1a; padding:6px 10px; margin-bottom:5px; border-radius:6px; font-size:12px; color:#aaa; font-weight:bold;}
-    .time-box{display:flex; align-items:center; gap:5px;}
+    /* 🔴 સ્લોટ બોક્સ નાના કર્યા 🔴 */
+    .cd{background:#111; padding:8px 10px; margin-bottom:10px; border-radius:8px; border-left:4px solid transparent; box-shadow:0 2px 4px rgba(0,0,0,0.3);}
+    .hd{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-weight:bold; font-size:12px;}
+    .rw{display:flex; justify-content:space-between; align-items:center; background:#1a1a1a; padding:4px 8px; margin-bottom:4px; border-radius:6px; font-size:11px; color:#aaa; font-weight:bold;}
+    .time-box{display:flex; align-items:center; gap:4px;}
     
-    /* 🔴 સમયના ઇનપુટ બોક્સ થોડા નાના કર્યા 🔴 */
-    .time-box input, .time-box select{background:#222; color:#e6c27a; border:1px solid #e6c27a; padding:4px; border-radius:4px; font-size:13px; font-weight:bold; text-align:center;}
+    /* 🔴 ઇનપુટ બોક્સ અને સ્વીચ પણ નાની કરી 🔴 */
+    .time-box input, .time-box select{background:#222; color:#e6c27a; border:1px solid #e6c27a; padding:2px; border-radius:4px; font-size:12px; font-weight:bold; text-align:center;}
     
-    /* 🔴 સ્વીચ પણ મિડીયમ સાઈઝની કરી 🔴 */
-    .sw{position:relative; width:36px; height:20px;} .sw input{display:none;} 
-    .sw span{position:absolute; top:0; left:0; right:0; bottom:0; background:#444; border-radius:20px; cursor:pointer;} 
-    .sw span:before{content:''; position:absolute; width:16px; height:16px; left:2px; bottom:2px; background:#fff; border-radius:50%; transition:0.3s;} 
-    input:checked+span{background:#e6c27a;} input:checked+span:before{transform:translateX(16px); background:#000;}
+    .sw{position:relative; width:30px; height:16px;} .sw input{display:none;} 
+    .sw span{position:absolute; top:0; left:0; right:0; bottom:0; background:#444; border-radius:16px; cursor:pointer;} 
+    .sw span:before{content:''; position:absolute; width:12px; height:12px; left:2px; bottom:2px; background:#fff; border-radius:50%; transition:0.3s;} 
+    input:checked+span{background:#e6c27a;} input:checked+span:before{transform:translateX(14px); background:#000;}
     
-    .btn-save{background:#e6c27a; color:#000; border:none; padding:15px; width:100%; font-weight:bold; font-size:15px; cursor:pointer; margin-top:10px; text-transform:uppercase; border-radius:5px;}
+    .btn-save{background:#e6c27a; color:#000; border:none; padding:12px; width:100%; font-weight:bold; font-size:14px; cursor:pointer; margin-top:10px; text-transform:uppercase; border-radius:5px;}
     
-    #toast{visibility:hidden; min-width:250px; background:#4CAF50; color:#fff; text-align:center; border-radius:30px; padding:12px; position:fixed; z-index:1000; left:50%; bottom:70px; transform:translateX(-50%); font-size:14px; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.5);} 
+    #toast{visibility:hidden; min-width:200px; background:#4CAF50; color:#fff; text-align:center; border-radius:20px; padding:10px; position:fixed; z-index:1000; left:50%; bottom:70px; transform:translateX(-50%); font-size:13px; font-weight:bold;} 
     #toast.show{visibility:visible;}
-    .footer{text-align:center; color:#ffffff; font-size:15px; margin-top:30px; padding-bottom:30px; font-weight:bold; text-shadow: 0 0 10px #9c27b0, 0 0 20px #9c27b0;}
+    .footer{text-align:center; color:#ffffff; font-size:14px; margin-top:25px; padding-bottom:30px; font-weight:bold; text-shadow: 0 0 8px #9c27b0, 0 0 15px #9c27b0;}
   </style>
 </head>
 <body>
@@ -82,8 +81,8 @@
 
   <div class="c">
     <div id="dashboard">
-      <div class="card" style="margin-bottom: 10px;">
-        <div style="color:#2196f3; font-weight:900; font-size:13px; margin-bottom:10px;">🔴🙏 SARVOPARI DHAM LIGHT 🙏🔴</div>
+      <div class="card" style="margin-bottom: 8px;">
+        <div style="color:#2196f3; font-weight:900; font-size:12px; margin-bottom:8px;">🔴🙏 SARVOPARI DHAM  LIGHT 🙏🔴</div>
         <div class="stat-row">
           <div id="clock" class="time-text">--:--</div>
           <div class="badge-col">
@@ -95,7 +94,7 @@
       </div>
 
       <div class='grid' id='buttonsGrid'></div>
-      <div class='footer'>SARVOPARI DHAM GLOBAL LIGHT REMOTE</div>
+      <div class='footer'>SARVOPARI DHAM GLOBAL LIGHT - ESP-A</div>
     </div>
 
     <div id="settings">
@@ -146,7 +145,7 @@
     function buildUI() {
       let dHtml = "";
       for(let i=0; i<10; i++) {
-        dHtml += `<div class='card' style='padding:12px; margin-bottom:0;'><h4>${names[i]}</h4><div class='btn-row'>
+        dHtml += `<div class='card' style='padding:10px; margin-bottom:0;'><h4>${names[i]}</h4><div class='btn-row'>
                   <button id='btnR${i}' class='btn off-m' onclick='cmd("toggle", ${i})'>Wait</button>
                   <button id='btnA${i}' class='btn a-on' onclick='cmd("auto", ${i})'>Wait</button>
                   </div></div>`;
@@ -159,13 +158,13 @@
 
       let cHtml = "";
       for(let i=0; i<10; i++) {
-        cHtml += `<div id='tc${i}' class='tc ${i==0?"act":""}' style='padding-bottom:20px;'><h3 style='color:#f9d976;text-align:center;margin-top:0;text-transform:uppercase;'>${names[i]}</h3>`;
+        cHtml += `<div id='tc${i}' class='tc ${i==0?"act":""}' style='padding-bottom:15px;'><h3 style='color:#f9d976;text-align:center;margin-top:0;font-size:14px;text-transform:uppercase;'>${names[i]}</h3>`;
         for(let j=0; j<12; j++) {
           let p = `r${i}s${j}`;
           cHtml += `<div class='cd' style='border-left-color:${slotColors[j]}'>
                       <div class='hd' style='color:${slotColors[j]}'><span>${slotNames[j]}</span><label class='sw'><input type='checkbox' id='${p}_en'><span></span></label></div>
-                      <div class='rw'><span>ON</span><div class='time-box'><input type='number' id='${p}_sh' min='1' max='12' value='12' style='width:42px'> : <input type='number' id='${p}_sm' min='0' max='59' value='00' style='width:42px'> <select id='${p}_sap'><option value='0'>AM</option><option value='1'>PM</option></select></div></div>
-                      <div class='rw'><span>OFF</span><div class='time-box'><input type='number' id='${p}_eh' min='1' max='12' value='12' style='width:42px'> : <input type='number' id='${p}_em' min='0' max='59' value='00' style='width:42px'> <select id='${p}_eap'><option value='0'>AM</option><option value='1'>PM</option></select></div></div>
+                      <div class='rw'><span>ON</span><div class='time-box'><input type='number' id='${p}_sh' min='1' max='12' value='12' style='width:36px'> : <input type='number' id='${p}_sm' min='0' max='59' value='00' style='width:36px'> <select id='${p}_sap'><option value='0'>AM</option><option value='1'>PM</option></select></div></div>
+                      <div class='rw'><span>OFF</span><div class='time-box'><input type='number' id='${p}_eh' min='1' max='12' value='12' style='width:36px'> : <input type='number' id='${p}_em' min='0' max='59' value='00' style='width:36px'> <select id='${p}_eap'><option value='0'>AM</option><option value='1'>PM</option></select></div></div>
                     </div>`;
         }
         cHtml += `<button class='btn-save' onclick='saveFirebaseSettings()'>SAVE L${i+1} SETTINGS</button></div>`;
@@ -241,6 +240,10 @@
 
     window.onload = () => {
       buildUI(); loadFirebaseSettings(); updateClock();
+
+      // 🔴 ઓનલાઈન ટાઈમ સિંક કોડ 🔴
+      let nd = new Date();
+      db.ref("/command").set({action: "settime", str: `${nd.getFullYear()},${nd.getMonth()+1},${nd.getDate()},${nd.getHours()},${nd.getMinutes()},${nd.getSeconds()}`, timestamp: Date.now()});
 
       db.ref(".info/connected").on("value", function(snap) {
         let appBadge = document.getElementById("appNetBadge");
