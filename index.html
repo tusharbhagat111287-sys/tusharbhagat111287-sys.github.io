@@ -6,10 +6,8 @@
   <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'>
   <meta name='theme-color' content='#1a1a1a'>
   <title>Sarvopari Dham Online</title>
-
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="https://i.ibb.co/999CRL59/IMG-20260606-214127.jpg">
-
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
@@ -18,22 +16,17 @@
     .nav{background:#111; padding:10px; display:flex; justify-content:space-around; font-weight:bold; border-bottom: 1px solid #333; position:sticky; top:0; z-index:100;}
     .nav a{color:#888; text-decoration:none; padding:6px 14px; border-radius:5px; transition:0.3s; cursor:pointer; font-size:14px;}
     .nav a.act{background:#2196f3; color:#fff;}
-    
     .c{padding:8px; max-width:800px; margin:auto;}
     .card{background:#333; padding:12px; margin-bottom:12px; border-radius:10px; box-shadow:0 4px 6px rgba(0,0,0,0.3);}
-    
     .stat-row{display:flex; justify-content:space-between; align-items:center;}
     .time-text{font-size:18px; color:#fbc02d; font-weight:bold;}
     .badge-col{display:flex; flex-direction:column; gap:4px; align-items:flex-end;}
     .badge{font-size:9px; padding:3px 6px; border-radius:4px; font-weight:bold; background:#4caf50; color:#fff; letter-spacing:1px;}
     .badge.offline{background:#f44336;}
     .status-msg{color:#69f0ae; font-weight:600; font-size:12px; margin-top:6px;}
-    
     .grid{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;}
     h4{margin:0 0 8px; color:#f9d976; font-size:12px;}
     .btn-row{display:flex; gap:6px;}
-    
-    /* 🔴 બટનો એકદમ નાના અને સ્લીમ કર્યા 🔴 */
     .btn{border:none; padding:8px 0; border-radius:18px; flex:1; font-weight:bold; cursor:pointer; color:#fff; font-size:11px; transition:0.2s; box-shadow:0 3px 5px rgba(0,0,0,0.3);}
     .btn:active{transform:scale(0.95);}
     .on-m{background:#388E3C; box-shadow:inset 0 4px 10px rgba(0,0,0,0.6);} 
@@ -42,29 +35,21 @@
     .off-a{background:#7B1FA2;} 
     .a-on{background:#F57C00; box-shadow:inset 0 4px 10px rgba(0,0,0,0.6);} 
     .a-off{background:#1976D2;}
-    
     #settings { display: none; text-align: left; }
     .tabs{display:flex; overflow-x:auto; padding:8px 0; gap:6px;}
     .tb{background:#222; color:#e6c27a; border:1px solid #e6c27a; padding:6px 12px; border-radius:15px; white-space:nowrap; font-weight:bold; font-size:12px; cursor:pointer;}
     .tb.act{background:#e6c27a; color:#000;}
     .tc{display:none;} .tc.act{display:block;}
-    
-    /* 🔴 સ્લોટ બોક્સ નાના કર્યા 🔴 */
     .cd{background:#111; padding:8px 10px; margin-bottom:10px; border-radius:8px; border-left:4px solid transparent; box-shadow:0 2px 4px rgba(0,0,0,0.3);}
     .hd{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-weight:bold; font-size:12px;}
     .rw{display:flex; justify-content:space-between; align-items:center; background:#1a1a1a; padding:4px 8px; margin-bottom:4px; border-radius:6px; font-size:11px; color:#aaa; font-weight:bold;}
     .time-box{display:flex; align-items:center; gap:4px;}
-    
-    /* 🔴 ઇનપુટ બોક્સ અને સ્વીચ પણ નાની કરી 🔴 */
     .time-box input, .time-box select{background:#222; color:#e6c27a; border:1px solid #e6c27a; padding:2px; border-radius:4px; font-size:12px; font-weight:bold; text-align:center;}
-    
     .sw{position:relative; width:30px; height:16px;} .sw input{display:none;} 
     .sw span{position:absolute; top:0; left:0; right:0; bottom:0; background:#444; border-radius:16px; cursor:pointer;} 
     .sw span:before{content:''; position:absolute; width:12px; height:12px; left:2px; bottom:2px; background:#fff; border-radius:50%; transition:0.3s;} 
     input:checked+span{background:#e6c27a;} input:checked+span:before{transform:translateX(14px); background:#000;}
-    
     .btn-save{background:#e6c27a; color:#000; border:none; padding:12px; width:100%; font-weight:bold; font-size:14px; cursor:pointer; margin-top:10px; text-transform:uppercase; border-radius:5px;}
-    
     #toast{visibility:hidden; min-width:200px; background:#4CAF50; color:#fff; text-align:center; border-radius:20px; padding:10px; position:fixed; z-index:1000; left:50%; bottom:70px; transform:translateX(-50%); font-size:13px; font-weight:bold;} 
     #toast.show{visibility:visible;}
     .footer{text-align:center; color:#ffffff; font-size:14px; margin-top:25px; padding-bottom:30px; font-weight:bold; text-shadow: 0 0 8px #9c27b0, 0 0 15px #9c27b0;}
@@ -82,7 +67,7 @@
   <div class="c">
     <div id="dashboard">
       <div class="card" style="margin-bottom: 8px;">
-        <div style="color:#2196f3; font-weight:900; font-size:12px; margin-bottom:8px;">🔴🙏 SARVOPARI DHAM  LIGHT 🙏🔴</div>
+        <div style="color:#2196f3; font-weight:900; font-size:12px; margin-bottom:8px;">🔴🙏 SARVOPARI DHAM LIGHT 🙏🔴</div>
         <div class="stat-row">
           <div id="clock" class="time-text">--:--</div>
           <div class="badge-col">
@@ -92,9 +77,8 @@
         </div>
         <div id="statusMsg" class="status-msg">SYSTEM READY</div>
       </div>
-
       <div class='grid' id='buttonsGrid'></div>
-      <div class='footer'>SARVOPARI DHAM GLOBAL LIGHT - ESP-A</div>
+      <div class='footer'>SARVOPARI DHAM GLOBAL LIGHT REMOTE</div>
     </div>
 
     <div id="settings">
@@ -240,11 +224,7 @@
 
     window.onload = () => {
       buildUI(); loadFirebaseSettings(); updateClock();
-
-      // 🔴 ઓનલાઈન ટાઈમ સિંક કોડ 🔴
-      let nd = new Date();
-      db.ref("/command").set({action: "settime", str: `${nd.getFullYear()},${nd.getMonth()+1},${nd.getDate()},${nd.getHours()},${nd.getMinutes()},${nd.getSeconds()}`, timestamp: Date.now()});
-
+      
       db.ref(".info/connected").on("value", function(snap) {
         let appBadge = document.getElementById("appNetBadge");
         if (snap.val() === true) { appBadge.className = "badge"; appBadge.innerText = "APP ONLINE"; } 
