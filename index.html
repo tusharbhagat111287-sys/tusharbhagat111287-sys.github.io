@@ -4,7 +4,7 @@
 <head>
   <meta charset='UTF-8'>
   <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'>
-  <meta name='theme-color' content='#2b1b0e'>
+  <meta name='theme-color' content='#1a1a1a'>
   <title>Sarvopari Dham Online</title>
 
   <link rel="manifest" href="manifest.json">
@@ -14,48 +14,54 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
   <style>
-    body{font-family:'Segoe UI', sans-serif; background:radial-gradient(circle at center, #2b1b0e 0%, #0a0a0a 100%); color:#f0e6d2; margin:0; text-align:center; min-height:100vh; padding-bottom:70px;}
-    .nav{background:rgba(20, 20, 20, 0.9); padding:10px; display:flex; justify-content:space-around; font-weight:bold; border-bottom: 2px solid #c8963e; position:sticky; top:0; z-index:100;}
-    .nav a{color:#a9a9a9; text-decoration:none; padding:6px 15px; border-radius:20px; transition:0.3s; cursor:pointer;}
-    .nav a.act{background:linear-gradient(145deg, #c8963e, #8b6914); color:#000;}
+    body{font-family:'Segoe UI', sans-serif; background:#1a1a1a; color:#f0e6d2; margin:0; text-align:center; min-height:100vh; padding-bottom:70px;}
+    .nav{background:#111; padding:12px; display:flex; justify-content:space-around; font-weight:bold; border-bottom: 1px solid #333; position:sticky; top:0; z-index:100;}
+    .nav a{color:#888; text-decoration:none; padding:8px 16px; border-radius:5px; transition:0.3s; cursor:pointer;}
+    .nav a.act{background:#2196f3; color:#fff;}
     
     .c{padding:10px; max-width:800px; margin:auto;}
-    .card{background:linear-gradient(145deg, rgba(40,30,20,0.8), rgba(20,15,10,0.9)); padding:15px; margin-bottom:15px; border-radius:10px; border:1px solid rgba(200,150,62,0.3); box-shadow:0 4px 6px rgba(0,0,0,0.3);}
+    .card{background:#333; padding:15px; margin-bottom:15px; border-radius:10px; box-shadow:0 4px 6px rgba(0,0,0,0.3);}
     
     .stat-row{display:flex; justify-content:space-between; align-items:center;}
-    .time-text{font-size:20px; color:#fbc02d; font-weight:bold;}
+    .time-text{font-size:22px; color:#fbc02d; font-weight:bold;}
     .badge-col{display:flex; flex-direction:column; gap:5px; align-items:flex-end;}
-    .badge{font-size:10px; padding:4px 8px; border-radius:5px; font-weight:bold; background:#4caf50; color:#fff; text-align:center; letter-spacing:1px;}
+    .badge{font-size:10px; padding:4px 8px; border-radius:5px; font-weight:bold; background:#4caf50; color:#fff; letter-spacing:1px;}
     .badge.offline{background:#f44336;}
     .status-msg{color:#69f0ae; font-weight:600; font-size:13px; margin-top:8px;}
     
     .grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;}
     h4{margin:0 0 10px; color:#f9d976; font-size:13px;}
     .btn-row{display:flex; gap:8px;}
-    .btn{border:none; padding:10px 0; border-radius:20px; flex:1; font-weight:bold; cursor:pointer; color:#fff; font-size:12px; transition:0.1s; box-shadow:0 3px 5px rgba(0,0,0,0.4);}
+    .btn{border:none; padding:12px 0; border-radius:10px; flex:1; font-weight:bold; cursor:pointer; color:#fff; font-size:12px; box-shadow:0 3px 5px rgba(0,0,0,0.4);}
     .btn:active{transform:scale(0.95);}
     
-    .on-m{background:#388E3C; box-shadow:inset 0 4px 12px rgba(0,0,0,0.8);}
-    .off-m{background:#D32F2F;}
-    .on-a{background:#0097A7; box-shadow:inset 0 4px 12px rgba(0,0,0,0.8);}
-    .off-a{background:#7B1FA2;}
-    .a-on{background:#F57C00; box-shadow:inset 0 4px 12px rgba(0,0,0,0.8);}
-    .a-off{background:#1976D2;}
+    .on-m{background:#388E3C;} .off-m{background:#D32F2F;} .on-a{background:#0097A7;} .off-a{background:#7B1FA2;} .a-on{background:#F57C00;} .a-off{background:#1976D2;}
     
     #settings { display: none; text-align: left; }
     .tabs{display:flex; overflow-x:auto; padding:10px 0; gap:8px;}
-    .tb{background:#2a2a2a; color:#c8963e; border:1px solid #c8963e; padding:8px 12px; border-radius:15px; white-space:nowrap; font-weight:bold; font-size:13px; cursor:pointer;}
-    .tb.act{background:#c8963e; color:#000;}
+    .tb{background:#222; color:#e6c27a; border:1px solid #e6c27a; padding:8px 12px; border-radius:20px; white-space:nowrap; font-weight:bold; font-size:13px; cursor:pointer;}
+    .tb.act{background:#e6c27a; color:#000;}
     .tc{display:none;} .tc.act{display:block;}
-    .hd{display:flex; justify-content:space-between; margin-bottom:6px; font-weight:bold; font-size:13px;}
-    .rw{display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.4); padding:6px 8px; margin-bottom:4px; border-radius:5px; font-size:12px;}
-    input,select{background:#111; color:#f0e6d2; border:1px solid #c8963e; padding:4px; border-radius:4px; text-align:center; font-weight:bold; font-size:12px;}
-    .sw{position:relative; width:36px; height:18px;} .sw input{display:none;} .sw span{position:absolute; top:0; left:0; right:0; bottom:0; background:#444; border-radius:18px; cursor:pointer;} .sw span:before{content:''; position:absolute; width:14px; height:14px; left:2px; bottom:2px; background:#fff; border-radius:50%; transition:0.3s;} input:checked+span{background:#c8963e;} input:checked+span:before{transform:translateX(18px); background:#000;}
-    .btn-save{background:linear-gradient(145deg, #4CAF50, #388E3C); color:#fff; border:none; padding:15px; width:100%; border-radius:10px; font-weight:bold; font-size:15px; cursor:pointer; margin-top:10px;}
     
-    #toast{visibility:hidden; min-width:250px; background:linear-gradient(145deg, #4CAF50, #2E7D32); color:#fff; text-align:center; border-radius:30px; padding:12px; position:fixed; z-index:1000; left:50%; bottom:70px; transform:translateX(-50%); font-size:14px; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.5);} 
+    /* 🔴 ઓફલાઈન સેટિંગ્સ જેવું જમસ્કા (CSS) 🔴 */
+    .cd{background:#1a1a1a; padding:15px; margin-bottom:15px; border-radius:8px; border:1px solid #333; border-left:4px solid transparent;}
+    .hd{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; font-weight:bold; font-size:14px;}
+    .rw{display:flex; justify-content:space-between; align-items:center; background:#0a0a0a; padding:10px; border-radius:6px; font-size:13px; font-weight:bold; color:#aaa; margin-top:5px;}
+    .time-box{display:flex; align-items:center; gap:4px;}
+    .time-box input, .time-box select{background:#111; color:#e6c27a; border:1px solid #e6c27a; padding:6px; border-radius:4px; font-size:14px; font-weight:bold; text-align:center;}
+    
+    /* 🔴 ગોલ્ડન સ્વીચ 🔴 */
+    .sw{position:relative; width:40px; height:22px;} .sw input{display:none;} 
+    .sw span{position:absolute; top:0; left:0; right:0; bottom:0; background:#444; border-radius:22px; cursor:pointer;} 
+    .sw span:before{content:''; position:absolute; width:18px; height:18px; left:2px; bottom:2px; background:#fff; border-radius:50%; transition:0.3s;} 
+    input:checked+span{background:#e6c27a;} input:checked+span:before{transform:translateX(18px); background:#000;}
+    
+    /* 🔴 ફૂલ સાઈઝનું ગોલ્ડન સેવ બટન 🔴 */
+    .btn-save{background:#e6c27a; color:#000; border:none; padding:15px; width:100%; font-weight:bold; font-size:15px; cursor:pointer; margin-top:10px; text-transform:uppercase; border-radius:5px;}
+    
+    #toast{visibility:hidden; min-width:250px; background:#4CAF50; color:#fff; text-align:center; border-radius:30px; padding:12px; position:fixed; z-index:1000; left:50%; bottom:70px; transform:translateX(-50%); font-size:14px; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.5);} 
     #toast.show{visibility:visible;}
-    .footer{text-align:center; color:#ffffff; font-size:16px; margin-top:30px; padding-bottom:30px; font-weight:bold; letter-spacing:1px; text-shadow: 0 0 8px #ff00ff, 0 0 15px #ff00ff;}
+    .footer{text-align:center; color:#ffffff; font-size:15px; margin-top:30px; padding-bottom:30px; font-weight:bold; text-shadow: 0 0 10px #9c27b0, 0 0 20px #9c27b0;}
   </style>
 </head>
 <body>
@@ -70,7 +76,7 @@
   <div class="c">
     <div id="dashboard">
       <div class="card" style="margin-bottom: 10px;">
-        <div style="color:#2196f3; font-weight:900; font-size:14px; margin-bottom:10px;">🔴🙏 SWAMINARAYAN SARVOPARI DHAM 🙏🔴</div>
+        <div style="color:#2196f3; font-weight:900; font-size:13px; margin-bottom:10px;">🔴🙏 SWAMINARAYAN SARVOPARI DHAM 🙏🔴</div>
         <div class="stat-row">
           <div id="clock" class="time-text">--:--</div>
           <div class="badge-col">
@@ -116,12 +122,8 @@
 
     function cmd(act, id) {
       if(isSending) return; isSending = true;
-      if(act === "toggle") {
-        relayStates[id] = relayStates[id] == 1 ? 0 : 1; 
-        manualModes[id] = "true"; 
-      } else if (act === "auto") {
-        manualModes[id] = "false";
-      }
+      if(act === "toggle") { relayStates[id] = relayStates[id] == 1 ? 0 : 1; manualModes[id] = "true"; } 
+      else if (act === "auto") { manualModes[id] = "false"; }
       updateBtnUI(id);
       db.ref("/command").set({action: act, id: id, timestamp: Date.now()});
       setTimeout(() => { isSending = false; }, 200); 
@@ -137,7 +139,7 @@
     function buildUI() {
       let dHtml = "";
       for(let i=0; i<10; i++) {
-        dHtml += `<div class='card' style='padding:12px;'><h4>${names[i]}</h4><div class='btn-row'>
+        dHtml += `<div class='card' style='padding:12px; margin-bottom:0;'><h4>${names[i]}</h4><div class='btn-row'>
                   <button id='btnR${i}' class='btn off-m' onclick='cmd("toggle", ${i})'>Wait</button>
                   <button id='btnA${i}' class='btn a-on' onclick='cmd("auto", ${i})'>Wait</button>
                   </div></div>`;
@@ -150,12 +152,16 @@
 
       let cHtml = "";
       for(let i=0; i<10; i++) {
-        cHtml += `<div id='tc${i}' class='tc ${i==0?"act":""}'><h3 style='color:#f9d976;text-align:center;margin-top:0;'>${names[i]}</h3>`;
+        cHtml += `<div id='tc${i}' class='tc ${i==0?"act":""}' style='padding-bottom:20px;'><h3 style='color:#f9d976;text-align:center;margin-top:0;text-transform:uppercase;'>${names[i]}</h3>`;
         for(let j=0; j<12; j++) {
           let p = `r${i}s${j}`;
-          cHtml += `<div class='cd' style='border-left-color:${slotColors[j]}'><div class='hd' style='color:${slotColors[j]}'><span>${slotNames[j]}</span><label class='sw'><input type='checkbox' id='${p}_en'><span></span></label></div><div class='rw'><span>ON</span><div><input type='number' id='${p}_sh' min='1' max='12' value='12' style='width:35px'>:<input type='number' id='${p}_sm' min='0' max='59' value='0' style='width:35px'> <select id='${p}_sap'><option value='0'>AM</option><option value='1'>PM</option></select></div></div><div class='rw'><span>OFF</span><div><input type='number' id='${p}_eh' min='1' max='12' value='12' style='width:35px'>:<input type='number' id='${p}_em' min='0' max='59' value='0' style='width:35px'> <select id='${p}_eap'><option value='0'>AM</option><option value='1'>PM</option></select></div></div></div>`;
+          cHtml += `<div class='cd' style='border-left-color:${slotColors[j]}'>
+                      <div class='hd' style='color:${slotColors[j]}'><span>${slotNames[j]}</span><label class='sw'><input type='checkbox' id='${p}_en'><span></span></label></div>
+                      <div class='rw'><span>ON</span><div class='time-box'><input type='number' id='${p}_sh' min='1' max='12' value='12' style='width:45px'>:<input type='number' id='${p}_sm' min='0' max='59' value='00' style='width:45px'> <select id='${p}_sap'><option value='0'>AM</option><option value='1'>PM</option></select></div></div>
+                      <div class='rw'><span>OFF</span><div class='time-box'><input type='number' id='${p}_eh' min='1' max='12' value='12' style='width:45px'>:<input type='number' id='${p}_em' min='0' max='59' value='00' style='width:45px'> <select id='${p}_eap'><option value='0'>AM</option><option value='1'>PM</option></select></div></div>
+                    </div>`;
         }
-        cHtml += `<button class='btn-save' onclick='saveFirebaseSettings()'>SYNC WITH MODULE</button></div>`;
+        cHtml += `<button class='btn-save' onclick='saveFirebaseSettings()'>SAVE L${i+1} SETTINGS</button></div>`;
       }
       document.getElementById('settingsContent').innerHTML = cHtml;
     }
@@ -220,10 +226,8 @@
     function updateClock() {
       const now = new Date();
       const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-      let h12 = now.getHours() % 12 || 12;
-      let ampm = now.getHours() >= 12 ? "PM" : "AM";
-      let m = now.getMinutes().toString().padStart(2, '0');
-      let s = now.getSeconds().toString().padStart(2, '0');
+      let h12 = now.getHours() % 12 || 12; let ampm = now.getHours() >= 12 ? "PM" : "AM";
+      let m = now.getMinutes().toString().padStart(2, '0'); let s = now.getSeconds().toString().padStart(2, '0');
       document.getElementById('clock').innerHTML = `${days[now.getDay()]} ${h12}:${m}:${s} ${ampm}`;
     }
     setInterval(updateClock, 1000);
@@ -233,30 +237,21 @@
 
       db.ref(".info/connected").on("value", function(snap) {
         let appBadge = document.getElementById("appNetBadge");
-        if (snap.val() === true) {
-          appBadge.className = "badge"; appBadge.innerText = "APP ONLINE";
-        } else {
-          appBadge.className = "badge offline"; appBadge.innerText = "APP OFFLINE";
-        }
+        if (snap.val() === true) { appBadge.className = "badge"; appBadge.innerText = "APP ONLINE"; } 
+        else { appBadge.className = "badge offline"; appBadge.innerText = "APP OFFLINE"; }
       });
 
       db.ref('/status').on('value', snap => {
         let d = snap.val(); if(!d) return;
-        if(d.s) relayStates = d.s;
-        if(d.m) manualModes = d.m;
+        if(d.s) relayStates = d.s; if(d.m) manualModes = d.m;
         for(let i=0; i<10; i++) updateBtnUI(i);
         
         let espBadge = document.getElementById("espNetBadge");
-        if(d.online === true) {
-          espBadge.className = "badge"; espBadge.innerText = "CLOUD";
-        } else {
-          espBadge.className = "badge offline"; espBadge.innerText = "LOCAL";
-        }
+        if(d.online === true) { espBadge.className = "badge"; espBadge.innerText = "CLOUD"; } 
+        else { espBadge.className = "badge offline"; espBadge.innerText = "LOCAL"; }
 
         clearTimeout(onlineTimer);
-        onlineTimer = setTimeout(() => { 
-          espBadge.className = "badge offline"; espBadge.innerText = "LOCAL";
-        }, 6000);
+        onlineTimer = setTimeout(() => { espBadge.className = "badge offline"; espBadge.innerText = "LOCAL"; }, 6000);
       });
     };
   </script>
