@@ -2,248 +2,248 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <meta charset='UTF-8'>
-  <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'>
-  <meta name='theme-color' content='#1a1a1a'>
-  <title>Sarvopari Dham Online</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="https://i.ibb.co/999CRL59/IMG-20260606-214127.jpg">
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'>
+  <meta name='theme-color' content='#1a1a1a'>
+  <title>Sarvopari Dham Online</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="https://i.ibb.co/999CRL59/IMG-20260606-214127.jpg">
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-  <style>
-    body{font-family:'Segoe UI', sans-serif; background:#1a1a1a; color:#f0e6d2; margin:0; text-align:center; min-height:100vh; padding-bottom:70px;}
-    .nav{background:#111; padding:10px; display:flex; justify-content:space-around; font-weight:bold; border-bottom: 1px solid #333; position:sticky; top:0; z-index:100;}
-    .nav a{color:#888; text-decoration:none; padding:6px 14px; border-radius:5px; transition:0.3s; cursor:pointer; font-size:14px;}
-    .nav a.act{background:#2196f3; color:#fff;}
-    .c{padding:8px; max-width:800px; margin:auto;}
-    .card{background:#333; padding:12px; margin-bottom:12px; border-radius:10px; box-shadow:0 4px 6px rgba(0,0,0,0.3);}
-    .stat-row{display:flex; justify-content:space-between; align-items:center;}
-    .time-text{font-size:18px; color:#fbc02d; font-weight:bold;}
-    .badge-col{display:flex; flex-direction:column; gap:4px; align-items:flex-end;}
-    .badge{font-size:9px; padding:3px 6px; border-radius:4px; font-weight:bold; background:#4caf50; color:#fff; letter-spacing:1px;}
-    .badge.offline{background:#f44336;}
-    .status-msg{color:#69f0ae; font-weight:600; font-size:12px; margin-top:6px;}
-    .grid{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;}
-    h4{margin:0 0 8px; color:#f9d976; font-size:12px;}
-    .btn-row{display:flex; gap:6px;}
-    .btn{border:none; padding:8px 0; border-radius:18px; flex:1; font-weight:bold; cursor:pointer; color:#fff; font-size:11px; transition:0.2s; box-shadow:0 3px 5px rgba(0,0,0,0.3);}
-    .btn:active{transform:scale(0.95);}
-    .on-m{background:#388E3C; box-shadow:inset 0 4px 10px rgba(0,0,0,0.6);} 
-    .off-m{background:#D32F2F;} 
-    .on-a{background:#0097A7; box-shadow:inset 0 4px 10px rgba(0,0,0,0.6);} 
-    .off-a{background:#7B1FA2;} 
-    .a-on{background:#F57C00; box-shadow:inset 0 4px 10px rgba(0,0,0,0.6);} 
-    .a-off{background:#1976D2;}
-    #settings { display: none; text-align: left; }
-    .tabs{display:flex; overflow-x:auto; padding:8px 0; gap:6px;}
-    .tb{background:#222; color:#e6c27a; border:1px solid #e6c27a; padding:6px 12px; border-radius:15px; white-space:nowrap; font-weight:bold; font-size:12px; cursor:pointer;}
-    .tb.act{background:#e6c27a; color:#000;}
-    .tc{display:none;} .tc.act{display:block;}
-    .cd{background:#111; padding:8px 10px; margin-bottom:10px; border-radius:8px; border-left:4px solid transparent; box-shadow:0 2px 4px rgba(0,0,0,0.3);}
-    .hd{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-weight:bold; font-size:12px;}
-    .rw{display:flex; justify-content:space-between; align-items:center; background:#1a1a1a; padding:4px 8px; margin-bottom:4px; border-radius:6px; font-size:11px; color:#aaa; font-weight:bold;}
-    .time-box{display:flex; align-items:center; gap:4px;}
-    .time-box input, .time-box select{background:#222; color:#e6c27a; border:1px solid #e6c27a; padding:2px; border-radius:4px; font-size:12px; font-weight:bold; text-align:center;}
-    .sw{position:relative; width:30px; height:16px;} .sw input{display:none;} 
-    .sw span{position:absolute; top:0; left:0; right:0; bottom:0; background:#444; border-radius:16px; cursor:pointer;} 
-    .sw span:before{content:''; position:absolute; width:12px; height:12px; left:2px; bottom:2px; background:#fff; border-radius:50%; transition:0.3s;} 
-    input:checked+span{background:#e6c27a;} input:checked+span:before{transform:translateX(14px); background:#000;}
-    .btn-save{background:#e6c27a; color:#000; border:none; padding:12px; width:100%; font-weight:bold; font-size:14px; cursor:pointer; margin-top:10px; text-transform:uppercase; border-radius:5px;}
-    #toast{visibility:hidden; min-width:200px; background:#4CAF50; color:#fff; text-align:center; border-radius:20px; padding:10px; position:fixed; z-index:1000; left:50%; bottom:70px; transform:translateX(-50%); font-size:13px; font-weight:bold;} 
-    #toast.show{visibility:visible;}
-    .footer{text-align:center; color:#ffffff; font-size:14px; margin-top:25px; padding-bottom:30px; font-weight:bold; text-shadow: 0 0 8px #9c27b0, 0 0 15px #9c27b0;}
-  </style>
+  <style>
+    body{font-family:'Segoe UI', sans-serif; background:#1a1a1a; color:#f0e6d2; margin:0; text-align:center; min-height:100vh; padding-bottom:70px;}
+    .nav{background:#111; padding:10px; display:flex; justify-content:space-around; font-weight:bold; border-bottom: 1px solid #333; position:sticky; top:0; z-index:100;}
+    .nav a{color:#888; text-decoration:none; padding:6px 14px; border-radius:5px; transition:0.3s; cursor:pointer; font-size:14px;}
+    .nav a.act{background:#2196f3; color:#fff;}
+    .c{padding:8px; max-width:800px; margin:auto;}
+    .card{background:#333; padding:12px; margin-bottom:12px; border-radius:10px; box-shadow:0 4px 6px rgba(0,0,0,0.3);}
+    .stat-row{display:flex; justify-content:space-between; align-items:center;}
+    .time-text{font-size:18px; color:#fbc02d; font-weight:bold;}
+    .badge-col{display:flex; flex-direction:column; gap:4px; align-items:flex-end;}
+    .badge{font-size:9px; padding:3px 6px; border-radius:4px; font-weight:bold; background:#4caf50; color:#fff; letter-spacing:1px;}
+    .badge.offline{background:#f44336;}
+    .status-msg{color:#69f0ae; font-weight:600; font-size:12px; margin-top:6px;}
+    .grid{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;}
+    h4{margin:0 0 8px; color:#f9d976; font-size:12px;}
+    .btn-row{display:flex; gap:6px;}
+    .btn{border:none; padding:8px 0; border-radius:18px; flex:1; font-weight:bold; cursor:pointer; color:#fff; font-size:11px; transition:0.2s; box-shadow:0 3px 5px rgba(0,0,0,0.3);}
+    .btn:active{transform:scale(0.95);}
+    .on-m{background:#388E3C; box-shadow:inset 0 4px 10px rgba(0,0,0,0.6);} 
+    .off-m{background:#D32F2F;} 
+    .on-a{background:#0097A7; box-shadow:inset 0 4px 10px rgba(0,0,0,0.6);} 
+    .off-a{background:#7B1FA2;} 
+    .a-on{background:#F57C00; box-shadow:inset 0 4px 10px rgba(0,0,0,0.6);} 
+    .a-off{background:#1976D2;}
+    #settings { display: none; text-align: left; }
+    .tabs{display:flex; overflow-x:auto; padding:8px 0; gap:6px;}
+    .tb{background:#222; color:#e6c27a; border:1px solid #e6c27a; padding:6px 12px; border-radius:15px; white-space:nowrap; font-weight:bold; font-size:12px; cursor:pointer;}
+    .tb.act{background:#e6c27a; color:#000;}
+    .tc{display:none;} .tc.act{display:block;}
+    .cd{background:#111; padding:8px 10px; margin-bottom:10px; border-radius:8px; border-left:4px solid transparent; box-shadow:0 2px 4px rgba(0,0,0,0.3);}
+    .hd{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-weight:bold; font-size:12px;}
+    .rw{display:flex; justify-content:space-between; align-items:center; background:#1a1a1a; padding:4px 8px; margin-bottom:4px; border-radius:6px; font-size:11px; color:#aaa; font-weight:bold;}
+    .time-box{display:flex; align-items:center; gap:4px;}
+    .time-box input, .time-box select{background:#222; color:#e6c27a; border:1px solid #e6c27a; padding:2px; border-radius:4px; font-size:12px; font-weight:bold; text-align:center;}
+    .sw{position:relative; width:30px; height:16px;} .sw input{display:none;} 
+    .sw span{position:absolute; top:0; left:0; right:0; bottom:0; background:#444; border-radius:16px; cursor:pointer;} 
+    .sw span:before{content:''; position:absolute; width:12px; height:12px; left:2px; bottom:2px; background:#fff; border-radius:50%; transition:0.3s;} 
+    input:checked+span{background:#e6c27a;} input:checked+span:before{transform:translateX(14px); background:#000;}
+    .btn-save{background:#e6c27a; color:#000; border:none; padding:12px; width:100%; font-weight:bold; font-size:14px; cursor:pointer; margin-top:10px; text-transform:uppercase; border-radius:5px;}
+    #toast{visibility:hidden; min-width:200px; background:#4CAF50; color:#fff; text-align:center; border-radius:20px; padding:10px; position:fixed; z-index:1000; left:50%; bottom:70px; transform:translateX(-50%); font-size:13px; font-weight:bold;} 
+    #toast.show{visibility:visible;}
+    .footer{text-align:center; color:#ffffff; font-size:14px; margin-top:25px; padding-bottom:30px; font-weight:bold; text-shadow: 0 0 8px #9c27b0, 0 0 15px #9c27b0;}
+  </style>
 </head>
 <body>
-  
-  <div class='nav'>
-    <a id="navDash" class='act' onclick="switchTab('dash')">DASHBOARD</a>
-    <a id="navSet" onclick="switchTab('set')">SETTINGS</a>
-  </div>
-  
-  <div id='toast'>Done!</div>
+  
+  <div class='nav'>
+    <a id="navDash" class='act' onclick="switchTab('dash')">DASHBOARD</a>
+    <a id="navSet" onclick="switchTab('set')">SETTINGS</a>
+  </div>
+  
+  <div id='toast'>Done!</div>
 
-  <div class="c">
-    <div id="dashboard">
-      <div class="card" style="margin-bottom: 8px;">
-        <div style="color:#2196f3; font-weight:900; font-size:13px; margin-bottom:8px;">🔴🙏 SARVOPARI DHAM LIGHT 🙏🔴</div>
-        <div class="stat-row">
-          <div id="clock" class="time-text">--:--</div>
-          <div class="badge-col">
-            <span id="appNetBadge" class="badge offline">APP OFFLINE</span>
-            <span id="espNetBadge" class="badge offline">ESP OFFLINE</span>
-          </div>
-        </div>
-        <div id="statusMsg" class="status-msg">SYSTEM READY</div>
-      </div>
-      <div class='grid' id='buttonsGrid'></div>
-      <div class='footer'>SARVOPARI DHAM GLOBAL LIGHT REMOTE</div>
-    </div>
+  <div class="c">
+    <div id="dashboard">
+      <div class="card" style="margin-bottom: 8px;">
+        <div style="color:#2196f3; font-weight:900; font-size:12px; margin-bottom:8px;">🔴🙏 SARVOPARI DHAM LIGHT 🙏🔴</div>
+        <div class="stat-row">
+          <div id="clock" class="time-text">--:--</div>
+          <div class="badge-col">
+            <span id="appNetBadge" class="badge offline">APP OFFLINE</span>
+            <span id="espNetBadge" class="badge offline">ESP OFFLINE</span>
+          </div>
+        </div>
+        <div id="statusMsg" class="status-msg">SYSTEM READY</div>
+      </div>
+      <div class='grid' id='buttonsGrid'></div>
+      <div class='footer'>SARVOPARI DHAM GLOBAL LIGHT REMOTE</div>
+    </div>
 
-    <div id="settings">
-      <div class='tabs' id='settingsTabs'></div>
-      <div id='settingsContent'></div>
-    </div>
-  </div>
+    <div id="settings">
+      <div class='tabs' id='settingsTabs'></div>
+      <div id='settingsContent'></div>
+    </div>
+  </div>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyAoPnrydmBiFCG8FP52Sy_jsRBb1CyUfaM",
-      databaseURL: "https://sarvopari-liths-default-rtdb.firebaseio.com"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAoPnrydmBiFCG8FP52Sy_jsRBb1CyUfaM",
+      databaseURL: "https://sarvopari-liths-default-rtdb.firebaseio.com"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    const names = ["1. Sinhasan Jalar 1", "2. Sabha Jalar 2", "3. Sabha Jalar 3", "4. Zumar 1", "5. Zumar 2", "6. Zumar 3", "7. Ghumat", "8. Border", "9. Audience Lamp 2", "10. Vakta Light"];
-    const slotNames = ["S1: All Day 1", "S2: All Day 2", "S3: Mon-Sat 1", "S4: Mon-Sat 2", "S5: Mon-Sat 3", "S6: Mon-Sat 4", "S7: Tue Only 1", "S8: Tue Only 2", "S9: Sat Only 1", "S10: Sat Only 2", "S11: Sun Only 1", "S12: Sun Only 2"];
-    const slotColors = ["#4CAF50", "#8BC34A", "#9C27B0", "#BA68C8", "#E91E63", "#F06292", "#FFEB3B", "#FBC02D", "#FF9800", "#F57C00", "#FFFFFF", "#E0E0E0"];
-    
-    let relayStates = [0,0,0,0,0,0,0,0,0,0]; 
-    let manualModes = ["false","false","false","false","false","false","false","false","false","false"];
-    let isSending = false; let onlineTimer;
+    const names = ["1. Sinhasan Jalar 1", "2. Sabha Jalar 2", "3. Sabha Jalar 3", "4. Zumar 1", "5. Zumar 2", "6. Zumar 3", "7. Ghumat", "8. Border", "9. Audience Lamp 2", "10. Vakta Light"];
+    const slotNames = ["S1: All Day 1", "S2: All Day 2", "S3: Mon-Sat 1", "S4: Mon-Sat 2", "S5: Mon-Sat 3", "S6: Mon-Sat 4", "S7: Tue Only 1", "S8: Tue Only 2", "S9: Sat Only 1", "S10: Sat Only 2", "S11: Sun Only 1", "S12: Sun Only 2"];
+    const slotColors = ["#4CAF50", "#8BC34A", "#9C27B0", "#BA68C8", "#E91E63", "#F06292", "#FFEB3B", "#FBC02D", "#FF9800", "#F57C00", "#FFFFFF", "#E0E0E0"];
+    
+    let relayStates = [0,0,0,0,0,0,0,0,0,0]; 
+    let manualModes = ["false","false","false","false","false","false","false","false","false","false"];
+    let isSending = false; let onlineTimer;
 
-    function switchTab(tab) {
-      document.getElementById('dashboard').style.display = tab==='dash'?'block':'none';
-      document.getElementById('settings').style.display = tab==='set'?'block':'none';
-      document.getElementById('navDash').classList.toggle('act', tab==='dash');
-      document.getElementById('navSet').classList.toggle('act', tab==='set');
-    }
+    function switchTab(tab) {
+      document.getElementById('dashboard').style.display = tab==='dash'?'block':'none';
+      document.getElementById('settings').style.display = tab==='set'?'block':'none';
+      document.getElementById('navDash').classList.toggle('act', tab==='dash');
+      document.getElementById('navSet').classList.toggle('act', tab==='set');
+    }
 
-    function cmd(act, id) {
-      if(isSending) return; isSending = true;
-      if(act === "toggle") { relayStates[id] = relayStates[id] == 1 ? 0 : 1; manualModes[id] = "true"; } 
-      else if (act === "auto") { manualModes[id] = "false"; }
-      updateBtnUI(id);
-      db.ref("/command").set({action: act, id: id, timestamp: Date.now()});
-      setTimeout(() => { isSending = false; }, 200); 
-    }
+    function cmd(act, id) {
+      if(isSending) return; isSending = true;
+      if(act === "toggle") { relayStates[id] = relayStates[id] == 1 ? 0 : 1; manualModes[id] = "true"; } 
+      else if (act === "auto") { manualModes[id] = "false"; }
+      updateBtnUI(id);
+      db.ref("/command").set({action: act, id: id, timestamp: Date.now()});
+      setTimeout(() => { isSending = false; }, 200); 
+    }
 
-    function oT(id) {
-      document.querySelectorAll('.tc').forEach(e => e.classList.remove('act'));
-      document.querySelectorAll('.tb').forEach(e => e.classList.remove('act'));
-      document.getElementById('tc'+id).classList.add('act');
-      document.getElementById('tb'+id).classList.add('act');
-    }
+    function oT(id) {
+      document.querySelectorAll('.tc').forEach(e => e.classList.remove('act'));
+      document.querySelectorAll('.tb').forEach(e => e.classList.remove('act'));
+      document.getElementById('tc'+id).classList.add('act');
+      document.getElementById('tb'+id).classList.add('act');
+    }
 
-    function buildUI() {
-      let dHtml = "";
-      for(let i=0; i<10; i++) {
-        dHtml += `<div class='card' style='padding:10px; margin-bottom:0;'><h4>${names[i]}</h4><div class='btn-row'>
-                  <button id='btnR${i}' class='btn off-m' onclick='cmd("toggle", ${i})'>Wait</button>
-                  <button id='btnA${i}' class='btn a-on' onclick='cmd("auto", ${i})'>Wait</button>
-                  </div></div>`;
-      }
-      document.getElementById('buttonsGrid').innerHTML = dHtml;
+    function buildUI() {
+      let dHtml = "";
+      for(let i=0; i<10; i++) {
+        dHtml += `<div class='card' style='padding:10px; margin-bottom:0;'><h4>${names[i]}</h4><div class='btn-row'>
+                  <button id='btnR${i}' class='btn off-m' onclick='cmd("toggle", ${i})'>Wait</button>
+                  <button id='btnA${i}' class='btn a-on' onclick='cmd("auto", ${i})'>Wait</button>
+                  </div></div>`;
+      }
+      document.getElementById('buttonsGrid').innerHTML = dHtml;
 
-      let tHtml = "";
-      for(let i=0; i<10; i++) { tHtml += `<button id='tb${i}' class='tb ${i==0?"act":""}' onclick='oT(${i})'>L${i+1}</button>`; }
-      document.getElementById('settingsTabs').innerHTML = tHtml;
+      let tHtml = "";
+      for(let i=0; i<10; i++) { tHtml += `<button id='tb${i}' class='tb ${i==0?"act":""}' onclick='oT(${i})'>L${i+1}</button>`; }
+      document.getElementById('settingsTabs').innerHTML = tHtml;
 
-      let cHtml = "";
-      for(let i=0; i<10; i++) {
-        cHtml += `<div id='tc${i}' class='tc ${i==0?"act":""}' style='padding-bottom:15px;'><h3 style='color:#f9d976;text-align:center;margin-top:0;font-size:14px;text-transform:uppercase;'>${names[i]}</h3>`;
-        for(let j=0; j<12; j++) {
-          let p = `r${i}s${j}`;
-          cHtml += `<div class='cd' style='border-left-color:${slotColors[j]}'>
-                      <div class='hd' style='color:${slotColors[j]}'><span>${slotNames[j]}</span><label class='sw'><input type='checkbox' id='${p}_en'><span></span></label></div>
-                      <div class='rw'><span>ON</span><div class='time-box'><input type='number' id='${p}_sh' min='1' max='12' value='12' style='width:36px'> : <input type='number' id='${p}_sm' min='0' max='59' value='00' style='width:36px'> <select id='${p}_sap'><option value='0'>AM</option><option value='1'>PM</option></select></div></div>
-                      <div class='rw'><span>OFF</span><div class='time-box'><input type='number' id='${p}_eh' min='1' max='12' value='12' style='width:36px'> : <input type='number' id='${p}_em' min='0' max='59' value='00' style='width:36px'> <select id='${p}_eap'><option value='0'>AM</option><option value='1'>PM</option></select></div></div>
-                    </div>`;
-        }
-        cHtml += `<button class='btn-save' onclick='saveFirebaseSettings()'>SAVE L${i+1} SETTINGS</button></div>`;
-      }
-      document.getElementById('settingsContent').innerHTML = cHtml;
-    }
+      let cHtml = "";
+      for(let i=0; i<10; i++) {
+        cHtml += `<div id='tc${i}' class='tc ${i==0?"act":""}' style='padding-bottom:15px;'><h3 style='color:#f9d976;text-align:center;margin-top:0;font-size:14px;text-transform:uppercase;'>${names[i]}</h3>`;
+        for(let j=0; j<12; j++) {
+          let p = `r${i}s${j}`;
+          cHtml += `<div class='cd' style='border-left-color:${slotColors[j]}'>
+                      <div class='hd' style='color:${slotColors[j]}'><span>${slotNames[j]}</span><label class='sw'><input type='checkbox' id='${p}_en'><span></span></label></div>
+                      <div class='rw'><span>ON</span><div class='time-box'><input type='number' id='${p}_sh' min='1' max='12' value='12' style='width:36px'> : <input type='number' id='${p}_sm' min='0' max='59' value='00' style='width:36px'> <select id='${p}_sap'><option value='0'>AM</option><option value='1'>PM</option></select></div></div>
+                      <div class='rw'><span>OFF</span><div class='time-box'><input type='number' id='${p}_eh' min='1' max='12' value='12' style='width:36px'> : <input type='number' id='${p}_em' min='0' max='59' value='00' style='width:36px'> <select id='${p}_eap'><option value='0'>AM</option><option value='1'>PM</option></select></div></div>
+                    </div>`;
+        }
+        cHtml += `<button class='btn-save' onclick='saveFirebaseSettings()'>SAVE L${i+1} SETTINGS</button></div>`;
+      }
+      document.getElementById('settingsContent').innerHTML = cHtml;
+    }
 
-    function loadFirebaseSettings() {
-      db.ref('/settings').once('value').then(snap => {
-        let data = snap.val(); if(!data) return;
-        for(let i=0; i<10; i++) {
-          let rData = data["R"+i];
-          if(rData) {
-            for(let j=0; j<12; j++) {
-              let slot = rData[j];
-              if(slot) {
-                let p = `r${i}s${j}`;
-                document.getElementById(`${p}_en`).checked = (slot.en == 1);
-                document.getElementById(`${p}_sh`).value = (slot.sh == 0 || slot.sh == 12) ? 12 : (slot.sh > 12 ? slot.sh - 12 : slot.sh);
-                document.getElementById(`${p}_sap`).value = (slot.sh >= 12) ? 1 : 0;
-                document.getElementById(`${p}_sm`).value = slot.sm < 10 ? '0'+slot.sm : slot.sm;
-                document.getElementById(`${p}_eh`).value = (slot.eh == 0 || slot.eh == 12) ? 12 : (slot.eh > 12 ? slot.eh - 12 : slot.eh);
-                document.getElementById(`${p}_eap`).value = (slot.eh >= 12) ? 1 : 0;
-                document.getElementById(`${p}_em`).value = slot.em < 10 ? '0'+slot.em : slot.em;
-              }
-            }
-          }
-        }
-      });
-    }
+    function loadFirebaseSettings() {
+      db.ref('/settings').once('value').then(snap => {
+        let data = snap.val(); if(!data) return;
+        for(let i=0; i<10; i++) {
+          let rData = data["R"+i];
+          if(rData) {
+            for(let j=0; j<12; j++) {
+              let slot = rData[j];
+              if(slot) {
+                let p = `r${i}s${j}`;
+                document.getElementById(`${p}_en`).checked = (slot.en == 1);
+                document.getElementById(`${p}_sh`).value = (slot.sh == 0 || slot.sh == 12) ? 12 : (slot.sh > 12 ? slot.sh - 12 : slot.sh);
+                document.getElementById(`${p}_sap`).value = (slot.sh >= 12) ? 1 : 0;
+                document.getElementById(`${p}_sm`).value = slot.sm < 10 ? '0'+slot.sm : slot.sm;
+                document.getElementById(`${p}_eh`).value = (slot.eh == 0 || slot.eh == 12) ? 12 : (slot.eh > 12 ? slot.eh - 12 : slot.eh);
+                document.getElementById(`${p}_eap`).value = (slot.eh >= 12) ? 1 : 0;
+                document.getElementById(`${p}_em`).value = slot.em < 10 ? '0'+slot.em : slot.em;
+              }
+            }
+          }
+        }
+      });
+    }
 
-    function saveFirebaseSettings() {
-      let fullData = {};
-      for(let i=0; i<10; i++) {
-        let rArray = [];
-        for(let j=0; j<12; j++) {
-          let p = `r${i}s${j}`;
-          let en = document.getElementById(`${p}_en`).checked ? 1 : 0;
-          let sh_in = parseInt(document.getElementById(`${p}_sh`).value); let sap = parseInt(document.getElementById(`${p}_sap`).value);
-          let sh = (sap === 1) ? (sh_in === 12 ? 12 : sh_in + 12) : (sh_in === 12 ? 0 : sh_in);
-          let eh_in = parseInt(document.getElementById(`${p}_eh`).value); let eap = parseInt(document.getElementById(`${p}_eap`).value);
-          let eh = (eap === 1) ? (eh_in === 12 ? 12 : eh_in + 12) : (eh_in === 12 ? 0 : eh_in);
-          rArray.push({en: en, sh: sh, sm: parseInt(document.getElementById(`${p}_sm`).value)||0, eh: eh, em: parseInt(document.getElementById(`${p}_em`).value)||0});
-        }
-        fullData["R"+i] = rArray;
-      }
-      db.ref('/settings').set(fullData).then(() => {
-        cmd("sync_settings", 0);
-        showToast("Settings Synced!"); switchTab('dash');
-      });
-    }
+    function saveFirebaseSettings() {
+      let fullData = {};
+      for(let i=0; i<10; i++) {
+        let rArray = [];
+        for(let j=0; j<12; j++) {
+          let p = `r${i}s${j}`;
+          let en = document.getElementById(`${p}_en`).checked ? 1 : 0;
+          let sh_in = parseInt(document.getElementById(`${p}_sh`).value); let sap = parseInt(document.getElementById(`${p}_sap`).value);
+          let sh = (sap === 1) ? (sh_in === 12 ? 12 : sh_in + 12) : (sh_in === 12 ? 0 : sh_in);
+          let eh_in = parseInt(document.getElementById(`${p}_eh`).value); let eap = parseInt(document.getElementById(`${p}_eap`).value);
+          let eh = (eap === 1) ? (eh_in === 12 ? 12 : eh_in + 12) : (eh_in === 12 ? 0 : eh_in);
+          rArray.push({en: en, sh: sh, sm: parseInt(document.getElementById(`${p}_sm`).value)||0, eh: eh, em: parseInt(document.getElementById(`${p}_em`).value)||0});
+        }
+        fullData["R"+i] = rArray;
+      }
+      db.ref('/settings').set(fullData).then(() => {
+        cmd("sync_settings", 0);
+        showToast("Settings Synced!"); switchTab('dash');
+      });
+    }
 
-    function showToast(msg) { let t = document.getElementById('toast'); t.innerText = msg; t.className = 'show'; setTimeout(() => { t.className = ''; }, 3000); }
+    function showToast(msg) { let t = document.getElementById('toast'); t.innerText = msg; t.className = 'show'; setTimeout(() => { t.className = ''; }, 3000); }
 
-    function updateBtnUI(i) {
-      let b = document.getElementById(`btnR${i}`); let a = document.getElementById(`btnA${i}`);
-      if(b && a) {
-        let isO = (relayStates[i] == 1); let isM = (manualModes[i] == "true");
-        b.innerHTML = isO ? (isM ? "ON" : "ON (Auto)") : (isM ? "OFF" : "OFF (Auto)");
-        b.className = isO ? (isM ? "btn on-m" : "btn on-a") : (isM ? "btn off-m" : "btn off-a");
-        a.innerHTML = isM ? "AUTO" : "AUTO (ON)"; a.className = isM ? "btn a-off" : "btn a-on";
-      }
-    }
+    function updateBtnUI(i) {
+      let b = document.getElementById(`btnR${i}`); let a = document.getElementById(`btnA${i}`);
+      if(b && a) {
+        let isO = (relayStates[i] == 1); let isM = (manualModes[i] == "true");
+        b.innerHTML = isO ? (isM ? "ON" : "ON (Auto)") : (isM ? "OFF" : "OFF (Auto)");
+        b.className = isO ? (isM ? "btn on-m" : "btn on-a") : (isM ? "btn off-m" : "btn off-a");
+        a.innerHTML = isM ? "AUTO" : "AUTO (ON)"; a.className = isM ? "btn a-off" : "btn a-on";
+      }
+    }
 
-    function updateClock() {
-      const now = new Date();
-      const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-      let h12 = now.getHours() % 12 || 12; let ampm = now.getHours() >= 12 ? "PM" : "AM";
-      let m = now.getMinutes().toString().padStart(2, '0'); let s = now.getSeconds().toString().padStart(2, '0');
-      document.getElementById('clock').innerHTML = `${days[now.getDay()]} ${h12}:${m}:${s} ${ampm}`;
-    }
-    setInterval(updateClock, 1000);
+    function updateClock() {
+      const now = new Date();
+      const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      let h12 = now.getHours() % 12 || 12; let ampm = now.getHours() >= 12 ? "PM" : "AM";
+      let m = now.getMinutes().toString().padStart(2, '0'); let s = now.getSeconds().toString().padStart(2, '0');
+      document.getElementById('clock').innerHTML = `${days[now.getDay()]} ${h12}:${m}:${s} ${ampm}`;
+    }
+    setInterval(updateClock, 1000);
 
-    window.onload = () => {
-      buildUI(); loadFirebaseSettings(); updateClock();
-      
-      db.ref(".info/connected").on("value", function(snap) {
-        let appBadge = document.getElementById("appNetBadge");
-        if (snap.val() === true) { appBadge.className = "badge"; appBadge.innerText = "APP ONLINE"; } 
-        else { appBadge.className = "badge offline"; appBadge.innerText = "APP OFFLINE"; }
-      });
+    window.onload = () => {
+      buildUI(); loadFirebaseSettings(); updateClock();
+      
+      db.ref(".info/connected").on("value", function(snap) {
+        let appBadge = document.getElementById("appNetBadge");
+        if (snap.val() === true) { appBadge.className = "badge"; appBadge.innerText = "APP ONLINE"; } 
+        else { appBadge.className = "badge offline"; appBadge.innerText = "APP OFFLINE"; }
+      });
 
-      db.ref('/status').on('value', snap => {
-        let d = snap.val(); if(!d) return;
-        if(d.s) relayStates = d.s; if(d.m) manualModes = d.m;
-        for(let i=0; i<10; i++) updateBtnUI(i);
-        
-        let espBadge = document.getElementById("espNetBadge");
-        if(d.online === true) { espBadge.className = "badge"; espBadge.innerText = "CLOUD"; } 
-        else { espBadge.className = "badge offline"; espBadge.innerText = "LOCAL"; }
+      db.ref('/status').on('value', snap => {
+        let d = snap.val(); if(!d) return;
+        if(d.s) relayStates = d.s; if(d.m) manualModes = d.m;
+        for(let i=0; i<10; i++) updateBtnUI(i);
+        
+        let espBadge = document.getElementById("espNetBadge");
+        if(d.online === true) { espBadge.className = "badge"; espBadge.innerText = "CLOUD"; } 
+        else { espBadge.className = "badge offline"; espBadge.innerText = "LOCAL"; }
 
-        clearTimeout(onlineTimer);
-        onlineTimer = setTimeout(() => { espBadge.className = "badge offline"; espBadge.innerText = "LOCAL"; }, 6000);
-      });
-    };
-  </script>
+        clearTimeout(onlineTimer);
+        onlineTimer = setTimeout(() => { espBadge.className = "badge offline"; espBadge.innerText = "LOCAL"; }, 6000);
+      });
+    };
+  </script>
 </body>
 </html>
