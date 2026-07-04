@@ -20,9 +20,11 @@
     .card{background:#333; padding:12px; margin-bottom:12px; border-radius:10px; box-shadow:0 4px 6px rgba(0,0,0,0.3);}
     .stat-row{display:flex; justify-content:space-between; align-items:center; margin-top: 15px;}
     
-    /* 🔴 ઘડિયાળની સાઈઝ 28px જેટલી મોટી કરી દીધી 🔴 */
     .time-text{font-size:28px; color:#fbc02d; font-weight:bold; padding-top: 6px; padding-bottom: 2px;}
     
+    /* 🔴 મૂર્તિ માટેનો નવો CSS 🔴 */
+    .center-murti {width: 55px; height: 55px; border-radius: 50%; border: 2px solid #FFD700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.8); object-fit: cover; margin: 0 5px;}
+
     .badge-col{display:flex; flex-direction:column; gap:4px; align-items:flex-end;}
     .badge{font-size:9px; padding:3px 6px; border-radius:4px; font-weight:bold; background:#4caf50; color:#fff; letter-spacing:1px;}
     .badge.offline{background:#f44336;}
@@ -75,6 +77,9 @@
         
         <div class="stat-row">
           <div id="clock" class="time-text">--:--</div>
+          
+          <img src="https://i.ibb.co/999CRL59/IMG-20260606-214127.jpg" class="center-murti" alt="Bhagwan Darshan">
+          
           <div class="badge-col">
             <span id="appNetBadge" class="badge offline">APP OFFLINE</span>
             <span id="espNetBadge" class="badge offline">ESP OFFLINE</span>
@@ -108,7 +113,6 @@
     let manualModes = ["false","false","false","false","false","false","false","false","false","false"];
     let isSending = false; let onlineTimer;
     
-    // 🔴 5 સેકન્ડની લોક સિસ્ટમ (બટનને ઝબકતું અટકાવવા) 🔴
     let pendingLocks = [0,0,0,0,0,0,0,0,0,0]; 
 
     function switchTab(tab) {
@@ -121,13 +125,12 @@
     function cmd(act, id) {
       if(isSending) return; isSending = true;
       
-      // 🔴 બટન દબાવાય ત્યારે ટાઈમ સેવ થાય 🔴
       pendingLocks[id] = Date.now(); 
       
       if(act === "toggle") { relayStates[id] = relayStates[id] == 1 ? 0 : 1; manualModes[id] = "true"; } 
       else if (act === "auto") { manualModes[id] = "false"; }
       
-      updateBtnUI(id); // તરત જ કલર બદલી દેશે
+      updateBtnUI(id); 
       
       db.ref("/command").set({action: act, id: id, timestamp: Date.now()});
       setTimeout(() => { isSending = false; }, 200); 
@@ -253,12 +256,10 @@
         let nowTime = Date.now();
         
         for(let i=0; i<10; i++) {
-          // 🔴 5 સેકન્ડ (5000ms) સુધી બટનને પકડી રાખશે 🔴
           if (nowTime - pendingLocks[i] > 5000) {
             if(d.s !== undefined && d.s[i] !== undefined) relayStates[i] = d.s[i]; 
             if(d.m !== undefined && d.m[i] !== undefined) manualModes[i] = d.m[i];
           }
-          // 🔴 કલર 100% અહીં જ બદલાશે 🔴
           updateBtnUI(i);
         }
         
