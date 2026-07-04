@@ -19,7 +19,10 @@
     .c{padding:8px; max-width:800px; margin:auto;}
     .card{background:#333; padding:12px; margin-bottom:12px; border-radius:10px; box-shadow:0 4px 6px rgba(0,0,0,0.3);}
     .stat-row{display:flex; justify-content:space-between; align-items:center; margin-top: 15px;}
-    .time-text{font-size:22px; color:#fbc02d; font-weight:bold; padding-top: 4px;}
+    
+    /* 🔴 ઘડિયાળની સાઈઝ 28px જેટલી મોટી કરી દીધી 🔴 */
+    .time-text{font-size:28px; color:#fbc02d; font-weight:bold; padding-top: 6px; padding-bottom: 2px;}
+    
     .badge-col{display:flex; flex-direction:column; gap:4px; align-items:flex-end;}
     .badge{font-size:9px; padding:3px 6px; border-radius:4px; font-weight:bold; background:#4caf50; color:#fff; letter-spacing:1px;}
     .badge.offline{background:#f44336;}
@@ -105,7 +108,7 @@
     let manualModes = ["false","false","false","false","false","false","false","false","false","false"];
     let isSending = false; let onlineTimer;
     
-    // 🔴 બટન લોક કરવા માટેનો નવો એરે (Flicker Fix) 🔴
+    // 🔴 5 સેકન્ડની લોક સિસ્ટમ (બટનને ઝબકતું અટકાવવા) 🔴
     let pendingLocks = [0,0,0,0,0,0,0,0,0,0]; 
 
     function switchTab(tab) {
@@ -118,7 +121,7 @@
     function cmd(act, id) {
       if(isSending) return; isSending = true;
       
-      // 🔴 બટન દબાવ્યાનો ટાઈમ સેવ કર્યો (લોક લગાવ્યો) 🔴
+      // 🔴 બટન દબાવાય ત્યારે ટાઈમ સેવ થાય 🔴
       pendingLocks[id] = Date.now(); 
       
       if(act === "toggle") { relayStates[id] = relayStates[id] == 1 ? 0 : 1; manualModes[id] = "true"; } 
@@ -250,12 +253,13 @@
         let nowTime = Date.now();
         
         for(let i=0; i<10; i++) {
-          // 🔴 જો છેલ્લા 2.5 સેકન્ડમાં બટન દબાવ્યું હોય તો જૂનો ડેટા ઇગ્નોર કરો (લોક સિસ્ટમ) 🔴
-          if (nowTime - pendingLocks[i] > 2500) {
-            if(d.s) relayStates[i] = d.s[i]; 
-            if(d.m) manualModes[i] = d.m[i];
-            updateBtnUI(i);
+          // 🔴 5 સેકન્ડ (5000ms) સુધી બટનને પકડી રાખશે 🔴
+          if (nowTime - pendingLocks[i] > 5000) {
+            if(d.s !== undefined && d.s[i] !== undefined) relayStates[i] = d.s[i]; 
+            if(d.m !== undefined && d.m[i] !== undefined) manualModes[i] = d.m[i];
           }
+          // 🔴 કલર 100% અહીં જ બદલાશે 🔴
+          updateBtnUI(i);
         }
         
         let espBadge = document.getElementById("espNetBadge");
