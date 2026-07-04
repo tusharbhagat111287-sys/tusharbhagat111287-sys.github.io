@@ -68,7 +68,7 @@
   <div class="c">
     <div id="dashboard">
       <div class="card" style="margin-bottom: 8px;">
-        <div style="color:#FFD700; font-weight:900; font-size: 19px; margin-bottom:12px; margin-top:8px; text-shadow: 0 0 8px #9c27b0, 0 0 15px #9c27b0; line-height: 1.4; word-break: keep-all; padding: 0 5px;">🔴🙏 SARVOPARI DHAM LIGHT  🙏🔴</div>
+        <div style="color:#FFFFFF; font-weight:900; font-size: 19px; margin-bottom:12px; margin-top:8px; text-shadow: 0 0 8px #9c27b0, 0 0 15px #9c27b0; line-height: 1.4; word-break: keep-all; padding: 0 5px;">🔴🙏 SARVOPARI DHAM LIGHT 🙏🔴</div>
         
         <div class="stat-row">
           <div id="clock" class="time-text">--:--</div>
@@ -104,6 +104,9 @@
     let relayStates = [0,0,0,0,0,0,0,0,0,0]; 
     let manualModes = ["false","false","false","false","false","false","false","false","false","false"];
     let isSending = false; let onlineTimer;
+    
+    // 🔴 બટન લોક કરવા માટેનો નવો એરે (Flicker Fix) 🔴
+    let pendingLocks = [0,0,0,0,0,0,0,0,0,0]; 
 
     function switchTab(tab) {
       document.getElementById('dashboard').style.display = tab==='dash'?'block':'none';
@@ -114,9 +117,15 @@
 
     function cmd(act, id) {
       if(isSending) return; isSending = true;
+      
+      // 🔴 બટન દબાવ્યાનો ટાઈમ સેવ કર્યો (લોક લગાવ્યો) 🔴
+      pendingLocks[id] = Date.now(); 
+      
       if(act === "toggle") { relayStates[id] = relayStates[id] == 1 ? 0 : 1; manualModes[id] = "true"; } 
       else if (act === "auto") { manualModes[id] = "false"; }
-      updateBtnUI(id);
+      
+      updateBtnUI(id); // તરત જ કલર બદલી દેશે
+      
       db.ref("/command").set({action: act, id: id, timestamp: Date.now()});
       setTimeout(() => { isSending = false; }, 200); 
     }
@@ -209,7 +218,6 @@
       let b = document.getElementById(`btnR${i}`); let a = document.getElementById(`btnA${i}`);
       if(b && a) {
         let isO = (relayStates[i] == 1); 
-        // 🔴 મેન્યુઅલ બટનના કલરની ઓળખાણ માટેનો નવો સુધારો 🔴
         let isM = (String(manualModes[i]) === "true"); 
         
         b.innerHTML = isO ? (isM ? "ON" : "ON (Auto)") : (isM ? "OFF" : "OFF (Auto)");
@@ -239,8 +247,16 @@
 
       db.ref('/status').on('value', snap => {
         let d = snap.val(); if(!d) return;
-        if(d.s) relayStates = d.s; if(d.m) manualModes = d.m;
-        for(let i=0; i<10; i++) updateBtnUI(i);
+        let nowTime = Date.now();
+        
+        for(let i=0; i<10; i++) {
+          // 🔴 જો છેલ્લા 2.5 સેકન્ડમાં બટન દબાવ્યું હોય તો જૂનો ડેટા ઇગ્નોર કરો (લોક સિસ્ટમ) 🔴
+          if (nowTime - pendingLocks[i] > 2500) {
+            if(d.s) relayStates[i] = d.s[i]; 
+            if(d.m) manualModes[i] = d.m[i];
+            updateBtnUI(i);
+          }
+        }
         
         let espBadge = document.getElementById("espNetBadge");
         if(d.online === true) { espBadge.className = "badge"; espBadge.innerText = "CLOUD"; } 
