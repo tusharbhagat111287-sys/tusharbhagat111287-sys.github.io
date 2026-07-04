@@ -37,20 +37,27 @@
     .a-off{background:#1976D2;}
     #settings { display: none; text-align: left; }
     .tabs{display:flex; overflow-x:auto; padding:8px 0; gap:6px;}
-    .tb{background:#222; color:#e6c27a; border:1px solid #e6c27a; padding:6px 12px; border-radius:15px; white-space:nowrap; font-weight:bold; font-size:12px; cursor:pointer;}
-    .tb.act{background:#e6c27a; color:#000;}
+    
+    /* 🔴 ગોલ્ડન ચમકતો કલર ટેબ્સ માટે 🔴 */
+    .tb{background:#222; color:#BF953F; border:1px solid #BF953F; padding:6px 12px; border-radius:15px; white-space:nowrap; font-weight:bold; font-size:12px; cursor:pointer;}
+    .tb.act{background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C); color:#000; border:none;}
+    
     .tc{display:none;} .tc.act{display:block;}
     .cd{background:#111; padding:8px 10px; margin-bottom:10px; border-radius:8px; border-left:4px solid transparent; box-shadow:0 2px 4px rgba(0,0,0,0.3);}
     .hd{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-weight:bold; font-size:12px;}
     .rw{display:flex; justify-content:space-between; align-items:center; background:#1a1a1a; padding:4px 8px; margin-bottom:4px; border-radius:6px; font-size:11px; color:#aaa; font-weight:bold;}
     .time-box{display:flex; align-items:center; gap:4px;}
-    .time-box input, .time-box select{background:#222; color:#e6c27a; border:1px solid #e6c27a; padding:2px; border-radius:4px; font-size:12px; font-weight:bold; text-align:center;}
+    .time-box input, .time-box select{background:#222; color:#BF953F; border:1px solid #BF953F; padding:2px; border-radius:4px; font-size:12px; font-weight:bold; text-align:center;}
     .sw{position:relative; width:30px; height:16px;} .sw input{display:none;} 
     .sw span{position:absolute; top:0; left:0; right:0; bottom:0; background:#444; border-radius:16px; cursor:pointer;} 
     .sw span:before{content:''; position:absolute; width:12px; height:12px; left:2px; bottom:2px; background:#fff; border-radius:50%; transition:0.3s;} 
-    input:checked+span{background:#e6c27a;} input:checked+span:before{transform:translateX(14px); background:#000;}
-    .btn-save{background:#e6c27a; color:#000; border:none; padding:12px; width:100%; font-weight:bold; font-size:14px; cursor:pointer; margin-top:10px; text-transform:uppercase; border-radius:5px;}
-    #toast{visibility:hidden; min-width:200px; background:#4CAF50; color:#fff; text-align:center; border-radius:20px; padding:10px; position:fixed; z-index:1000; left:50%; bottom:70px; transform:translateX(-50%); font-size:13px; font-weight:bold;} 
+    input:checked+span{background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);} input:checked+span:before{transform:translateX(14px); background:#000;}
+    
+    /* 🔴 ગોલ્ડન ચમકતો કલર SAVE બટન માટે 🔴 */
+    .btn-save{background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C); color:#000; border:none; padding:12px; width:100%; font-weight:bold; font-size:14px; cursor:pointer; margin-top:10px; text-transform:uppercase; border-radius:5px; box-shadow:0 4px 6px rgba(0,0,0,0.4);}
+    .btn-save:active{transform:scale(0.98);}
+    
+    #toast{visibility:hidden; min-width:200px; background:#4CAF50; color:#fff; text-align:center; border-radius:20px; padding:10px; position:fixed; z-index:1000; left:50%; bottom:70px; transform:translateX(-50%); font-size:13px; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.5);} 
     #toast.show{visibility:visible;}
     .footer{text-align:center; color:#ffffff; font-size:14px; margin-top:25px; padding-bottom:30px; font-weight:bold; text-shadow: 0 0 8px #9c27b0, 0 0 15px #9c27b0;}
   </style>
@@ -67,7 +74,7 @@
   <div class="c">
     <div id="dashboard">
       <div class="card" style="margin-bottom: 8px;">
-        <div style="color:#2196f3; font-weight:900; font-size:12px; margin-bottom:8px;">🔴🙏 SARVOPARI DHAM LIGHT 🙏🔴</div>
+        <div style="color:#FFD700; font-weight:900; font-size: 16px; margin-bottom:10px; text-shadow: 0 0 8px rgba(255,215,0,0.8); line-height: 1.4; word-break: keep-all; padding: 0 5px;">🔴🙏 SARVOPARI DHAM LIGHT 🙏🔴</div>
         <div class="stat-row">
           <div id="clock" class="time-text">--:--</div>
           <div class="badge-col">
@@ -197,7 +204,8 @@
       }
       db.ref('/settings').set(fullData).then(() => {
         cmd("sync_settings", 0);
-        showToast("Settings Synced!"); switchTab('dash');
+        showToast("Settings Synced!"); 
+        // 🔴 અહીથી મેં switchTab('dash'); કાઢી નાખ્યું છે, એટલે પેજ ત્યાં જ રહેશે 🔴
       });
     }
 
