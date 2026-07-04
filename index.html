@@ -18,8 +18,8 @@
     .nav a.act{background:#2196f3; color:#fff;}
     .c{padding:8px; max-width:800px; margin:auto;}
     .card{background:#333; padding:12px; margin-bottom:12px; border-radius:10px; box-shadow:0 4px 6px rgba(0,0,0,0.3);}
-    .stat-row{display:flex; justify-content:space-between; align-items:center;}
-    .time-text{font-size:18px; color:#fbc02d; font-weight:bold;}
+    .stat-row{display:flex; justify-content:space-between; align-items:center; margin-top: 15px;}
+    .time-text{font-size:22px; color:#fbc02d; font-weight:bold; padding-top: 4px;}
     .badge-col{display:flex; flex-direction:column; gap:4px; align-items:flex-end;}
     .badge{font-size:9px; padding:3px 6px; border-radius:4px; font-weight:bold; background:#4caf50; color:#fff; letter-spacing:1px;}
     .badge.offline{background:#f44336;}
@@ -37,11 +37,8 @@
     .a-off{background:#1976D2;}
     #settings { display: none; text-align: left; }
     .tabs{display:flex; overflow-x:auto; padding:8px 0; gap:6px;}
-    
-    /* 🔴 ગોલ્ડન ચમકતો કલર ટેબ્સ માટે 🔴 */
     .tb{background:#222; color:#BF953F; border:1px solid #BF953F; padding:6px 12px; border-radius:15px; white-space:nowrap; font-weight:bold; font-size:12px; cursor:pointer;}
     .tb.act{background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C); color:#000; border:none;}
-    
     .tc{display:none;} .tc.act{display:block;}
     .cd{background:#111; padding:8px 10px; margin-bottom:10px; border-radius:8px; border-left:4px solid transparent; box-shadow:0 2px 4px rgba(0,0,0,0.3);}
     .hd{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-weight:bold; font-size:12px;}
@@ -52,11 +49,8 @@
     .sw span{position:absolute; top:0; left:0; right:0; bottom:0; background:#444; border-radius:16px; cursor:pointer;} 
     .sw span:before{content:''; position:absolute; width:12px; height:12px; left:2px; bottom:2px; background:#fff; border-radius:50%; transition:0.3s;} 
     input:checked+span{background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);} input:checked+span:before{transform:translateX(14px); background:#000;}
-    
-    /* 🔴 ગોલ્ડન ચમકતો કલર SAVE બટન માટે 🔴 */
     .btn-save{background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C); color:#000; border:none; padding:12px; width:100%; font-weight:bold; font-size:14px; cursor:pointer; margin-top:10px; text-transform:uppercase; border-radius:5px; box-shadow:0 4px 6px rgba(0,0,0,0.4);}
     .btn-save:active{transform:scale(0.98);}
-    
     #toast{visibility:hidden; min-width:200px; background:#4CAF50; color:#fff; text-align:center; border-radius:20px; padding:10px; position:fixed; z-index:1000; left:50%; bottom:70px; transform:translateX(-50%); font-size:13px; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.5);} 
     #toast.show{visibility:visible;}
     .footer{text-align:center; color:#ffffff; font-size:14px; margin-top:25px; padding-bottom:30px; font-weight:bold; text-shadow: 0 0 8px #9c27b0, 0 0 15px #9c27b0;}
@@ -74,7 +68,8 @@
   <div class="c">
     <div id="dashboard">
       <div class="card" style="margin-bottom: 8px;">
-        <div style="color:#FFD700; font-weight:900; font-size: 16px; margin-bottom:10px; text-shadow: 0 0 8px rgba(255,215,0,0.8); line-height: 1.4; word-break: keep-all; padding: 0 5px;">🔴🙏 SARVOPARI DHAM LIGHT 🙏🔴</div>
+        <div style="color:#FFD700; font-weight:900; font-size: 19px; margin-bottom:12px; margin-top:8px; text-shadow: 0 0 8px #9c27b0, 0 0 15px #9c27b0; line-height: 1.4; word-break: keep-all; padding: 0 5px;">🔴🙏 SARVOPARI DHAM LIGHT  🙏🔴</div>
+        
         <div class="stat-row">
           <div id="clock" class="time-text">--:--</div>
           <div class="badge-col">
@@ -205,7 +200,6 @@
       db.ref('/settings').set(fullData).then(() => {
         cmd("sync_settings", 0);
         showToast("Settings Synced!"); 
-        // 🔴 અહીથી મેં switchTab('dash'); કાઢી નાખ્યું છે, એટલે પેજ ત્યાં જ રહેશે 🔴
       });
     }
 
@@ -214,10 +208,14 @@
     function updateBtnUI(i) {
       let b = document.getElementById(`btnR${i}`); let a = document.getElementById(`btnA${i}`);
       if(b && a) {
-        let isO = (relayStates[i] == 1); let isM = (manualModes[i] == "true");
+        let isO = (relayStates[i] == 1); 
+        // 🔴 મેન્યુઅલ બટનના કલરની ઓળખાણ માટેનો નવો સુધારો 🔴
+        let isM = (String(manualModes[i]) === "true"); 
+        
         b.innerHTML = isO ? (isM ? "ON" : "ON (Auto)") : (isM ? "OFF" : "OFF (Auto)");
         b.className = isO ? (isM ? "btn on-m" : "btn on-a") : (isM ? "btn off-m" : "btn off-a");
-        a.innerHTML = isM ? "AUTO" : "AUTO (ON)"; a.className = isM ? "btn a-off" : "btn a-on";
+        a.innerHTML = isM ? "AUTO" : "AUTO (ON)"; 
+        a.className = isM ? "btn a-off" : "btn a-on";
       }
     }
 
