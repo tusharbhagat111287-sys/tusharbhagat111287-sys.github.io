@@ -10,40 +10,52 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Marcellus&display=swap" rel="stylesheet">
   <style>
     :root{--gold1:#BF953F;--gold2:#FCF6BA;--gold3:#B38728;--gold4:#FBF5B7;--gold5:#AA771C;}
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    body{font-family:'Segoe UI',sans-serif;background:radial-gradient(ellipse at top,#2b1210 0%,#0a0a0a 60%);color:#f0e6d2;margin:0;text-align:center;min-height:100vh;padding-bottom:70px;}
-    .nav{background:linear-gradient(180deg,#1a1a1a,#111);padding:10px;display:flex;justify-content:space-around;font-weight:bold;border-bottom:2px solid #5c3d0e;position:sticky;top:0;z-index:100;}
-    .nav a{color:#c9a05a;text-decoration:none;padding:7px 16px;border-radius:20px;transition:0.3s;cursor:pointer;font-size:13px;letter-spacing:0.5px;}
-    .nav a.act{background:linear-gradient(to right,var(--gold1),var(--gold4),var(--gold3));color:#000;box-shadow:0 2px 8px rgba(191,149,63,0.5);}
-    .c{padding:10px;max-width:800px;margin:auto;}
-    .hero{background:linear-gradient(145deg,#241010,#1a0a0a);border:1px solid #5c3d0e;padding:16px 12px;margin-bottom:14px;border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,0.5),inset 0 0 30px rgba(191,149,63,0.06);position:relative;overflow:hidden;}
-    .hero:before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(to right,var(--gold1),var(--gold4),var(--gold3),var(--gold4),var(--gold5));}
-    .title{font-weight:900;font-size:19px;margin-bottom:12px;background:linear-gradient(to right,var(--gold1),var(--gold4),var(--gold3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1px;}
-    .stat-row{display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
-    .time-text{font-size:26px;color:#fbc02d;font-weight:bold;text-shadow:0 0 10px rgba(251,192,45,0.4);}
-    .center-murti{width:70px;height:70px;border-radius:50%;border:2px solid #FFD700;box-shadow:0 0 14px rgba(255,215,0,0.8);object-fit:cover;}
+    body{font-family:'Marcellus',Georgia,serif;background:#0a0603;background-image:radial-gradient(ellipse at top,#2b1210 0%,#0a0603 55%,#050302 100%),repeating-conic-gradient(from 0deg,rgba(191,149,63,0.025) 0deg 3deg,transparent 3deg 6deg);color:#f0e6d2;margin:0;text-align:center;min-height:100vh;padding-bottom:70px;}
+    .nav{background:linear-gradient(180deg,#1a1509,#0d0a05);padding:10px;display:flex;justify-content:space-around;font-weight:bold;border-bottom:2px solid #5c3d0e;position:sticky;top:0;z-index:100;box-shadow:0 3px 10px rgba(0,0,0,0.6);}
+    .nav a{color:#c9a05a;text-decoration:none;padding:8px 22px;border-radius:20px;transition:0.3s;cursor:pointer;font-size:12.5px;letter-spacing:1.5px;border:1px solid transparent;}
+    .nav a.act{background:linear-gradient(to right,var(--gold1),var(--gold4),var(--gold3));color:#2b1500;box-shadow:0 2px 10px rgba(191,149,63,0.5);}
+    .c{padding:12px;max-width:800px;margin:auto;}
+    .frame{border:1px solid #4a3010;border-radius:18px;padding:3px;margin-bottom:16px;background:linear-gradient(145deg,rgba(191,149,63,0.08),transparent);}
+    .hero{background:linear-gradient(160deg,#231109,#160a05);border:1px solid #6b4a1a;padding:18px 12px;border-radius:16px;box-shadow:inset 0 0 40px rgba(191,149,63,0.08);position:relative;overflow:hidden;}
+    .hero:before,.hero:after{content:'';position:absolute;left:0;right:0;height:3px;background:linear-gradient(to right,transparent,var(--gold1),var(--gold4),var(--gold3),var(--gold4),var(--gold1),transparent);}
+    .hero:before{top:0;} .hero:after{bottom:0;}
+    .title{font-family:'Cinzel',serif;font-weight:700;font-size:20px;margin-bottom:14px;background:linear-gradient(to right,var(--gold1),var(--gold4),var(--gold3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px;}
+    .flourish{color:#8a6a2a;font-size:15px;vertical-align:middle;}
+    .stat-row{display:flex;justify-content:space-between;align-items:center;margin-top:6px;}
+    .time-text{font-size:24px;color:#fbc02d;font-weight:bold;text-shadow:0 0 12px rgba(251,192,45,0.5);letter-spacing:1px;}
+    .murti-wrap{position:relative;width:76px;height:76px;}
+    .murti-wrap:before{content:'';position:absolute;inset:-6px;border-radius:50%;border:1px dashed #8a6a2a;animation:spin 18s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .center-murti{width:76px;height:76px;border-radius:50%;border:2px solid #FFD700;box-shadow:0 0 16px rgba(255,215,0,0.85);object-fit:cover;}
     .badge-col{display:flex;flex-direction:column;gap:4px;align-items:flex-end;}
-    .badge{font-size:9px;padding:4px 8px;border-radius:10px;font-weight:bold;background:#4caf50;color:#fff;letter-spacing:1px;}
-    .badge.offline{background:#8a3b3b;}
-    .status-msg{color:#69f0ae;font-weight:600;font-size:12px;margin-top:8px;background:#000;padding:6px 10px;border-radius:8px;display:inline-block;}
-    .master-row{display:flex;gap:8px;margin-bottom:12px;}
-    .m-btn{flex:1;padding:10px 0;border-radius:12px;border:1px solid #5c3d0e;background:#1a1a1a;color:#c9a05a;font-weight:bold;font-size:12px;cursor:pointer;}
-    .m-btn:active{transform:scale(0.96);}
-    .grp-title{text-align:left;color:#e0b978;font-size:12px;font-weight:bold;margin:14px 4px 8px;letter-spacing:1px;text-transform:uppercase;opacity:0.85;}
+    .badge{font-size:9px;padding:4px 9px;border-radius:10px;font-weight:bold;background:#3d7a45;color:#eaffea;letter-spacing:1px;border:1px solid #6fbf7a;}
+    .badge.offline{background:#5c2323;border-color:#a05a5a;color:#ffdcdc;}
+    .status-msg{color:#69f0ae;font-weight:600;font-size:11.5px;margin-top:10px;background:#000;padding:6px 12px;border-radius:8px;display:inline-block;border:1px solid #234;letter-spacing:0.5px;}
+    .master-row{display:flex;gap:8px;margin:16px 0;}
+    .m-btn{flex:1;padding:11px 0;border-radius:10px;border:1px solid #6b4a1a;background:linear-gradient(160deg,#1e1409,#140d05);color:#d9b876;font-weight:bold;font-size:11.5px;cursor:pointer;letter-spacing:0.5px;box-shadow:0 3px 8px rgba(0,0,0,0.5);font-family:'Marcellus',serif;}
+    .m-btn:active{transform:scale(0.96);background:linear-gradient(160deg,#2a1c0c,#1a1006);}
+    .divider{display:flex;align-items:center;gap:8px;margin:20px 4px 10px;}
+    .divider .ln{flex:1;height:1px;background:linear-gradient(to right,transparent,#7a5a1e,transparent);}
+    .divider .lbl{color:#e0b978;font-size:11.5px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;white-space:nowrap;font-family:'Cinzel',serif;}
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-    .rcard{background:linear-gradient(145deg,#1e1e1e,#161616);border:1px solid #333;border-radius:14px;padding:10px;box-shadow:0 4px 10px rgba(0,0,0,0.4);transition:0.3s;}
-    .rcard.on{border-color:#7a5a1e;box-shadow:0 4px 14px rgba(191,149,63,0.25),inset 0 0 12px rgba(191,149,63,0.08);}
-    .rname{font-size:11.5px;color:#f0e6d2;font-weight:bold;margin-bottom:8px;min-height:28px;display:flex;align-items:center;justify-content:center;text-align:center;}
-    .sw-row{display:flex;align-items:center;justify-content:center;margin-bottom:6px;}
-    .sw{position:relative;width:52px;height:28px;}
+    .rcard{background:linear-gradient(160deg,#1c1712,#120e0a);border:1px solid #3a2f22;border-radius:14px;padding:12px 8px;box-shadow:0 4px 10px rgba(0,0,0,0.45);transition:0.3s;position:relative;}
+    .rcard.on{border-color:#a97e2e;box-shadow:0 4px 16px rgba(191,149,63,0.3),inset 0 0 14px rgba(191,149,63,0.1);}
+    .ricon{font-size:20px;margin-bottom:4px;filter:grayscale(0.6);transition:0.3s;}
+    .rcard.on .ricon{filter:grayscale(0) drop-shadow(0 0 6px rgba(255,193,7,0.8));}
+    .rname{font-size:11px;color:#e8dcc4;font-weight:bold;margin-bottom:8px;min-height:14px;display:flex;align-items:center;justify-content:center;text-align:center;letter-spacing:0.3px;}
+    .sw-row{display:flex;align-items:center;justify-content:center;margin-bottom:8px;}
+    .sw{position:relative;width:56px;height:30px;}
     .sw input{display:none;}
-    .sw span{position:absolute;top:0;left:0;right:0;bottom:0;background:#3a3a3a;border-radius:28px;cursor:pointer;transition:0.3s;}
-    .sw span:before{content:'';position:absolute;width:22px;height:22px;left:3px;bottom:3px;background:#ddd;border-radius:50%;transition:0.3s;box-shadow:0 2px 4px rgba(0,0,0,0.4);}
-    .sw input:checked+span{background:linear-gradient(to right,var(--gold1),var(--gold3));}
-    .sw input:checked+span:before{transform:translateX(24px);background:#fff;}
-    .auto-pill{font-size:9px;padding:3px 10px;border-radius:10px;border:1px solid #555;background:transparent;color:#888;cursor:pointer;font-weight:bold;}
+    .sw span{position:absolute;top:0;left:0;right:0;bottom:0;background:#2a2420;border-radius:30px;cursor:pointer;transition:0.3s;border:1px solid #4a3a20;}
+    .sw span:before{content:'\1F311';font-size:11px;display:flex;align-items:center;justify-content:center;position:absolute;width:24px;height:24px;left:2px;bottom:2px;background:#3a3a3a;border-radius:50%;transition:0.3s;box-shadow:0 2px 4px rgba(0,0,0,0.5);}
+    .sw input:checked+span{background:linear-gradient(to right,var(--gold5),var(--gold1));border-color:var(--gold1);}
+    .sw input:checked+span:before{content:'\1F525';transform:translateX(26px);background:#fff8e1;box-shadow:0 0 8px rgba(255,193,7,0.9);}
+    .auto-pill{font-size:9px;padding:3px 12px;border-radius:10px;border:1px solid #555;background:transparent;color:#888;cursor:pointer;font-weight:bold;letter-spacing:0.5px;}
     .auto-pill.is-auto{color:#4caf50;border-color:#4caf50;}
     .auto-pill.is-manual{color:#ff9800;border-color:#ff9800;}
     #settings{display:none;text-align:left;}
@@ -78,30 +90,30 @@
 
   <div class="c">
     <div id="dashboard">
-      <div class="hero">
-        <div class="title">🔴🙏 SARVOPARI DHAM LIGHT 🙏🔴</div>
+      <div class="frame"><div class="hero">
+        <div class="title"><span class="flourish">❈</span> &nbsp;🙏 SARVOPARI DHAM LIGHT 🙏&nbsp; <span class="flourish">❈</span></div>
         <div class="stat-row">
           <div id="clock" class="time-text">--:--</div>
-          <img src="https://i.ibb.co/999CRL59/IMG-20260606-214127.jpg" class="center-murti" alt="Bhagwan Darshan">
+          <div class="murti-wrap"><img src="https://i.ibb.co/999CRL59/IMG-20260606-214127.jpg" class="center-murti" alt="Bhagwan Darshan"></div>
           <div class="badge-col">
             <span id="appNetBadge" class="badge offline">APP OFFLINE</span>
             <span id="espNetBadge" class="badge offline">ESP OFFLINE</span>
           </div>
         </div>
         <div id="statusMsg" class="status-msg">SYSTEM READY</div>
-      </div>
+      </div></div>
 
       <div class="master-row">
         <button class="m-btn" onclick="allCmd('toggle',1)">🪔 ALL ON</button>
-        <button class="m-btn" onclick="allCmd('toggle',0)">ALL OFF</button>
+        <button class="m-btn" onclick="allCmd('toggle',0)">⏻ ALL OFF</button>
         <button class="m-btn" onclick="allCmd('auto')">⟲ ALL AUTO</button>
       </div>
 
-      <div class="grp-title">🪔 Jalar Lights</div><div class="grid" id="grpJalar"></div>
-      <div class="grp-title">💡 Zumar Lights</div><div class="grid" id="grpZumar"></div>
-      <div class="grp-title">✨ Ambience</div><div class="grid" id="grpAmbience"></div>
+      <div class="divider"><span class="ln"></span><span class="lbl">🪔 Jalar Lights</span><span class="ln"></span></div><div class="grid" id="grpJalar"></div>
+      <div class="divider"><span class="ln"></span><span class="lbl">💡 Zumar Lights</span><span class="ln"></span></div><div class="grid" id="grpZumar"></div>
+      <div class="divider"><span class="ln"></span><span class="lbl">✨ Ambience</span><span class="ln"></span></div><div class="grid" id="grpAmbience"></div>
 
-      <div class='footer'>SARVOPARI DHAM GLOBAL LIGHT REMOTE</div>
+      <div class='footer'>❈ SARVOPARI DHAM GLOBAL LIGHT REMOTE ❈</div>
     </div>
 
     <div id="settings">
@@ -164,8 +176,11 @@
       document.getElementById('tb'+id).classList.add('act');
     }
 
+    const icons = ["🪔","🪔","🪔","💡","💡","💡","🔔","🎗️","🕯️","🎙️"];
+
     function cardHtml(i) {
       return `<div class='rcard' id='card${i}'>
+                <div class='ricon'>${icons[i]}</div>
                 <div class='rname'>${names[i].replace(/^\d+\.\s*/,'')}</div>
                 <div class='sw-row'><label class='sw'><input type='checkbox' id='sw${i}' onchange='cmd("toggle",${i})'><span></span></label></div>
                 <button class='auto-pill' id='ap${i}' onclick='cmd("auto",${i})'>AUTO</button>
