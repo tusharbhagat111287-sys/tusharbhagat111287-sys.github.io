@@ -3,117 +3,91 @@
 <head>
   <meta charset='UTF-8'>
   <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'>
-  <meta name='theme-color' content='#2b1b0e'>
+  <meta name='theme-color' content='#1a1a1a'>
   <title>Sarvopari Dham Online</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="https://i.ibb.co/999CRL59/IMG-20260606-214127.jpg">
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Marcellus&display=swap" rel="stylesheet">
   <style>
-    :root{--gold1:#BF953F;--gold2:#FCF6BA;--gold3:#B38728;--gold4:#FBF5B7;--gold5:#AA771C;}
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    body{font-family:'Marcellus',Georgia,serif;background:#0a0603;background-image:radial-gradient(ellipse at top,#2b1210 0%,#0a0603 55%,#050302 100%),repeating-conic-gradient(from 0deg,rgba(191,149,63,0.025) 0deg 3deg,transparent 3deg 6deg);color:#f0e6d2;margin:0;text-align:center;min-height:100vh;padding-bottom:70px;}
-    .nav{background:linear-gradient(180deg,#1a1509,#0d0a05);padding:10px;display:flex;justify-content:space-around;font-weight:bold;border-bottom:2px solid #5c3d0e;position:sticky;top:0;z-index:100;box-shadow:0 3px 10px rgba(0,0,0,0.6);}
-    .nav a{color:#c9a05a;text-decoration:none;padding:8px 22px;border-radius:20px;transition:0.3s;cursor:pointer;font-size:12.5px;letter-spacing:1.5px;border:1px solid transparent;}
-    .nav a.act{background:linear-gradient(to right,var(--gold1),var(--gold4),var(--gold3));color:#2b1500;box-shadow:0 2px 10px rgba(191,149,63,0.5);}
-    .c{padding:12px;max-width:800px;margin:auto;}
-    .frame{border:1px solid #4a3010;border-radius:18px;padding:3px;margin-bottom:16px;background:linear-gradient(145deg,rgba(191,149,63,0.08),transparent);}
-    .hero{background:linear-gradient(160deg,#231109,#160a05);border:1px solid #6b4a1a;padding:18px 12px;border-radius:16px;box-shadow:inset 0 0 40px rgba(191,149,63,0.08);position:relative;overflow:hidden;}
-    .hero:before,.hero:after{content:'';position:absolute;left:0;right:0;height:3px;background:linear-gradient(to right,transparent,var(--gold1),var(--gold4),var(--gold3),var(--gold4),var(--gold1),transparent);}
-    .hero:before{top:0;} .hero:after{bottom:0;}
-    .title{font-family:'Cinzel',serif;font-weight:700;font-size:20px;margin-bottom:14px;background:linear-gradient(to right,var(--gold1),var(--gold4),var(--gold3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px;}
-    .flourish{color:#8a6a2a;font-size:15px;vertical-align:middle;}
-    .stat-row{display:flex;justify-content:space-between;align-items:center;margin-top:6px;}
-    .time-text{font-size:24px;color:#fbc02d;font-weight:bold;text-shadow:0 0 12px rgba(251,192,45,0.5);letter-spacing:1px;}
-    .murti-wrap{position:relative;width:76px;height:76px;}
-    .murti-wrap:before{content:'';position:absolute;inset:-6px;border-radius:50%;border:1px dashed #8a6a2a;animation:spin 18s linear infinite;}
-    @keyframes spin{to{transform:rotate(360deg);}}
-    .center-murti{width:76px;height:76px;border-radius:50%;border:2px solid #FFD700;box-shadow:0 0 16px rgba(255,215,0,0.85);object-fit:cover;}
-    .badge-col{display:flex;flex-direction:column;gap:4px;align-items:flex-end;}
-    .badge{font-size:9px;padding:4px 9px;border-radius:10px;font-weight:bold;background:#3d7a45;color:#eaffea;letter-spacing:1px;border:1px solid #6fbf7a;}
-    .badge.offline{background:#5c2323;border-color:#a05a5a;color:#ffdcdc;}
-    .status-msg{color:#69f0ae;font-weight:600;font-size:11.5px;margin-top:10px;background:#000;padding:6px 12px;border-radius:8px;display:inline-block;border:1px solid #234;letter-spacing:0.5px;}
-    .master-row{display:flex;gap:8px;margin:16px 0;}
-    .m-btn{flex:1;padding:11px 0;border-radius:10px;border:1px solid #6b4a1a;background:linear-gradient(160deg,#1e1409,#140d05);color:#d9b876;font-weight:bold;font-size:11.5px;cursor:pointer;letter-spacing:0.5px;box-shadow:0 3px 8px rgba(0,0,0,0.5);font-family:'Marcellus',serif;}
-    .m-btn:active{transform:scale(0.96);background:linear-gradient(160deg,#2a1c0c,#1a1006);}
-    .divider{display:flex;align-items:center;gap:8px;margin:20px 4px 10px;}
-    .divider .ln{flex:1;height:1px;background:linear-gradient(to right,transparent,#7a5a1e,transparent);}
-    .divider .lbl{color:#e0b978;font-size:11.5px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;white-space:nowrap;font-family:'Cinzel',serif;}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-    .rcard{background:linear-gradient(160deg,#1c1712,#120e0a);border:1px solid #3a2f22;border-radius:14px;padding:12px 8px;box-shadow:0 4px 10px rgba(0,0,0,0.45);transition:0.3s;position:relative;}
-    .rcard.on{border-color:#a97e2e;box-shadow:0 4px 16px rgba(191,149,63,0.3),inset 0 0 14px rgba(191,149,63,0.1);}
-    .ricon{font-size:20px;margin-bottom:4px;filter:grayscale(0.6);transition:0.3s;}
-    .rcard.on .ricon{filter:grayscale(0) drop-shadow(0 0 6px rgba(255,193,7,0.8));}
-    .rname{font-size:11px;color:#e8dcc4;font-weight:bold;margin-bottom:8px;min-height:14px;display:flex;align-items:center;justify-content:center;text-align:center;letter-spacing:0.3px;}
-    .sw-row{display:flex;align-items:center;justify-content:center;margin-bottom:8px;}
-    .sw{position:relative;width:56px;height:30px;}
-    .sw input{display:none;}
-    .sw span{position:absolute;top:0;left:0;right:0;bottom:0;background:#2a2420;border-radius:30px;cursor:pointer;transition:0.3s;border:1px solid #4a3a20;}
-    .sw span:before{content:'\1F311';font-size:11px;display:flex;align-items:center;justify-content:center;position:absolute;width:24px;height:24px;left:2px;bottom:2px;background:#3a3a3a;border-radius:50%;transition:0.3s;box-shadow:0 2px 4px rgba(0,0,0,0.5);}
-    .sw input:checked+span{background:linear-gradient(to right,var(--gold5),var(--gold1));border-color:var(--gold1);}
-    .sw input:checked+span:before{content:'\1F525';transform:translateX(26px);background:#fff8e1;box-shadow:0 0 8px rgba(255,193,7,0.9);}
-    .auto-pill{font-size:9px;padding:3px 12px;border-radius:10px;border:1px solid #555;background:transparent;color:#888;cursor:pointer;font-weight:bold;letter-spacing:0.5px;}
-    .auto-pill.is-auto{color:#4caf50;border-color:#4caf50;}
-    .auto-pill.is-manual{color:#ff9800;border-color:#ff9800;}
-    #settings{display:none;text-align:left;}
-    .tabs{display:flex;overflow-x:auto;padding:8px 0;gap:6px;}
-    .tb{background:#1e1e1e;color:#BF953F;border:1px solid #5c3d0e;padding:6px 14px;border-radius:16px;white-space:nowrap;font-weight:bold;font-size:12px;cursor:pointer;}
-    .tb.act{background:linear-gradient(to right,var(--gold1),var(--gold4),var(--gold3),var(--gold4),var(--gold5));color:#000;border:none;}
+    body{font-family:'Segoe UI', sans-serif; background:#1a1a1a; color:#f0e6d2; margin:0; text-align:center; min-height:100vh; padding-bottom:70px;}
+    .nav{background:#111; padding:10px; display:flex; justify-content:space-around; font-weight:bold; border-bottom: 1px solid #333; position:sticky; top:0; z-index:100;}
+    .nav a{color:#888; text-decoration:none; padding:6px 14px; border-radius:5px; transition:0.3s; cursor:pointer; font-size:14px;}
+    .nav a.act{background:#2196f3; color:#fff;}
+    .c{padding:8px; max-width:800px; margin:auto;}
+    .card{background:#333; padding:12px; margin-bottom:12px; border-radius:10px; box-shadow:0 4px 6px rgba(0,0,0,0.3);}
+    .stat-row{display:flex; justify-content:space-between; align-items:center; margin-top: 15px;}
+    
+    .time-text{font-size:28px; color:#fbc02d; font-weight:bold; padding-top: 6px; padding-bottom: 2px;}
+    
+    /* 🔴 મૂર્તિ માટેનો નવો CSS 🔴 */
+    .center-murti {width: 90px; height: 90px; border-radius: 50%; border: 2px solid #FFD700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.8); object-fit: cover; margin: 0 5px;}
+
+    .badge-col{display:flex; flex-direction:column; gap:4px; align-items:flex-end;}
+    .badge{font-size:9px; padding:3px 6px; border-radius:4px; font-weight:bold; background:#4caf50; color:#fff; letter-spacing:1px;}
+    .badge.offline{background:#f44336;}
+    .status-msg{color:#69f0ae; font-weight:600; font-size:12px; margin-top:6px;}
+    .grid{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;}
+    h4{margin:0 0 8px; color:#f9d976; font-size:12px;}
+    .btn-row{display:flex; gap:6px;}
+    .btn{border:none; padding:8px 0; border-radius:18px; flex:1; font-weight:bold; cursor:pointer; color:#fff; font-size:11px; transition:0.2s; box-shadow:0 3px 5px rgba(0,0,0,0.3);}
+    .btn:active{transform:scale(0.95);}
+    .on-m{background:#388E3C; box-shadow:inset 0 4px 10px rgba(0,0,0,0.6);} 
+    .off-m{background:#D32F2F;} 
+    .on-a{background:#0097A7; box-shadow:inset 0 4px 10px rgba(0,0,0,0.6);} 
+    .off-a{background:#7B1FA2;} 
+    .a-on{background:#F57C00; box-shadow:inset 0 4px 10px rgba(0,0,0,0.6);} 
+    .a-off{background:#1976D2;}
+    #settings { display: none; text-align: left; }
+    .tabs{display:flex; overflow-x:auto; padding:8px 0; gap:6px;}
+    .tb{background:#222; color:#BF953F; border:1px solid #BF953F; padding:6px 12px; border-radius:15px; white-space:nowrap; font-weight:bold; font-size:12px; cursor:pointer;}
+    .tb.act{background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C); color:#000; border:none;}
     .tc{display:none;} .tc.act{display:block;}
-    .cd{background:#111;padding:8px 10px;margin-bottom:10px;border-radius:8px;border-left:4px solid transparent;box-shadow:0 2px 4px rgba(0,0,0,0.3);}
-    .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-weight:bold;font-size:12px;}
-    .rw{display:flex;justify-content:space-between;align-items:center;background:#1a1a1a;padding:4px 8px;margin-bottom:4px;border-radius:6px;font-size:11px;color:#aaa;font-weight:bold;}
-    .time-box{display:flex;align-items:center;gap:4px;}
-    .time-box input,.time-box select{background:#222;color:#BF953F;border:1px solid #BF953F;padding:2px;border-radius:4px;font-size:12px;font-weight:bold;text-align:center;}
-    .sw2{position:relative;width:30px;height:16px;} .sw2 input{display:none;}
-    .sw2 span{position:absolute;top:0;left:0;right:0;bottom:0;background:#444;border-radius:16px;cursor:pointer;}
-    .sw2 span:before{content:'';position:absolute;width:12px;height:12px;left:2px;bottom:2px;background:#fff;border-radius:50%;transition:0.3s;}
-    .sw2 input:checked+span{background:linear-gradient(to right,var(--gold1),var(--gold3));} .sw2 input:checked+span:before{transform:translateX(14px);background:#000;}
-    .btn-save{background:linear-gradient(to right,var(--gold1),var(--gold4),var(--gold3),var(--gold4),var(--gold5));color:#000;border:none;padding:12px;width:100%;font-weight:bold;font-size:14px;cursor:pointer;margin-top:10px;text-transform:uppercase;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,0.4);}
+    .cd{background:#111; padding:8px 10px; margin-bottom:10px; border-radius:8px; border-left:4px solid transparent; box-shadow:0 2px 4px rgba(0,0,0,0.3);}
+    .hd{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-weight:bold; font-size:12px;}
+    .rw{display:flex; justify-content:space-between; align-items:center; background:#1a1a1a; padding:4px 8px; margin-bottom:4px; border-radius:6px; font-size:11px; color:#aaa; font-weight:bold;}
+    .time-box{display:flex; align-items:center; gap:4px;}
+    .time-box input, .time-box select{background:#222; color:#BF953F; border:1px solid #BF953F; padding:2px; border-radius:4px; font-size:12px; font-weight:bold; text-align:center;}
+    .sw{position:relative; width:30px; height:16px;} .sw input{display:none;} 
+    .sw span{position:absolute; top:0; left:0; right:0; bottom:0; background:#444; border-radius:16px; cursor:pointer;} 
+    .sw span:before{content:''; position:absolute; width:12px; height:12px; left:2px; bottom:2px; background:#fff; border-radius:50%; transition:0.3s;} 
+    input:checked+span{background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);} input:checked+span:before{transform:translateX(14px); background:#000;}
+    .btn-save{background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C); color:#000; border:none; padding:12px; width:100%; font-weight:bold; font-size:14px; cursor:pointer; margin-top:10px; text-transform:uppercase; border-radius:5px; box-shadow:0 4px 6px rgba(0,0,0,0.4);}
     .btn-save:active{transform:scale(0.98);}
-    #toast{visibility:hidden;min-width:200px;background:#4CAF50;color:#fff;text-align:center;border-radius:20px;padding:10px;position:fixed;z-index:1000;left:50%;bottom:70px;transform:translateX(-50%);font-size:13px;font-weight:bold;box-shadow:0 4px 10px rgba(0,0,0,0.5);}
+    #toast{visibility:hidden; min-width:200px; background:#4CAF50; color:#fff; text-align:center; border-radius:20px; padding:10px; position:fixed; z-index:1000; left:50%; bottom:70px; transform:translateX(-50%); font-size:13px; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.5);} 
     #toast.show{visibility:visible;}
-    .footer{text-align:center;color:#c9a05a;font-size:13px;margin-top:22px;padding-bottom:30px;font-weight:bold;letter-spacing:1px;}
+    .footer{text-align:center; color:#ffffff; font-size:14px; margin-top:25px; padding-bottom:30px; font-weight:bold; text-shadow: 0 0 8px #9c27b0, 0 0 15px #9c27b0;}
   </style>
 </head>
 <body>
-
+  
   <div class='nav'>
     <a id="navDash" class='act' onclick="switchTab('dash')">DASHBOARD</a>
     <a id="navSet" onclick="switchTab('set')">SETTINGS</a>
   </div>
-
+  
   <div id='toast'>Done!</div>
 
   <div class="c">
     <div id="dashboard">
-      <div class="frame"><div class="hero">
-        <div class="title"><span class="flourish">❈</span> &nbsp;🙏 SARVOPARI DHAM LIGHT 🙏&nbsp; <span class="flourish">❈</span></div>
+      <div class="card" style="margin-bottom: 8px;">
+        <div style="color:#FFFFFF; font-weight:900; font-size: 19px; margin-bottom:12px; margin-top:8px; text-shadow: 0 0 8px #9c27b0, 0 0 15px #9c27b0; line-height: 1.4; word-break: keep-all; padding: 0 5px;">🔴🙏 SARVOPARI DHAM LIGHT 🙏🔴</div>
+        
         <div class="stat-row">
           <div id="clock" class="time-text">--:--</div>
-          <div class="murti-wrap"><img src="https://i.ibb.co/999CRL59/IMG-20260606-214127.jpg" class="center-murti" alt="Bhagwan Darshan"></div>
+          
+          <img src="https://i.ibb.co/999CRL59/IMG-20260606-214127.jpg" class="center-murti" alt="Bhagwan Darshan">
+          
           <div class="badge-col">
             <span id="appNetBadge" class="badge offline">APP OFFLINE</span>
             <span id="espNetBadge" class="badge offline">ESP OFFLINE</span>
           </div>
         </div>
         <div id="statusMsg" class="status-msg">SYSTEM READY</div>
-      </div></div>
-
-      <div class="master-row">
-        <button class="m-btn" onclick="allCmd('toggle',1)">🪔 ALL ON</button>
-        <button class="m-btn" onclick="allCmd('toggle',0)">⏻ ALL OFF</button>
-        <button class="m-btn" onclick="allCmd('auto')">⟲ ALL AUTO</button>
       </div>
-
-      <div class="divider"><span class="ln"></span><span class="lbl">🪔 Jalar Lights</span><span class="ln"></span></div><div class="grid" id="grpJalar"></div>
-      <div class="divider"><span class="ln"></span><span class="lbl">💡 Zumar Lights</span><span class="ln"></span></div><div class="grid" id="grpZumar"></div>
-      <div class="divider"><span class="ln"></span><span class="lbl">✨ Ambience</span><span class="ln"></span></div><div class="grid" id="grpAmbience"></div>
-
-      <div class='footer'>❈ SARVOPARI DHAM GLOBAL LIGHT REMOTE ❈</div>
+      <div class='grid' id='buttonsGrid'></div>
+      <div class='footer'>SARVOPARI DHAM GLOBAL LIGHT REMOTE</div>
     </div>
 
     <div id="settings">
@@ -133,12 +107,12 @@
     const names = ["1. Sinhasan Jalar 1", "2. Sabha Jalar 2", "3. Sabha Jalar 3", "4. Zumar 1", "5. Zumar 2", "6. Zumar 3", "7. Ghumat", "8. Border", "9. Audience Lamp 2", "10. Vakta Light"];
     const slotNames = ["S1: All Day 1", "S2: All Day 2", "S3: Mon-Sat 1", "S4: Mon-Sat 2", "S5: Mon-Sat 3", "S6: Mon-Sat 4", "S7: Tue Only 1", "S8: Tue Only 2", "S9: Sat Only 1", "S10: Sat Only 2", "S11: Sun Only 1", "S12: Sun Only 2"];
     const slotColors = ["#4CAF50", "#8BC34A", "#9C27B0", "#BA68C8", "#E91E63", "#F06292", "#FFEB3B", "#FBC02D", "#FF9800", "#F57C00", "#FFFFFF", "#E0E0E0"];
-    const groups = { jalar:[0,1,2], zumar:[3,4,5], ambience:[6,7,8,9] };
-
-    let relayStates = [0,0,0,0,0,0,0,0,0,0];
+    
+    let relayStates = [0,0,0,0,0,0,0,0,0,0]; 
     let manualModes = ["false","false","false","false","false","false","false","false","false","false"];
     let isSending = false; let onlineTimer;
-    let pendingLocks = [0,0,0,0,0,0,0,0,0,0];
+    
+    let pendingLocks = [0,0,0,0,0,0,0,0,0,0]; 
 
     function switchTab(tab) {
       document.getElementById('dashboard').style.display = tab==='dash'?'block':'none';
@@ -147,26 +121,18 @@
       document.getElementById('navSet').classList.toggle('act', tab==='set');
     }
 
-    // 🟢 તાત્કાલિક UI (optimistic) — સર્વર જવાબની રાહ જોયા વગર તરત બદલાય, પછી Firebase કન્ફર્મ કરે 🟢
     function cmd(act, id) {
       if(isSending) return; isSending = true;
-      pendingLocks[id] = Date.now();
-      if(act === "toggle") { relayStates[id] = relayStates[id] == 1 ? 0 : 1; manualModes[id] = "true"; }
+      
+      pendingLocks[id] = Date.now(); 
+      
+      if(act === "toggle") { relayStates[id] = relayStates[id] == 1 ? 0 : 1; manualModes[id] = "true"; } 
       else if (act === "auto") { manualModes[id] = "false"; }
-      updateCardUI(id);
+      
+      updateBtnUI(id); 
+      
       db.ref("/command").set({action: act, id: id, timestamp: Date.now()});
-      setTimeout(() => { isSending = false; }, 150);
-    }
-
-    function allCmd(act, val) {
-      for (let i=0; i<10; i++) {
-        if (act === 'toggle') {
-          let isOn = relayStates[i] == 1;
-          if ((val===1 && !isOn) || (val===0 && isOn)) { pendingLocks[i]=Date.now(); relayStates[i]=val; manualModes[i]="true"; updateCardUI(i); db.ref("/command").set({action:"toggle", id:i, timestamp: Date.now()+i}); }
-        } else {
-          pendingLocks[i]=Date.now(); manualModes[i]="false"; updateCardUI(i); db.ref("/command").set({action:"auto", id:i, timestamp: Date.now()+i});
-        }
-      }
+      setTimeout(() => { isSending = false; }, 200); 
     }
 
     function oT(id) {
@@ -176,21 +142,15 @@
       document.getElementById('tb'+id).classList.add('act');
     }
 
-    const icons = ["🪔","🪔","🪔","💡","💡","💡","🔔","🎗️","🕯️","🎙️"];
-
-    function cardHtml(i) {
-      return `<div class='rcard' id='card${i}'>
-                <div class='ricon'>${icons[i]}</div>
-                <div class='rname'>${names[i].replace(/^\d+\.\s*/,'')}</div>
-                <div class='sw-row'><label class='sw'><input type='checkbox' id='sw${i}' onchange='cmd("toggle",${i})'><span></span></label></div>
-                <button class='auto-pill' id='ap${i}' onclick='cmd("auto",${i})'>AUTO</button>
-              </div>`;
-    }
-
     function buildUI() {
-      document.getElementById('grpJalar').innerHTML = groups.jalar.map(cardHtml).join('');
-      document.getElementById('grpZumar').innerHTML = groups.zumar.map(cardHtml).join('');
-      document.getElementById('grpAmbience').innerHTML = groups.ambience.map(cardHtml).join('');
+      let dHtml = "";
+      for(let i=0; i<10; i++) {
+        dHtml += `<div class='card' style='padding:10px; margin-bottom:0;'><h4>${names[i]}</h4><div class='btn-row'>
+                  <button id='btnR${i}' class='btn off-m' onclick='cmd("toggle", ${i})'>Wait</button>
+                  <button id='btnA${i}' class='btn a-on' onclick='cmd("auto", ${i})'>Wait</button>
+                  </div></div>`;
+      }
+      document.getElementById('buttonsGrid').innerHTML = dHtml;
 
       let tHtml = "";
       for(let i=0; i<10; i++) { tHtml += `<button id='tb${i}' class='tb ${i==0?"act":""}' onclick='oT(${i})'>L${i+1}</button>`; }
@@ -198,11 +158,11 @@
 
       let cHtml = "";
       for(let i=0; i<10; i++) {
-        cHtml += `<div id='tc${i}' class='tc ${i==0?"act":""}' style='padding-bottom:15px;'><h3 style='color:#e0b978;text-align:center;margin-top:0;font-size:14px;text-transform:uppercase;'>${names[i]}</h3>`;
+        cHtml += `<div id='tc${i}' class='tc ${i==0?"act":""}' style='padding-bottom:15px;'><h3 style='color:#f9d976;text-align:center;margin-top:0;font-size:14px;text-transform:uppercase;'>${names[i]}</h3>`;
         for(let j=0; j<12; j++) {
           let p = `r${i}s${j}`;
           cHtml += `<div class='cd' style='border-left-color:${slotColors[j]}'>
-                      <div class='hd' style='color:${slotColors[j]}'><span>${slotNames[j]}</span><label class='sw2'><input type='checkbox' id='${p}_en'><span></span></label></div>
+                      <div class='hd' style='color:${slotColors[j]}'><span>${slotNames[j]}</span><label class='sw'><input type='checkbox' id='${p}_en'><span></span></label></div>
                       <div class='rw'><span>ON</span><div class='time-box'><input type='number' id='${p}_sh' min='1' max='12' value='12' style='width:36px'> : <input type='number' id='${p}_sm' min='0' max='59' value='00' style='width:36px'> <select id='${p}_sap'><option value='0'>AM</option><option value='1'>PM</option></select></div></div>
                       <div class='rw'><span>OFF</span><div class='time-box'><input type='number' id='${p}_eh' min='1' max='12' value='12' style='width:36px'> : <input type='number' id='${p}_em' min='0' max='59' value='00' style='width:36px'> <select id='${p}_eap'><option value='0'>AM</option><option value='1'>PM</option></select></div></div>
                     </div>`;
@@ -252,22 +212,23 @@
         fullData["R"+i] = rArray;
       }
       db.ref('/settings').set(fullData).then(() => {
-        db.ref("/command").set({action: "sync_settings", id: 0, timestamp: Date.now()});
-        showToast("Settings Synced!");
+        cmd("sync_settings", 0);
+        showToast("Settings Synced!"); 
       });
     }
 
     function showToast(msg) { let t = document.getElementById('toast'); t.innerText = msg; t.className = 'show'; setTimeout(() => { t.className = ''; }, 3000); }
 
-    function updateCardUI(i) {
-      let sw = document.getElementById(`sw${i}`); let ap = document.getElementById(`ap${i}`); let card = document.getElementById(`card${i}`);
-      if(sw && ap && card) {
-        let isO = (relayStates[i] == 1);
-        let isM = (String(manualModes[i]) === "true");
-        sw.checked = isO;
-        card.classList.toggle('on', isO);
-        ap.innerText = isM ? "MANUAL" : "AUTO";
-        ap.className = "auto-pill " + (isM ? "is-manual" : "is-auto");
+    function updateBtnUI(i) {
+      let b = document.getElementById(`btnR${i}`); let a = document.getElementById(`btnA${i}`);
+      if(b && a) {
+        let isO = (relayStates[i] == 1); 
+        let isM = (String(manualModes[i]) === "true"); 
+        
+        b.innerHTML = isO ? (isM ? "ON" : "ON (Auto)") : (isM ? "OFF" : "OFF (Auto)");
+        b.className = isO ? (isM ? "btn on-m" : "btn on-a") : (isM ? "btn off-m" : "btn off-a");
+        a.innerHTML = isM ? "AUTO" : "AUTO (ON)"; 
+        a.className = isM ? "btn a-off" : "btn a-on";
       }
     }
 
@@ -282,29 +243,28 @@
 
     window.onload = () => {
       buildUI(); loadFirebaseSettings(); updateClock();
-
+      
       db.ref(".info/connected").on("value", function(snap) {
         let appBadge = document.getElementById("appNetBadge");
-        if (snap.val() === true) { appBadge.className = "badge"; appBadge.innerText = "APP ONLINE"; }
+        if (snap.val() === true) { appBadge.className = "badge"; appBadge.innerText = "APP ONLINE"; } 
         else { appBadge.className = "badge offline"; appBadge.innerText = "APP OFFLINE"; }
       });
 
       db.ref('/status').on('value', snap => {
         let d = snap.val(); if(!d) return;
         let nowTime = Date.now();
-
+        
         for(let i=0; i<10; i++) {
           if (nowTime - pendingLocks[i] > 5000) {
-            if(d.s !== undefined && d.s[i] !== undefined) relayStates[i] = d.s[i];
+            if(d.s !== undefined && d.s[i] !== undefined) relayStates[i] = d.s[i]; 
             if(d.m !== undefined && d.m[i] !== undefined) manualModes[i] = d.m[i];
           }
-          updateCardUI(i);
+          updateBtnUI(i);
         }
-
+        
         let espBadge = document.getElementById("espNetBadge");
-        if(d.online === true) { espBadge.className = "badge"; espBadge.innerText = "CLOUD"; }
+        if(d.online === true) { espBadge.className = "badge"; espBadge.innerText = "CLOUD"; } 
         else { espBadge.className = "badge offline"; espBadge.innerText = "LOCAL"; }
-        document.getElementById("statusMsg").innerText = "SYSTEM ACTIVE";
 
         clearTimeout(onlineTimer);
         onlineTimer = setTimeout(() => { espBadge.className = "badge offline"; espBadge.innerText = "LOCAL"; }, 6000);
