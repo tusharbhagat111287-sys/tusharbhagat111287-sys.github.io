@@ -10,7 +10,6 @@
   <link rel="apple-touch-icon" href="https://i.ibb.co/999CRL59/IMG-20260606-214127.jpg">
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
   <style>
     body{font-family:'Segoe UI', sans-serif; background:#1a1a1a; color:#f0e6d2; margin:0; text-align:center; min-height:100vh; padding-bottom:70px;}
     .nav{background:#111; padding:10px; display:flex; justify-content:space-around; font-weight:bold; border-bottom: 1px solid #333; position:sticky; top:0; z-index:100;}
@@ -20,11 +19,10 @@
     .card{background:#333; padding:12px; margin-bottom:12px; border-radius:10px; box-shadow:0 4px 6px rgba(0,0,0,0.3);}
     .stat-row{display:flex; justify-content:space-between; align-items:center; margin-top: 15px;}
     
-    .time-text { font-size: 28px; font-weight: bold; white-space: nowrap; background: linear-gradient(to right, #B38728 0%, #FBF5B7 25%, #B38728 50%, #FBF5B7 75%, #B38728 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.6;;}
+    .time-text { font-size: 28px; font-weight: bold; white-space: nowrap; background: linear-gradient(to right, #B38728 0%, #FBF5B7 25%, #B38728 50%, #FBF5B7 75%, #B38728 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.6);}
     
     /* 🔴 મૂર્તિ માટેનો નવો CSS 🔴 */
     .center-murti {width: 90px; height: 90px; border-radius: 50%; border: 2px solid #FFD700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.8); object-fit: cover; margin: 0 5px;}
-
     .badge-col{display:flex; flex-direction:column; gap:4px; align-items:flex-end;}
     .badge{font-size:9px; padding:3px 6px; border-radius:4px; font-weight:bold; background:#4caf50; color:#fff; letter-spacing:1px;}
     .badge.offline{background:#f44336;}
@@ -69,7 +67,6 @@
   </div>
   
   <div id='toast'>Done!</div>
-
   <div class="c">
     <div id="dashboard">
       <div class="card" style="margin-bottom: 8px;">
@@ -90,13 +87,11 @@
       <div class='grid' id='buttonsGrid'></div>
       <div class='footer'>SARVOPARI DHAM GLOBAL LIGHT REMOTE</div>
     </div>
-
     <div id="settings">
       <div class='tabs' id='settingsTabs'></div>
       <div id='settingsContent'></div>
     </div>
   </div>
-
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAoPnrydmBiFCG8FP52Sy_jsRBb1CyUfaM",
@@ -104,7 +99,6 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-
     const names = ["1. Sinhasan Jalar 1", "2. Sabha Jalar 2", "3. Sabha Jalar 3", "4. Zumar 1", "5. Zumar 2", "6. Zumar 3", "7. Ghumat", "8. Border", "9. Audience Lamp 2", "10. Vakta Light"];
     const slotNames = ["S1: All Day 1", "S2: All Day 2", "S3: Mon-Sat 1", "S4: Mon-Sat 2", "S5: Mon-Sat 3", "S6: Mon-Sat 4", "S7: Tue Only 1", "S8: Tue Only 2", "S9: Sat Only 1", "S10: Sat Only 2", "S11: Sun Only 1", "S12: Sun Only 2"];
     const slotColors = ["#4CAF50", "#8BC34A", "#9C27B0", "#BA68C8", "#E91E63", "#F06292", "#FFEB3B", "#FBC02D", "#FF9800", "#F57C00", "#FFFFFF", "#E0E0E0"];
@@ -114,14 +108,12 @@
     let isSending = false; let onlineTimer;
     
     let pendingLocks = [0,0,0,0,0,0,0,0,0,0]; 
-
     function switchTab(tab) {
       document.getElementById('dashboard').style.display = tab==='dash'?'block':'none';
       document.getElementById('settings').style.display = tab==='set'?'block':'none';
       document.getElementById('navDash').classList.toggle('act', tab==='dash');
       document.getElementById('navSet').classList.toggle('act', tab==='set');
     }
-
     function cmd(act, id) {
       if(isSending) return; isSending = true;
       
@@ -135,14 +127,12 @@
       db.ref("/command").set({action: act, id: id, timestamp: Date.now()});
       setTimeout(() => { isSending = false; }, 200); 
     }
-
     function oT(id) {
       document.querySelectorAll('.tc').forEach(e => e.classList.remove('act'));
       document.querySelectorAll('.tb').forEach(e => e.classList.remove('act'));
       document.getElementById('tc'+id).classList.add('act');
       document.getElementById('tb'+id).classList.add('act');
     }
-
     function buildUI() {
       let dHtml = "";
       for(let i=0; i<10; i++) {
@@ -152,11 +142,9 @@
                   </div></div>`;
       }
       document.getElementById('buttonsGrid').innerHTML = dHtml;
-
       let tHtml = "";
       for(let i=0; i<10; i++) { tHtml += `<button id='tb${i}' class='tb ${i==0?"act":""}' onclick='oT(${i})'>L${i+1}</button>`; }
       document.getElementById('settingsTabs').innerHTML = tHtml;
-
       let cHtml = "";
       for(let i=0; i<10; i++) {
         cHtml += `<div id='tc${i}' class='tc ${i==0?"act":""}' style='padding-bottom:15px;'><h3 style='color:#f9d976;text-align:center;margin-top:0;font-size:14px;text-transform:uppercase;'>${names[i]}</h3>`;
@@ -172,7 +160,6 @@
       }
       document.getElementById('settingsContent').innerHTML = cHtml;
     }
-
     function loadFirebaseSettings() {
       db.ref('/settings').once('value').then(snap => {
         let data = snap.val(); if(!data) return;
@@ -196,7 +183,6 @@
         }
       });
     }
-
     function saveFirebaseSettings() {
       let fullData = {};
       for(let i=0; i<10; i++) {
@@ -217,9 +203,7 @@
         showToast("Settings Synced!"); 
       });
     }
-
     function showToast(msg) { let t = document.getElementById('toast'); t.innerText = msg; t.className = 'show'; setTimeout(() => { t.className = ''; }, 3000); }
-
     function updateBtnUI(i) {
       let b = document.getElementById(`btnR${i}`); let a = document.getElementById(`btnA${i}`);
       if(b && a) {
@@ -232,7 +216,6 @@
         a.className = isM ? "btn a-off" : "btn a-on";
       }
     }
-
     function updateClock() {
       const now = new Date();
       const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -241,7 +224,6 @@
       document.getElementById('clock').innerHTML = `${days[now.getDay()]} ${h12}:${m}:${s} ${ampm}`;
     }
     setInterval(updateClock, 1000);
-
     window.onload = () => {
       buildUI(); loadFirebaseSettings(); updateClock();
       
@@ -250,7 +232,6 @@
         if (snap.val() === true) { appBadge.className = "badge"; appBadge.innerText = "APP ONLINE"; } 
         else { appBadge.className = "badge offline"; appBadge.innerText = "APP OFFLINE"; }
       });
-
       db.ref('/status').on('value', snap => {
         let d = snap.val(); if(!d) return;
         let nowTime = Date.now();
@@ -266,13 +247,11 @@
         let espBadge = document.getElementById("espNetBadge");
         if(d.online === true) { espBadge.className = "badge"; espBadge.innerText = "CLOUD"; } 
         else { espBadge.className = "badge offline"; espBadge.innerText = "LOCAL"; }
-
         clearTimeout(onlineTimer);
         onlineTimer = setTimeout(() => { espBadge.className = "badge offline"; espBadge.innerText = "LOCAL"; }, 6000);
       });
     };
   </script>
-
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
