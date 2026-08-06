@@ -139,6 +139,16 @@
       setTimeout(() => { isSending = false; }, 200); 
     }
 
+    // 🟢🔴 ASLI FIX (12:00 AM બગ, ઓનલાઈન ડેશબોર્ડ): પેજ ખૂલતાં જ ફોનનો સાચો સમય Firebase મારફતે
+    // ESP32ને મોકલી RTC સિંક કરી દો — ડેશબોર્ડ ખૂલે એટલે તરત જ 🔴🟢
+    function syncTimeToDevice() {
+      let d = new Date();
+      db.ref("/command").set({
+        action: "sync_time", y: d.getFullYear(), mo: d.getMonth()+1, d: d.getDate(),
+        h: d.getHours(), mi: d.getMinutes(), s: d.getSeconds(), timestamp: Date.now()
+      });
+    }
+
     function oT(id) {
       document.querySelectorAll('.tc').forEach(e => e.classList.remove('act'));
       document.querySelectorAll('.tb').forEach(e => e.classList.remove('act'));
@@ -246,7 +256,7 @@
     setInterval(updateClock, 1000);
 
     window.onload = () => {
-      buildUI(); loadFirebaseSettings(); updateClock();
+      buildUI(); loadFirebaseSettings(); updateClock(); syncTimeToDevice();
       
       db.ref(".info/connected").on("value", function(snap) {
         let appBadge = document.getElementById("appNetBadge");
