@@ -30,25 +30,21 @@
     .badge-col{display:flex; flex-direction:column; gap:4px; align-items:flex-end;}
     .badge{font-size:9px; padding:3px 6px; border-radius:4px; font-weight:bold; background:#4caf50; color:#fff; letter-spacing:1px;}
     .badge.offline{background:#f44336;}
+    .badge.local{background:#ff9800;}
     .status-msg{color:#69f0ae; font-weight:600; font-size:12px; margin-top:6px;}
     .grid{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;}
     h4{margin:0 0 8px; color:#f9d976; font-size:12px;}
     
-    /* 🔴 NEW SLEEK BUTTON CSS 🔴 */
     .btn-row { display: flex; flex-direction: row; gap: 8px; justify-content: space-between; }
     .btn, .btn-a {
-      flex: 1; border: 1px solid #333; padding: 8px 0; border-radius: 6px; font-weight: bold; cursor: pointer; color: #ddd; font-size: 10px; transition: all 0.2s ease-in-out;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      flex: 1; border: none; padding: 8px 0; border-radius: 20px; font-weight: bold; cursor: pointer; color: #fff; font-size: 10px; transition: 0.2s; box-shadow: 0 3px 5px rgba(0,0,0,0.4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    .btn { background: linear-gradient(180deg, #2c2c2c 0%, #1a1a1a 100%); border-left: 4px solid var(--bc,#555); }
-    .btn:active, .btn-a:active { transform: scale(0.95); box-shadow: none; }
+    .btn:active, .btn-a:active { transform: scale(0.92); box-shadow: none; }
     
-    .btn.on { background: linear-gradient(180deg, #1f3b25 0%, #0d1a10 100%); border-left-color: #00e676 !important; color: #69f0ae; border: 1px solid #14301a; border-left: 4px solid #00e676; }
-    .btn-a { background: linear-gradient(180deg, #262626 0%, #141414 100%); border-left: 4px solid #555; }
-    
-    .btn-a.is-auto { border-left-color: #9c27b0; color: #ce93d8; }
-    .btn-a.is-auto-active { border-left-color: #4caf50; color: #a5d6a7; }
-    .btn-a.is-manual { border-left-color: #ff9800; color: #ffcc80; }
+    .btn.on { background: linear-gradient(180deg, #4caf50, #2e7d32); box-shadow: 0 0 8px rgba(76,175,80,0.5); }
+    .btn.off { background: linear-gradient(180deg, #9c27b0, #6a1b9a); box-shadow: 0 0 8px rgba(156,39,176,0.5); }
+    .btn-a.is-auto { background: linear-gradient(180deg, #ff9800, #ef6c00); box-shadow: 0 0 8px rgba(255,152,0,0.5); }
+    .btn-a.is-manual { background: linear-gradient(180deg, #607d8b, #455a64); }
 
     #settings { display: none; text-align: left; }
     .tabs{display:flex; overflow-x:auto; padding:8px 0; gap:6px;}
@@ -118,7 +114,6 @@
     const names = ["1. Sinhasan Jalar 1", "2. Sabha Jalar 2", "3. Sabha Jalar 3", "4. Zumar 1", "5. Zumar 2", "6. Zumar 3", "7. Ghumat", "8. Border", "9. Audience Lamp 2", "10. Vakta Light"];
     const slotNames = ["S1: All Day 1", "S2: All Day 2", "S3: Mon-Sat 1", "S4: Mon-Sat 2", "S5: Mon-Sat 3", "S6: Mon-Sat 4", "S7: Tue Only 1", "S8: Tue Only 2", "S9: Sat Only 1", "S10: Sat Only 2", "S11: Sun Only 1", "S12: Sun Only 2"];
     const slotColors = ["#4CAF50", "#8BC34A", "#9C27B0", "#BA68C8", "#E91E63", "#F06292", "#FFEB3B", "#FBC02D", "#FF9800", "#F57C00", "#FFFFFF", "#E0E0E0"];
-    const barColors = ["#2196f3","#ff9800","#fbc02d","#9c27b0","#e91e63","#00bcd4","#ff5722","#3f51b5","#795548","#ffc107"];
     
     let relayStates = [0,0,0,0,0,0,0,0,0,0]; 
     let manualModes = ["false","false","false","false","false","false","false","false","false","false"];
@@ -133,10 +128,10 @@
       document.getElementById('navSet').classList.toggle('act', tab==='set');
     }
 
+    // 🟢 ડ્યુઅલ કમાન્ડ સિસ્ટમ (Firebase + Local Fetch) 🟢
     function cmd(act, id) {
       if(isSending) return; 
-      isSending = true; // Prevents double click rapidly
-      
+      isSending = true;
       pendingLocks[id] = Date.now(); 
       
       if(act === "toggle") { relayStates[id] = relayStates[id] == 1 ? 0 : 1; manualModes[id] = "true"; } 
@@ -144,17 +139,24 @@
       
       updateBtnUI(id); 
       
-      db.ref("/command").set({action: act, id: id, timestamp: Date.now()});
+      // 1. ONLINE કમાન્ડ 
+      try { db.ref("/command").set({action: act, id: id, timestamp: Date.now()}); } catch(e){}
       
-      isSending = false; 
+      // 2. OFFLINE કમાન્ડ 
+      fetch(act === 'toggle' ? `/toggle?id=${id}` : `/auto?id=${id}`).catch(()=>{});
+      
+      setTimeout(()=>{ isSending = false; }, 300);
     }
 
     function syncTimeToDevice() {
       let d = new Date();
-      db.ref("/command").set({
-        action: "sync_time", y: d.getFullYear(), mo: d.getMonth()+1, d: d.getDate(),
-        h: d.getHours(), mi: d.getMinutes(), s: d.getSeconds(), timestamp: Date.now()
-      });
+      try {
+        db.ref("/command").set({
+          action: "sync_time", y: d.getFullYear(), mo: d.getMonth()+1, d: d.getDate(),
+          h: d.getHours(), mi: d.getMinutes(), s: d.getSeconds(), timestamp: Date.now()
+        });
+      } catch(e){}
+      fetch(`/sync_time?y=${d.getFullYear()}&mo=${d.getMonth()+1}&d=${d.getDate()}&h=${d.getHours()}&mi=${d.getMinutes()}&s=${d.getSeconds()}`).catch(()=>{});
     }
 
     function oT(id) {
@@ -168,7 +170,7 @@
       let dHtml = "";
       for(let i=0; i<10; i++) {
         dHtml += `<div class='card' style='padding:10px; margin-bottom:0;'><h4>${names[i]}</h4><div class='btn-row'>
-                  <button id='btnR${i}' class='btn' style='--bc:${barColors[i]}' onclick='cmd("toggle", ${i})'>Wait</button>
+                  <button id='btnR${i}' class='btn off' onclick='cmd("toggle", ${i})'>Wait</button>
                   <button id='btnA${i}' class='btn-a is-auto' onclick='cmd("auto", ${i})'>Wait</button>
                   </div></div>`;
       }
@@ -234,7 +236,7 @@
         fullData["R"+i] = rArray;
       }
       db.ref('/settings').set(fullData).then(() => {
-        cmd("sync_settings", 0);
+        try{ db.ref("/command").set({action: "sync_settings", id: 0, timestamp: Date.now()}); }catch(e){}
         showToast("Settings Synced!"); 
       });
     }
@@ -248,9 +250,9 @@
         let isM = (String(manualModes[i]) === "true"); 
         
         b.innerHTML = isO ? (isM ? "ON" : "ON (Auto)") : (isM ? "OFF" : "OFF (Auto)");
-        b.className = 'btn ' + (isO ? 'on' : '');
+        b.className = 'btn ' + (isO ? 'on' : 'off');
         a.innerHTML = isM ? "AUTO" : "AUTO (ON)"; 
-        a.className = 'btn-a ' + (isM ? 'is-manual' : (isO ? 'is-auto-active' : 'is-auto'));
+        a.className = 'btn-a ' + (isM ? 'is-manual' : 'is-auto');
       }
     }
 
@@ -263,6 +265,21 @@
     }
     setInterval(updateClock, 1000);
 
+    // 🟢 ડ્યુઅલ સ્ટેટસ અપડેટ ફંક્શન 🟢
+    function updateData(d) {
+        let nowTime = Date.now();
+        for(let i=0; i<10; i++) {
+          if (nowTime - pendingLocks[i] > 2000) {
+            if(d.s !== undefined && d.s[i] !== undefined) relayStates[i] = d.s[i]; 
+            if(d.m !== undefined && d.m[i] !== undefined) manualModes[i] = d.m[i];
+          }
+          updateBtnUI(i);
+        }
+        let espBadge = document.getElementById("espNetBadge");
+        if(d.online === true) { espBadge.className = "badge"; espBadge.innerText = "CLOUD"; } 
+        else { espBadge.className = "badge local"; espBadge.innerText = "LOCAL"; }
+    }
+
     window.onload = () => {
       buildUI(); loadFirebaseSettings(); updateClock(); syncTimeToDevice();
       
@@ -272,25 +289,21 @@
         else { appBadge.className = "badge offline"; appBadge.innerText = "APP OFFLINE"; }
       });
 
+      // 1. ONLINE SYNC 
       db.ref('/status').on('value', snap => {
         let d = snap.val(); if(!d) return;
-        let nowTime = Date.now();
-        
-        for(let i=0; i<10; i++) {
-          if (nowTime - pendingLocks[i] > 2000) { // Reduced UI lock wait to 2s
-            if(d.s !== undefined && d.s[i] !== undefined) relayStates[i] = d.s[i]; 
-            if(d.m !== undefined && d.m[i] !== undefined) manualModes[i] = d.m[i];
-          }
-          updateBtnUI(i);
-        }
-        
-        let espBadge = document.getElementById("espNetBadge");
-        if(d.online === true) { espBadge.className = "badge"; espBadge.innerText = "CLOUD"; } 
-        else { espBadge.className = "badge offline"; espBadge.innerText = "LOCAL"; }
-
+        updateData(d);
         clearTimeout(onlineTimer);
-        onlineTimer = setTimeout(() => { espBadge.className = "badge offline"; espBadge.innerText = "LOCAL"; }, 6000);
+        onlineTimer = setTimeout(() => { 
+            document.getElementById("espNetBadge").className = "badge offline"; 
+            document.getElementById("espNetBadge").innerText = "LOCAL"; 
+        }, 6000);
       });
+
+      // 2. OFFLINE SYNC 
+      setInterval(() => {
+        fetch('/status').then(r=>r.json()).then(d=>{ updateData(d); }).catch(()=>{});
+      }, 1500);
     };
   </script>
 
@@ -305,3 +318,5 @@
   </script>
 </body>
 </html>
+
+
