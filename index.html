@@ -1,3 +1,4 @@
+
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -7,8 +8,10 @@
   <title>Sarvopari Dham Online</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="https://i.ibb.co/999CRL59/IMG-20260606-214127.jpg">
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  
+  <!-- 🟢 ઈન્ટરનેટ ન હોય તો આ એરર ન આપે તે માટે Async ઉમેર્યું 🟢 -->
+  <script async src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script async src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
   <style>
     body{font-family:'Segoe UI', sans-serif; background:#1a1a1a; color:#f0e6d2; margin:0; text-align:center; min-height:100vh; padding-bottom:70px;}
@@ -37,7 +40,7 @@
     
     .btn-row { display: flex; flex-direction: row; gap: 8px; justify-content: space-between; }
     .btn, .btn-a {
-      flex: 1; border: none; padding: 8px 0; border-radius: 20px; font-weight: bold; cursor: pointer; color: #fff; font-size: 10px; transition: 0.2s; box-shadow: 0 3px 5px rgba(0,0,0,0.4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      flex: 1; border: none; padding: 8px 0; border-radius: 20px; font-weight: bold; cursor: pointer; color: #fff; font-size: 10px; transition: 0.1s; box-shadow: 0 3px 5px rgba(0,0,0,0.4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .btn:active, .btn-a:active { transform: scale(0.92); box-shadow: none; }
     
@@ -104,22 +107,60 @@
   </div>
 
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyAoPnrydmBiFCG8FP52Sy_jsRBb1CyUfaM",
-      databaseURL: "https://sarvopari-liths-default-rtdb.firebaseio.com"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
     const names = ["1. Sinhasan Jalar 1", "2. Sabha Jalar 2", "3. Sabha Jalar 3", "4. Zumar 1", "5. Zumar 2", "6. Zumar 3", "7. Ghumat", "8. Border", "9. Audience Lamp 2", "10. Vakta Light"];
     const slotNames = ["S1: All Day 1", "S2: All Day 2", "S3: Mon-Sat 1", "S4: Mon-Sat 2", "S5: Mon-Sat 3", "S6: Mon-Sat 4", "S7: Tue Only 1", "S8: Tue Only 2", "S9: Sat Only 1", "S10: Sat Only 2", "S11: Sun Only 1", "S12: Sun Only 2"];
     const slotColors = ["#4CAF50", "#8BC34A", "#9C27B0", "#BA68C8", "#E91E63", "#F06292", "#FFEB3B", "#FBC02D", "#FF9800", "#F57C00", "#FFFFFF", "#E0E0E0"];
     
     let relayStates = [0,0,0,0,0,0,0,0,0,0]; 
     let manualModes = ["false","false","false","false","false","false","false","false","false","false"];
-    let isSending = false; let onlineTimer;
-    
     let pendingLocks = [0,0,0,0,0,0,0,0,0,0]; 
+    let onlineTimer;
+    
+    // 🟢 Firebase ને સુરક્ષિત રીતે ચાલુ કરવાની રીત (ઓફલાઈન ક્રેશ ન થાય એ માટે) 🟢
+    let db = null;
+    let fbReady = false;
+    
+    function initApp() {
+        try {
+            if (typeof firebase !== 'undefined') {
+                firebase.initializeApp({
+                    apiKey: "AIzaSyAoPnrydmBiFCG8FP52Sy_jsRBb1CyUfaM",
+                    databaseURL: "https://sarvopari-liths-default-rtdb.firebaseio.com"
+                });
+                db = firebase.database();
+                fbReady = true;
+            }
+        } catch(e) { console.log("Offline Mode Active"); }
+        
+        buildUI(); 
+        updateClock(); 
+        syncTimeToDevice();
+        loadLocalSettings(); // હંમેશા પહેલા લોકલ સેટિંગ્સ લાવી દેવા 
+
+        if (fbReady) {
+            loadFirebaseSettings();
+            db.ref(".info/connected").on("value", function(snap) {
+                let appBadge = document.getElementById("appNetBadge");
+                if (snap.val() === true) { appBadge.className = "badge"; appBadge.innerText = "APP ONLINE"; } 
+                else { appBadge.className = "badge offline"; appBadge.innerText = "APP OFFLINE"; }
+            });
+
+            db.ref('/status').on('value', snap => {
+                let d = snap.val(); if(!d) return;
+                updateData(d);
+                clearTimeout(onlineTimer);
+                onlineTimer = setTimeout(() => { 
+                    document.getElementById("espNetBadge").className = "badge local"; 
+                    document.getElementById("espNetBadge").innerText = "LOCAL"; 
+                }, 6000);
+            });
+        }
+
+        // 2. OFFLINE SYNC (હંમેશા ચાલુ રહેશે)
+        setInterval(() => {
+            fetch('/status').then(r=>r.json()).then(d=>{ updateData(d); }).catch(()=>{});
+        }, 1500);
+    }
 
     function switchTab(tab) {
       document.getElementById('dashboard').style.display = tab==='dash'?'block':'none';
@@ -128,34 +169,29 @@
       document.getElementById('navSet').classList.toggle('act', tab==='set');
     }
 
-    // 🟢 ડ્યુઅલ કમાન્ડ સિસ્ટમ (Firebase + Local Fetch) 🟢
+    // 🟢 બટન દબાવતા 0.0s માં કલર બદલવાની રીત 🟢
     function cmd(act, id) {
-      if(isSending) return; 
-      isSending = true;
-      pendingLocks[id] = Date.now(); 
+      pendingLocks[id] = Date.now(); // 3 સેકન્ડ સુધી જૂનો ડેટા નહિ લે 
       
       if(act === "toggle") { relayStates[id] = relayStates[id] == 1 ? 0 : 1; manualModes[id] = "true"; } 
       else if (act === "auto") { manualModes[id] = "false"; }
       
-      updateBtnUI(id); 
+      updateBtnUI(id); // 🟢 0.0s ઇન્સ્ટન્ટ અપડેટ 🟢
       
-      // 1. ONLINE કમાન્ડ 
-      try { db.ref("/command").set({action: act, id: id, timestamp: Date.now()}); } catch(e){}
-      
-      // 2. OFFLINE કમાન્ડ 
+      if (fbReady && db) { try { db.ref("/command").set({action: act, id: id, timestamp: Date.now()}); } catch(e){} }
       fetch(act === 'toggle' ? `/toggle?id=${id}` : `/auto?id=${id}`).catch(()=>{});
-      
-      setTimeout(()=>{ isSending = false; }, 300);
     }
 
     function syncTimeToDevice() {
       let d = new Date();
-      try {
-        db.ref("/command").set({
-          action: "sync_time", y: d.getFullYear(), mo: d.getMonth()+1, d: d.getDate(),
-          h: d.getHours(), mi: d.getMinutes(), s: d.getSeconds(), timestamp: Date.now()
-        });
-      } catch(e){}
+      if (fbReady && db) {
+        try {
+          db.ref("/command").set({
+            action: "sync_time", y: d.getFullYear(), mo: d.getMonth()+1, d: d.getDate(),
+            h: d.getHours(), mi: d.getMinutes(), s: d.getSeconds(), timestamp: Date.now()
+          });
+        } catch(e){}
+      }
       fetch(`/sync_time?y=${d.getFullYear()}&mo=${d.getMonth()+1}&d=${d.getDate()}&h=${d.getHours()}&mi=${d.getMinutes()}&s=${d.getSeconds()}`).catch(()=>{});
     }
 
@@ -191,36 +227,47 @@
                       <div class='rw'><span>OFF</span><div class='time-box'><input type='number' id='${p}_eh' min='1' max='12' value='12' style='width:36px'> : <input type='number' id='${p}_em' min='0' max='59' value='00' style='width:36px'> <select id='${p}_eap'><option value='0'>AM</option><option value='1'>PM</option></select></div></div>
                     </div>`;
         }
-        cHtml += `<button class='btn-save' onclick='saveFirebaseSettings()'>SAVE L${i+1} SETTINGS</button></div>`;
+        cHtml += `<button class='btn-save' onclick='saveAllSettings()'>SAVE L${i+1} SETTINGS</button></div>`;
       }
       document.getElementById('settingsContent').innerHTML = cHtml;
     }
 
-    function loadFirebaseSettings() {
-      db.ref('/settings').once('value').then(snap => {
-        let data = snap.val(); if(!data) return;
-        for(let i=0; i<10; i++) {
-          let rData = data["R"+i];
-          if(rData) {
-            for(let j=0; j<12; j++) {
-              let slot = rData[j];
-              if(slot) {
-                let p = `r${i}s${j}`;
-                document.getElementById(`${p}_en`).checked = (slot.en == 1);
-                document.getElementById(`${p}_sh`).value = (slot.sh == 0 || slot.sh == 12) ? 12 : (slot.sh > 12 ? slot.sh - 12 : slot.sh);
-                document.getElementById(`${p}_sap`).value = (slot.sh >= 12) ? 1 : 0;
-                document.getElementById(`${p}_sm`).value = slot.sm < 10 ? '0'+slot.sm : slot.sm;
-                document.getElementById(`${p}_eh`).value = (slot.eh == 0 || slot.eh == 12) ? 12 : (slot.eh > 12 ? slot.eh - 12 : slot.eh);
-                document.getElementById(`${p}_eap`).value = (slot.eh >= 12) ? 1 : 0;
-                document.getElementById(`${p}_em`).value = slot.em < 10 ? '0'+slot.em : slot.em;
+    function fillSettings(data) {
+      if(!data) return;
+      for(let i=0; i<10; i++) {
+        let rData = data["R"+i];
+        if(rData) {
+          for(let j=0; j<12; j++) {
+            let slot = rData[j];
+            if(slot) {
+              let p = `r${i}s${j}`;
+              let enEl = document.getElementById(`${p}_en`);
+              if(enEl) {
+                  enEl.checked = (slot.en == 1);
+                  document.getElementById(`${p}_sh`).value = (slot.sh == 0 || slot.sh == 12) ? 12 : (slot.sh > 12 ? slot.sh - 12 : slot.sh);
+                  document.getElementById(`${p}_sap`).value = (slot.sh >= 12) ? 1 : 0;
+                  document.getElementById(`${p}_sm`).value = slot.sm < 10 ? '0'+slot.sm : slot.sm;
+                  document.getElementById(`${p}_eh`).value = (slot.eh == 0 || slot.eh == 12) ? 12 : (slot.eh > 12 ? slot.eh - 12 : slot.eh);
+                  document.getElementById(`${p}_eap`).value = (slot.eh >= 12) ? 1 : 0;
+                  document.getElementById(`${p}_em`).value = slot.em < 10 ? '0'+slot.em : slot.em;
               }
             }
           }
         }
-      });
+      }
     }
 
-    function saveFirebaseSettings() {
+    // 🟢 ઓફલાઈન સેટિંગ ખેંચવાની રીત 🟢
+    function loadLocalSettings() {
+        fetch('/settings_json').then(r=>r.json()).then(d => { fillSettings(d); }).catch(()=>{});
+    }
+
+    function loadFirebaseSettings() {
+      db.ref('/settings').once('value').then(snap => { fillSettings(snap.val()); });
+    }
+
+    // 🟢 ઓફલાઈન અને ઓનલાઈન બંનેમાં સેટિંગ સેવ કરવાની રીત 🟢
+    function saveAllSettings() {
       let fullData = {};
       for(let i=0; i<10; i++) {
         let rArray = [];
@@ -235,10 +282,17 @@
         }
         fullData["R"+i] = rArray;
       }
-      db.ref('/settings').set(fullData).then(() => {
-        try{ db.ref("/command").set({action: "sync_settings", id: 0, timestamp: Date.now()}); }catch(e){}
-        showToast("Settings Synced!"); 
-      });
+      
+      // 1. Send to Local ESP32
+      fetch('/save_settings', { method: 'POST', body: JSON.stringify(fullData) }).catch(()=>{});
+      
+      // 2. Send to Firebase
+      if (fbReady && db) {
+        db.ref('/settings').set(fullData).then(() => {
+          try{ db.ref("/command").set({action: "sync_settings", id: 0, timestamp: Date.now()}); }catch(e){}
+        });
+      }
+      showToast("Settings Saved & Synced!"); 
     }
 
     function showToast(msg) { let t = document.getElementById('toast'); t.innerText = msg; t.className = 'show'; setTimeout(() => { t.className = ''; }, 3000); }
@@ -265,11 +319,10 @@
     }
     setInterval(updateClock, 1000);
 
-    // 🟢 ડ્યુઅલ સ્ટેટસ અપડેટ ફંક્શન 🟢
     function updateData(d) {
         let nowTime = Date.now();
         for(let i=0; i<10; i++) {
-          if (nowTime - pendingLocks[i] > 2000) {
+          if (nowTime - pendingLocks[i] > 3000) { // 🟢 3 સેકન્ડ સુધી જૂનો કમાન્ડ ઓવરરાઈડ નહિ થાય 
             if(d.s !== undefined && d.s[i] !== undefined) relayStates[i] = d.s[i]; 
             if(d.m !== undefined && d.m[i] !== undefined) manualModes[i] = d.m[i];
           }
@@ -280,41 +333,10 @@
         else { espBadge.className = "badge local"; espBadge.innerText = "LOCAL"; }
     }
 
-    window.onload = () => {
-      buildUI(); loadFirebaseSettings(); updateClock(); syncTimeToDevice();
-      
-      db.ref(".info/connected").on("value", function(snap) {
-        let appBadge = document.getElementById("appNetBadge");
-        if (snap.val() === true) { appBadge.className = "badge"; appBadge.innerText = "APP ONLINE"; } 
-        else { appBadge.className = "badge offline"; appBadge.innerText = "APP OFFLINE"; }
-      });
+    // બ્રાઉઝર લોડ થાય ત્યારે સ્ક્રિપ્ટ રન કરવા 
+    setTimeout(initApp, 200); 
 
-      // 1. ONLINE SYNC 
-      db.ref('/status').on('value', snap => {
-        let d = snap.val(); if(!d) return;
-        updateData(d);
-        clearTimeout(onlineTimer);
-        onlineTimer = setTimeout(() => { 
-            document.getElementById("espNetBadge").className = "badge offline"; 
-            document.getElementById("espNetBadge").innerText = "LOCAL"; 
-        }, 6000);
-      });
-
-      // 2. OFFLINE SYNC 
-      setInterval(() => {
-        fetch('/status').then(r=>r.json()).then(d=>{ updateData(d); }).catch(()=>{});
-      }, 1500);
-    };
-  </script>
-
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-          .then(reg => console.log('Service Worker Registered!'))
-          .catch(err => console.log('Service Worker Error!', err));
-      });
-    }
   </script>
 </body>
 </html>
+
