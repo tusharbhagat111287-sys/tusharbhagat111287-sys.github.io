@@ -1,73 +1,89 @@
-
 <!DOCTYPE HTML>
 <html>
 <head>
   <meta charset='UTF-8'>
   <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'>
-  <meta name='theme-color' content='#1a1a1a'>
+  <meta name='theme-color' content='#121212'>
   <title>Sarvopari Dham Online</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="https://i.ibb.co/999CRL59/IMG-20260606-214127.jpg">
   
-  <!-- 🟢 ઈન્ટરનેટ ન હોય તો આ એરર ન આપે તે માટે Async ઉમેર્યું 🟢 -->
-  <script async src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script async src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <!-- 🟢 ફિક્સ: async કાઢીને defer મૂક્યું જેથી પહેલી જ વારમાં 100% ઓનલાઇન કનેક્ટ થાય 🟢 -->
+  <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
   <style>
-    body{font-family:'Segoe UI', sans-serif; background:#1a1a1a; color:#f0e6d2; margin:0; text-align:center; min-height:100vh; padding-bottom:70px;}
-    .nav{background:#111; padding:10px; display:flex; justify-content:space-around; font-weight:bold; border-bottom: 1px solid #333; position:sticky; top:0; z-index:100;}
-    .nav a{color:#888; text-decoration:none; padding:6px 14px; border-radius:5px; transition:0.3s; cursor:pointer; font-size:14px;}
-    .nav a.act{background:#2196f3; color:#fff;}
+    :root { --gold1:#BF953F; --gold2:#FCF6BA; --gold3:#B38728; --gold4:#FBF5B7; --gold5:#AA771C; }
+    *{box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none;}
+    body{font-family:'Segoe UI', sans-serif; background:radial-gradient(circle at top, #221533 0%, #0f0f12 70%); color:#f0e6d2; margin:0; text-align:center; min-height:100vh; padding-bottom:70px; touch-action:manipulation;}
+    
+    .nav{background:rgba(15,15,18,0.92); backdrop-filter:blur(10px); padding:10px; display:flex; justify-content:space-around; font-weight:bold; border-bottom:1px solid rgba(255,215,0,0.2); position:sticky; top:0; z-index:100;}
+    .nav a{color:#999; text-decoration:none; padding:7px 22px; border-radius:20px; transition:0.2s; cursor:pointer; font-size:13px;}
+    .nav a.act{background:linear-gradient(135deg, var(--gold1), var(--gold2), var(--gold3)); color:#000; box-shadow:0 0 12px rgba(255,215,0,0.4);}
+    
     .c{padding:8px; max-width:800px; margin:auto;}
-    .card{background:#333; padding:12px; margin-bottom:12px; border-radius:10px; box-shadow:0 4px 6px rgba(0,0,0,0.3);}
-    .stat-row{display:flex; justify-content:space-between; align-items:center; margin-top: 15px;}
+    .card{background:rgba(32,32,38,0.88); padding:12px; margin-bottom:10px; border-radius:14px; border:1px solid rgba(255,255,255,0.08); box-shadow:0 6px 15px rgba(0,0,0,0.45); transition:border-color 0.15s, box-shadow 0.15s;}
+    .card.active-card{border-color:rgba(0,230,118,0.55); box-shadow:0 0 14px rgba(0,230,118,0.18);}
     
-    .time-text{font-size:28px; font-weight:bold; white-space:nowrap; padding-top:6px; padding-bottom:2px; background:linear-gradient(to right,#B38728 0%,#FBF5B7 25%,#B38728 50%,#FBF5B7 75%,#B38728 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; filter:drop-shadow(0px 4px 6px rgba(0,0,0,0.6));}
+    .stat-row{display:flex; justify-content:space-between; align-items:center; margin-top:12px;}
+    .time-text{font-size:26px; font-weight:bold; white-space:nowrap; padding-top:4px; background:linear-gradient(to right,#B38728 0%,#FBF5B7 25%,#B38728 50%,#FBF5B7 75%,#B38728 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; filter:drop-shadow(0px 4px 6px rgba(0,0,0,0.6));}
     
-    .murti-wrap{position:relative; width:96px; height:96px; display:flex; align-items:center; justify-content:center; margin:0 5px;}
-    .murti-wrap:before{content:''; position:absolute; width:150%; height:150%; border-radius:50%; background:repeating-conic-gradient(from 0deg,rgba(255,215,0,0.85) 0deg 6deg,rgba(255,140,0,0) 6deg 24deg); filter:blur(5px); animation:spin 8s linear infinite;}
-    .murti-wrap:after{content:''; position:absolute; width:96px; height:96px; border-radius:50%; box-shadow:0 0 22px 8px rgba(255,215,0,0.55);}
+    .murti-wrap{position:relative; width:94px; height:94px; display:flex; align-items:center; justify-content:center; margin:0 5px;}
+    .murti-wrap:before{content:''; position:absolute; width:145%; height:145%; border-radius:50%; background:repeating-conic-gradient(from 0deg,rgba(255,215,0,0.85) 0deg 6deg,rgba(255,140,0,0) 6deg 24deg); filter:blur(5px); animation:spin 8s linear infinite;}
+    .murti-wrap:after{content:''; position:absolute; width:94px; height:94px; border-radius:50%; box-shadow:0 0 22px 8px rgba(255,215,0,0.55);}
     @keyframes spin{to{transform:rotate(360deg);}}
-    .center-murti {position:relative; z-index:1; width: 90px; height: 90px; border-radius: 50%; border: 2px solid #FFD700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.8); object-fit: cover;}
+    .center-murti {position:relative; z-index:1; width:88px; height:88px; border-radius:50%; border:2px solid #FFD700; box-shadow:0 0 10px rgba(255, 215, 0, 0.8); object-fit:cover;}
 
     .badge-col{display:flex; flex-direction:column; gap:4px; align-items:flex-end;}
-    .badge{font-size:9px; padding:3px 6px; border-radius:4px; font-weight:bold; background:#4caf50; color:#fff; letter-spacing:1px;}
+    .badge{font-size:9px; padding:3px 7px; border-radius:6px; font-weight:bold; background:#4caf50; color:#fff; letter-spacing:1px;}
     .badge.offline{background:#f44336;}
     .badge.local{background:#ff9800;}
-    .status-msg{color:#69f0ae; font-weight:600; font-size:12px; margin-top:6px;}
-    .grid{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;}
-    h4{margin:0 0 8px; color:#f9d976; font-size:12px;}
+    .status-msg{color:#69f0ae; font-weight:700; font-size:12px; margin-top:8px; background:rgba(0,0,0,0.35); padding:6px; border-radius:8px;}
     
-    .btn-row { display: flex; flex-direction: row; gap: 8px; justify-content: space-between; }
-    .btn, .btn-a {
-      flex: 1; border: none; padding: 8px 0; border-radius: 20px; font-weight: bold; cursor: pointer; color: #fff; font-size: 10px; transition: 0.1s; box-shadow: 0 3px 5px rgba(0,0,0,0.4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .btn:active, .btn-a:active { transform: scale(0.92); box-shadow: none; }
-    
-    .btn.on { background: linear-gradient(180deg, #4caf50, #2e7d32); box-shadow: 0 0 8px rgba(76,175,80,0.5); }
-    .btn.off { background: linear-gradient(180deg, #9c27b0, #6a1b9a); box-shadow: 0 0 8px rgba(156,39,176,0.5); }
-    .btn-a.is-auto { background: linear-gradient(180deg, #ff9800, #ef6c00); box-shadow: 0 0 8px rgba(255,152,0,0.5); }
-    .btn-a.is-manual { background: linear-gradient(180deg, #607d8b, #455a64); }
+    /* 🟢 Master Quick Control Bar 🟢 */
+    .master-bar{display:flex; gap:8px; margin-bottom:10px;}
+    .m-btn{flex:1; border:none; padding:9px 0; border-radius:10px; font-weight:bold; font-size:11px; color:#fff; cursor:pointer; box-shadow:0 3px 6px rgba(0,0,0,0.4); transition:transform 0.06s;}
+    .m-btn:active{transform:scale(0.92);}
+    .m-on{background:linear-gradient(135deg,#00c853,#1b5e20);}
+    .m-off{background:linear-gradient(135deg,#d50000,#7f0000);}
+    .m-auto{background:linear-gradient(135deg,#ff9800,#e65100);}
 
-    #settings { display: none; text-align: left; }
+    .grid{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+    .card-hdr{display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:8px;}
+    .led-dot{width:8px; height:8px; border-radius:50%; background:#555; transition:0.1s;}
+    .led-dot.on{background:#00e676; box-shadow:0 0 8px #00e676;}
+    h4{margin:0; color:#f9d976; font-size:12px;}
+    
+    .btn-row { display:flex; flex-direction:row; gap:8px; justify-content:space-between; }
+    .btn, .btn-a {
+      flex:1; border:none; padding:9px 0; border-radius:20px; font-weight:bold; cursor:pointer; color:#fff; font-size:10.5px; transition:transform 0.05s; box-shadow:0 3px 5px rgba(0,0,0,0.4); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .btn:active, .btn-a:active { transform:scale(0.91); }
+    
+    .btn.on { background:linear-gradient(180deg, #00e676, #1b5e20); box-shadow:0 0 10px rgba(0,230,118,0.6); color:#000; }
+    .btn.off { background:linear-gradient(180deg, #9c27b0, #4a148c); box-shadow:0 0 8px rgba(156,39,176,0.4); }
+    .btn-a.is-auto { background:linear-gradient(180deg, #ff9800, #e65100); box-shadow:0 0 8px rgba(255,152,0,0.5); }
+    .btn-a.is-manual { background:linear-gradient(180deg, #546e7a, #37474f); }
+
+    #settings { display:none; text-align:left; }
     .tabs{display:flex; overflow-x:auto; padding:8px 0; gap:6px;}
     .tb{background:#222; color:#BF953F; border:1px solid #BF953F; padding:6px 12px; border-radius:15px; white-space:nowrap; font-weight:bold; font-size:12px; cursor:pointer;}
-    .tb.act{background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C); color:#000; border:none;}
+    .tb.act{background:linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C); color:#000; border:none;}
     .tc{display:none;} .tc.act{display:block;}
-    .cd{background:#111; padding:8px 10px; margin-bottom:10px; border-radius:8px; border-left:4px solid transparent; box-shadow:0 2px 4px rgba(0,0,0,0.3);}
+    .cd{background:#141418; padding:8px 10px; margin-bottom:10px; border-radius:10px; border-left:4px solid transparent; box-shadow:0 2px 4px rgba(0,0,0,0.3);}
     .hd{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-weight:bold; font-size:12px;}
-    .rw{display:flex; justify-content:space-between; align-items:center; background:#1a1a1a; padding:4px 8px; margin-bottom:4px; border-radius:6px; font-size:11px; color:#aaa; font-weight:bold;}
+    .rw{display:flex; justify-content:space-between; align-items:center; background:#1e1e24; padding:4px 8px; margin-bottom:4px; border-radius:6px; font-size:11px; color:#aaa; font-weight:bold;}
     .time-box{display:flex; align-items:center; gap:4px;}
     .time-box input, .time-box select{background:#222; color:#BF953F; border:1px solid #BF953F; padding:2px; border-radius:4px; font-size:12px; font-weight:bold; text-align:center;}
     .sw{position:relative; width:30px; height:16px;} .sw input{display:none;} 
     .sw span{position:absolute; top:0; left:0; right:0; bottom:0; background:#444; border-radius:16px; cursor:pointer;} 
-    .sw span:before{content:''; position:absolute; width:12px; height:12px; left:2px; bottom:2px; background:#fff; border-radius:50%; transition:0.3s;} 
-    input:checked+span{background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);} input:checked+span:before{transform:translateX(14px); background:#000;}
-    .btn-save{background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C); color:#000; border:none; padding:12px; width:100%; font-weight:bold; font-size:14px; cursor:pointer; margin-top:10px; text-transform:uppercase; border-radius:5px; box-shadow:0 4px 6px rgba(0,0,0,0.4);}
+    .sw span:before{content:''; position:absolute; width:12px; height:12px; left:2px; bottom:2px; background:#fff; border-radius:50%; transition:0.25s;} 
+    input:checked+span{background:linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);} input:checked+span:before{transform:translateX(14px); background:#000;}
+    .btn-save{background:linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C); color:#000; border:none; padding:12px; width:100%; font-weight:bold; font-size:14px; cursor:pointer; margin-top:10px; text-transform:uppercase; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.4);}
     .btn-save:active{transform:scale(0.98);}
-    #toast{visibility:hidden; min-width:200px; background:#4CAF50; color:#fff; text-align:center; border-radius:20px; padding:10px; position:fixed; z-index:1000; left:50%; bottom:70px; transform:translateX(-50%); font-size:13px; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.5);} 
+    #toast{visibility:hidden; min-width:200px; background:#00c853; color:#fff; text-align:center; border-radius:20px; padding:10px; position:fixed; z-index:1000; left:50%; bottom:70px; transform:translateX(-50%); font-size:13px; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.5);} 
     #toast.show{visibility:visible;}
-    .footer{text-align:center; color:#ffffff; font-size:14px; margin-top:25px; padding-bottom:30px; font-weight:bold; text-shadow: 0 0 8px #9c27b0, 0 0 15px #9c27b0;}
+    .footer{text-align:center; color:#ffffff; font-size:13px; margin-top:22px; padding-bottom:30px; font-weight:bold; text-shadow:0 0 8px #9c27b0, 0 0 15px #9c27b0;}
   </style>
 </head>
 <body>
@@ -82,20 +98,26 @@
   <div class="c">
     <div id="dashboard">
       <div class="card" style="margin-bottom: 8px;">
-        <div style="color:#FFFFFF; font-weight:900; font-size: 19px; margin-bottom:12px; margin-top:8px; text-shadow: 0 0 8px #9c27b0, 0 0 15px #9c27b0; line-height: 1.4; word-break: keep-all; padding: 0 5px;">🔴🙏 SARVOPARI DHAM LIGHT 🙏🔴</div>
+        <div style="color:#FFFFFF; font-weight:900; font-size: 18px; margin-bottom:10px; margin-top:4px; text-shadow: 0 0 8px #9c27b0, 0 0 15px #9c27b0;">🔴🙏 SARVOPARI DHAM LIGHT 🙏🔴</div>
         
         <div class="stat-row">
           <div id="clock" class="time-text">--:--</div>
-          
           <div class="murti-wrap"><img src="https://i.ibb.co/999CRL59/IMG-20260606-214127.jpg" class="center-murti" alt="Bhagwan Darshan"></div>
-          
           <div class="badge-col">
-            <span id="appNetBadge" class="badge offline">APP OFFLINE</span>
-            <span id="espNetBadge" class="badge offline">ESP OFFLINE</span>
+            <span id="appNetBadge" class="badge offline">CONNECTING...</span>
+            <span id="espNetBadge" class="badge offline">ESP WAIT</span>
           </div>
         </div>
-        <div id="statusMsg" class="status-msg">SYSTEM READY</div>
+        <div id="statusMsg" class="status-msg">⚡ SYSTEM READY</div>
       </div>
+
+      <!-- 🟢 નવું માસ્ટર કંટ્રોલ બાર 🟢 -->
+      <div class="master-bar">
+        <button class="m-btn m-on" onclick="masterCmd('all_on')">⚡ ALL ON</button>
+        <button class="m-btn m-off" onclick="masterCmd('all_off')">🌙 ALL OFF</button>
+        <button class="m-btn m-auto" onclick="masterCmd('all_auto')">🔄 ALL AUTO</button>
+      </div>
+
       <div class='grid' id='buttonsGrid'></div>
       <div class='footer'>SARVOPARI DHAM GLOBAL LIGHT REMOTE</div>
     </div>
@@ -111,55 +133,69 @@
     const slotNames = ["S1: All Day 1", "S2: All Day 2", "S3: Mon-Sat 1", "S4: Mon-Sat 2", "S5: Mon-Sat 3", "S6: Mon-Sat 4", "S7: Tue Only 1", "S8: Tue Only 2", "S9: Sat Only 1", "S10: Sat Only 2", "S11: Sun Only 1", "S12: Sun Only 2"];
     const slotColors = ["#4CAF50", "#8BC34A", "#9C27B0", "#BA68C8", "#E91E63", "#F06292", "#FFEB3B", "#FBC02D", "#FF9800", "#F57C00", "#FFFFFF", "#E0E0E0"];
     
+    const LOCAL_ESP_IP = "http://192.168.4.4";
+    let isLocalHost = (location.hostname === "192.168.4.4");
+
     let relayStates = [0,0,0,0,0,0,0,0,0,0]; 
     let manualModes = ["false","false","false","false","false","false","false","false","false","false"];
     let pendingLocks = [0,0,0,0,0,0,0,0,0,0]; 
     let onlineTimer;
     
-    // 🟢 Firebase ને સુરક્ષિત રીતે ચાલુ કરવાની રીત (ઓફલાઈન ક્રેશ ન થાય એ માટે) 🟢
     let db = null;
     let fbReady = false;
+
+    // 🟢 ફિક્સ: જો નેટ ધીમું હોય તો પણ Firebase લોડ થતાની સાથે જ 100% પહેલી વારમાં જ કનેક્ટ થઈ જશે 🟢
+    function tryConnectFirebase(attempts = 0) {
+      if (fbReady) return;
+      if (typeof firebase !== 'undefined' && firebase.database) {
+        try {
+          if (!firebase.apps.length) {
+            firebase.initializeApp({
+              apiKey: "AIzaSyAoPnrydmBiFCG8FP52Sy_jsRBb1CyUfaM",
+              databaseURL: "https://sarvopari-liths-default-rtdb.firebaseio.com"
+            });
+          }
+          db = firebase.database();
+          fbReady = true;
+
+          loadFirebaseSettings();
+
+          db.ref(".info/connected").on("value", function(snap) {
+            let appBadge = document.getElementById("appNetBadge");
+            if (snap.val() === true) { appBadge.className = "badge"; appBadge.innerText = "APP ONLINE"; } 
+            else { appBadge.className = "badge offline"; appBadge.innerText = "APP OFFLINE"; }
+          });
+
+          db.ref('/status').on('value', snap => {
+            let d = snap.val(); if(!d) return;
+            updateData(d);
+            clearTimeout(onlineTimer);
+            onlineTimer = setTimeout(() => { 
+              document.getElementById("espNetBadge").className = "badge local"; 
+              document.getElementById("espNetBadge").innerText = "LOCAL"; 
+            }, 6000);
+          });
+        } catch(e) { console.log("FB Init Error:", e); }
+      } else if (attempts < 40) {
+        setTimeout(() => tryConnectFirebase(attempts + 1), 150);
+      } else {
+        let appBadge = document.getElementById("appNetBadge");
+        appBadge.className = "badge offline"; appBadge.innerText = "APP OFFLINE";
+      }
+    }
     
     function initApp() {
-        try {
-            if (typeof firebase !== 'undefined') {
-                firebase.initializeApp({
-                    apiKey: "AIzaSyAoPnrydmBiFCG8FP52Sy_jsRBb1CyUfaM",
-                    databaseURL: "https://sarvopari-liths-default-rtdb.firebaseio.com"
-                });
-                db = firebase.database();
-                fbReady = true;
-            }
-        } catch(e) { console.log("Offline Mode Active"); }
-        
-        buildUI(); 
-        updateClock(); 
+      buildUI(); 
+      updateClock(); 
+      tryConnectFirebase();
+
+      if (isLocalHost) {
+        loadLocalSettings();
         syncTimeToDevice();
-        loadLocalSettings(); // હંમેશા પહેલા લોકલ સેટિંગ્સ લાવી દેવા 
-
-        if (fbReady) {
-            loadFirebaseSettings();
-            db.ref(".info/connected").on("value", function(snap) {
-                let appBadge = document.getElementById("appNetBadge");
-                if (snap.val() === true) { appBadge.className = "badge"; appBadge.innerText = "APP ONLINE"; } 
-                else { appBadge.className = "badge offline"; appBadge.innerText = "APP OFFLINE"; }
-            });
-
-            db.ref('/status').on('value', snap => {
-                let d = snap.val(); if(!d) return;
-                updateData(d);
-                clearTimeout(onlineTimer);
-                onlineTimer = setTimeout(() => { 
-                    document.getElementById("espNetBadge").className = "badge local"; 
-                    document.getElementById("espNetBadge").innerText = "LOCAL"; 
-                }, 6000);
-            });
-        }
-
-        // 2. OFFLINE SYNC (હંમેશા ચાલુ રહેશે)
         setInterval(() => {
-            fetch('/status').then(r=>r.json()).then(d=>{ updateData(d); }).catch(()=>{});
-        }, 1500);
+          fetch('/status').then(r=>r.json()).then(d=>{ updateData(d); }).catch(()=>{});
+        }, 1000);
+      }
     }
 
     function switchTab(tab) {
@@ -169,30 +205,49 @@
       document.getElementById('navSet').classList.toggle('act', tab==='set');
     }
 
-    // 🟢 બટન દબાવતા 0.0s માં કલર બદલવાની રીત 🟢
+    // 🟢 બટન ટચ કરતા જ 0.0 સેકન્ડમાં કલર બદલાશે અને કમાન્ડ ફાયર થશે 🟢
     function cmd(act, id) {
-      pendingLocks[id] = Date.now(); // 3 સેકન્ડ સુધી જૂનો ડેટા નહિ લે 
+      if (navigator.vibrate) navigator.vibrate(12);
+      pendingLocks[id] = Date.now();
       
       if(act === "toggle") { relayStates[id] = relayStates[id] == 1 ? 0 : 1; manualModes[id] = "true"; } 
       else if (act === "auto") { manualModes[id] = "false"; }
       
-      updateBtnUI(id); // 🟢 0.0s ઇન્સ્ટન્ટ અપડેટ 🟢
+      updateBtnUI(id); // 0.0s Instant UI Update
       
-      if (fbReady && db) { try { db.ref("/command").set({action: act, id: id, timestamp: Date.now()}); } catch(e){} }
-      fetch(act === 'toggle' ? `/toggle?id=${id}` : `/auto?id=${id}`).catch(()=>{});
+      if (fbReady && db) {
+        try { db.ref("/command").set({action: act, id: id, timestamp: Date.now()}); } catch(e){}
+      }
+      if (isLocalHost) {
+        fetch(act === 'toggle' ? `/toggle?id=${id}` : `/auto?id=${id}`).catch(()=>{});
+      }
+    }
+
+    // 🟢 માસ્ટર બટન (ALL ON / ALL OFF / ALL AUTO) 🟢
+    function masterCmd(act) {
+      if (navigator.vibrate) navigator.vibrate(25);
+      let now = Date.now();
+      for(let i=0; i<10; i++) {
+        pendingLocks[i] = now;
+        if (act === 'all_on') { relayStates[i] = 1; manualModes[i] = "true"; }
+        else if (act === 'all_off') { relayStates[i] = 0; manualModes[i] = "true"; }
+        else if (act === 'all_auto') { manualModes[i] = "false"; }
+        updateBtnUI(i);
+      }
+      if (fbReady && db) {
+        try { db.ref("/command").set({action: act, id: 0, timestamp: now}); } catch(e){}
+      }
+      if (isLocalHost) {
+        fetch(`/master?act=${act}`).catch(()=>{});
+      }
+      showToast(act.replace('_', ' ').toUpperCase() + " SENT!");
     }
 
     function syncTimeToDevice() {
       let d = new Date();
-      if (fbReady && db) {
-        try {
-          db.ref("/command").set({
-            action: "sync_time", y: d.getFullYear(), mo: d.getMonth()+1, d: d.getDate(),
-            h: d.getHours(), mi: d.getMinutes(), s: d.getSeconds(), timestamp: Date.now()
-          });
-        } catch(e){}
+      if (isLocalHost) {
+        fetch(`/sync_time?y=${d.getFullYear()}&mo=${d.getMonth()+1}&d=${d.getDate()}&h=${d.getHours()}&mi=${d.getMinutes()}&s=${d.getSeconds()}`).catch(()=>{});
       }
-      fetch(`/sync_time?y=${d.getFullYear()}&mo=${d.getMonth()+1}&d=${d.getDate()}&h=${d.getHours()}&mi=${d.getMinutes()}&s=${d.getSeconds()}`).catch(()=>{});
     }
 
     function oT(id) {
@@ -205,10 +260,13 @@
     function buildUI() {
       let dHtml = "";
       for(let i=0; i<10; i++) {
-        dHtml += `<div class='card' style='padding:10px; margin-bottom:0;'><h4>${names[i]}</h4><div class='btn-row'>
-                  <button id='btnR${i}' class='btn off' onclick='cmd("toggle", ${i})'>Wait</button>
-                  <button id='btnA${i}' class='btn-a is-auto' onclick='cmd("auto", ${i})'>Wait</button>
-                  </div></div>`;
+        dHtml += `<div id='card${i}' class='card' style='padding:10px; margin-bottom:0;'>
+                    <div class='card-hdr'><span id='dot${i}' class='led-dot'></span><h4>${names[i]}</h4></div>
+                    <div class='btn-row'>
+                      <button id='btnR${i}' class='btn off' onclick='cmd("toggle", ${i})'>OFF</button>
+                      <button id='btnA${i}' class='btn-a is-auto' onclick='cmd("auto", ${i})'>AUTO</button>
+                    </div>
+                  </div>`;
       }
       document.getElementById('buttonsGrid').innerHTML = dHtml;
 
@@ -243,13 +301,13 @@
               let p = `r${i}s${j}`;
               let enEl = document.getElementById(`${p}_en`);
               if(enEl) {
-                  enEl.checked = (slot.en == 1);
-                  document.getElementById(`${p}_sh`).value = (slot.sh == 0 || slot.sh == 12) ? 12 : (slot.sh > 12 ? slot.sh - 12 : slot.sh);
-                  document.getElementById(`${p}_sap`).value = (slot.sh >= 12) ? 1 : 0;
-                  document.getElementById(`${p}_sm`).value = slot.sm < 10 ? '0'+slot.sm : slot.sm;
-                  document.getElementById(`${p}_eh`).value = (slot.eh == 0 || slot.eh == 12) ? 12 : (slot.eh > 12 ? slot.eh - 12 : slot.eh);
-                  document.getElementById(`${p}_eap`).value = (slot.eh >= 12) ? 1 : 0;
-                  document.getElementById(`${p}_em`).value = slot.em < 10 ? '0'+slot.em : slot.em;
+                enEl.checked = (slot.en == 1);
+                document.getElementById(`${p}_sh`).value = (slot.sh == 0 || slot.sh == 12) ? 12 : (slot.sh > 12 ? slot.sh - 12 : slot.sh);
+                document.getElementById(`${p}_sap`).value = (slot.sh >= 12) ? 1 : 0;
+                document.getElementById(`${p}_sm`).value = slot.sm < 10 ? '0'+slot.sm : slot.sm;
+                document.getElementById(`${p}_eh`).value = (slot.eh == 0 || slot.eh == 12) ? 12 : (slot.eh > 12 ? slot.eh - 12 : slot.eh);
+                document.getElementById(`${p}_eap`).value = (slot.eh >= 12) ? 1 : 0;
+                document.getElementById(`${p}_em`).value = slot.em < 10 ? '0'+slot.em : slot.em;
               }
             }
           }
@@ -257,17 +315,16 @@
       }
     }
 
-    // 🟢 ઓફલાઈન સેટિંગ ખેંચવાની રીત 🟢
     function loadLocalSettings() {
-        fetch('/settings_json').then(r=>r.json()).then(d => { fillSettings(d); }).catch(()=>{});
+      fetch('/settings_json').then(r=>r.json()).then(d => { fillSettings(d); }).catch(()=>{});
     }
 
     function loadFirebaseSettings() {
-      db.ref('/settings').once('value').then(snap => { fillSettings(snap.val()); });
+      db.ref('/settings').on('value', snap => { fillSettings(snap.val()); });
     }
 
-    // 🟢 ઓફલાઈન અને ઓનલાઈન બંનેમાં સેટિંગ સેવ કરવાની રીત 🟢
     function saveAllSettings() {
+      if (navigator.vibrate) navigator.vibrate(20);
       let fullData = {};
       for(let i=0; i<10; i++) {
         let rArray = [];
@@ -283,10 +340,10 @@
         fullData["R"+i] = rArray;
       }
       
-      // 1. Send to Local ESP32
-      fetch('/save_settings', { method: 'POST', body: JSON.stringify(fullData) }).catch(()=>{});
+            if (isLocalHost) {
+        fetch('/save_settings', { method: 'POST', body: JSON.stringify(fullData) }).catch(()=>{});
+      }
       
-      // 2. Send to Firebase
       if (fbReady && db) {
         db.ref('/settings').set(fullData).then(() => {
           try{ db.ref("/command").set({action: "sync_settings", id: 0, timestamp: Date.now()}); }catch(e){}
@@ -295,10 +352,13 @@
       showToast("Settings Saved & Synced!"); 
     }
 
-    function showToast(msg) { let t = document.getElementById('toast'); t.innerText = msg; t.className = 'show'; setTimeout(() => { t.className = ''; }, 3000); }
+    function showToast(msg) { let t = document.getElementById('toast'); t.innerText = msg; t.className = 'show'; setTimeout(() => { t.className = ''; }, 2500); }
 
     function updateBtnUI(i) {
-      let b = document.getElementById(`btnR${i}`); let a = document.getElementById(`btnA${i}`);
+      let b = document.getElementById(`btnR${i}`);
+      let a = document.getElementById(`btnA${i}`);
+      let c = document.getElementById(`card${i}`);
+      let dot = document.getElementById(`dot${i}`);
       if(b && a) {
         let isO = (relayStates[i] == 1); 
         let isM = (String(manualModes[i]) === "true"); 
@@ -307,7 +367,11 @@
         b.className = 'btn ' + (isO ? 'on' : 'off');
         a.innerHTML = isM ? "AUTO" : "AUTO (ON)"; 
         a.className = 'btn-a ' + (isM ? 'is-manual' : 'is-auto');
+        if (c) c.classList.toggle('active-card', isO);
+        if (dot) dot.classList.toggle('on', isO);
       }
+      let onCnt = relayStates.reduce((acc, v) => acc + (v == 1 ? 1 : 0), 0);
+      document.getElementById('statusMsg').innerText = `⚡ ${onCnt} / 10 LIGHTS ON • SYSTEM ACTIVE`;
     }
 
     function updateClock() {
@@ -320,23 +384,20 @@
     setInterval(updateClock, 1000);
 
     function updateData(d) {
-        let nowTime = Date.now();
-        for(let i=0; i<10; i++) {
-          if (nowTime - pendingLocks[i] > 3000) { // 🟢 3 સેકન્ડ સુધી જૂનો કમાન્ડ ઓવરરાઈડ નહિ થાય 
-            if(d.s !== undefined && d.s[i] !== undefined) relayStates[i] = d.s[i]; 
-            if(d.m !== undefined && d.m[i] !== undefined) manualModes[i] = d.m[i];
-          }
-          updateBtnUI(i);
+      let nowTime = Date.now();
+      for(let i=0; i<10; i++) {
+        if (nowTime - pendingLocks[i] > 2000) {
+          if(d.s !== undefined && d.s[i] !== undefined) relayStates[i] = d.s[i]; 
+          if(d.m !== undefined && d.m[i] !== undefined) manualModes[i] = d.m[i];
         }
-        let espBadge = document.getElementById("espNetBadge");
-        if(d.online === true) { espBadge.className = "badge"; espBadge.innerText = "CLOUD"; } 
-        else { espBadge.className = "badge local"; espBadge.innerText = "LOCAL"; }
+        updateBtnUI(i);
+      }
+      let espBadge = document.getElementById("espNetBadge");
+      if(d.online === true) { espBadge.className = "badge"; espBadge.innerText = "ESP CLOUD"; } 
+      else { espBadge.className = "badge local"; espBadge.innerText = "ESP LOCAL"; }
     }
 
-    // બ્રાઉઝર લોડ થાય ત્યારે સ્ક્રિપ્ટ રન કરવા 
-    setTimeout(initApp, 200); 
-
+    window.addEventListener('DOMContentLoaded', initApp);
   </script>
 </body>
 </html>
-
